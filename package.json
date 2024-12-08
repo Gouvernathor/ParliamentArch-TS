@@ -1,0 +1,25 @@
+{
+  "name": "parliamentarch",
+  "version": "1.0.0",
+  "description": "Generating arch-styled SVG parliamentary diagrams",
+  "main": "parliamentarch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+  },
+  "keywords": [
+    "parliament",
+    "svg",
+    "diagram"
+  ],
+  "author": "Gouvernathor",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
+  },
+  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
+  "funding": "https://ko-fi.com/gouvernathor"
+}
