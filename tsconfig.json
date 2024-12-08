@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "ES2019",
+        "module": "Preserve",
+        "sourceMap": true,
+        "outDir": "out",
+        "strict": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+    },
+}
