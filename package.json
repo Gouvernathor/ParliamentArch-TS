@@ -2,8 +2,19 @@
   "name": "parliamentarch",
   "version": "1.0.0",
   "description": "Generating arch-styled SVG parliamentary diagrams",
-  "main": "parliamentarch.js",
+  "main": "./dist/parliamentarch.js",
+  "exports": {
+    ".": "./dist/parliamentarch.js",
+    "./geometry": "./dist/parliamentarch/geometry.js",
+    "./svg": "./dist/parliamentarch/svg.js"
+  },
+  "module": "./dist/parliamentarch.mjs",
+  "types": "./dist/parliamentarch.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +32,9 @@
     "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
   },
   "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
-  "funding": "https://ko-fi.com/gouvernathor"
+  "funding": "https://ko-fi.com/gouvernathor",
+  "devDependencies": {
+    "typescript": "*",
+    "tsup": "^8.3.5"
+  }
 }
