@@ -5,8 +5,8 @@ export class SeatData {
     readonly borderSize: number;
     readonly borderColor: string;
     constructor({
-        color, id, data="", borderSize=0, borderColor="black",
-    }: {color: string, id?: string, data: string, borderSize: number, borderColor: string},
+        color, id, data = "", borderSize = 0, borderColor = "black",
+    }: { color: string, id?: string, data: string, borderSize: number, borderColor: string },
     ) {
         this.color = color;
         this.id = id;
@@ -73,10 +73,10 @@ export function getGroupedSVG(
         canvasSize = 175,
         margins = 5,
         writeNumberOfSeats = true,
-        fontSizeFactor = 36/175,
+        fontSizeFactor = 36 / 175,
     }: {
         canvasSize?: number,
-        margins?: number|[number, number]|[number, number, number, number],
+        margins?: number | [number, number] | [number, number, number, number],
         writeNumberOfSeats?: boolean,
         fontSizeFactor?: number
     } = {},
@@ -91,7 +91,7 @@ export function getGroupedSVG(
     const svg = document.createElementNS(SVG_NS, "svg");
 
     populateHeader(svg,
-        leftMargin + 2*canvasSize + rightMargin,
+        leftMargin + 2 * canvasSize + rightMargin,
         topMargin + canvasSize + bottomMargin,
     );
     if (writeNumberOfSeats) {

@@ -26,7 +26,7 @@ export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE):
     const rad = getRowThickness(nRows);
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array(nRows).map((_, r) => {
-        const rowArcRadius = .5 + 2*r*rad;
+        const rowArcRadius = .5 + 2 * r * rad;
         return Math.floor(radianSpanAngle * rowArcRadius / (2 * rad));
     });
 }
@@ -67,11 +67,11 @@ export function getSeatsCenters(
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: {minNRows?: number, fillingStrategy?: FillingStrategy, spanAngle?: number} = {},
+    }: { minNRows?: number, fillingStrategy?: FillingStrategy, spanAngle?: number } = {},
 ): Map<[number, number], number> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
-    const spanAngleMargin = (1 - spanAngle/180)*Math.PI/2;
+    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
 
     const maxedRows = getRowsFromNRows(nRows, spanAngle);
 
@@ -121,7 +121,7 @@ export function getSeatsCenters(
     const positions = new Map<[number, number], number>();
     for (let r = startingRow; r < nRows; r++) {
         let nSeatsThisRow: number;
-        if (r === nRows-1) { // if it's the last, outermost row
+        if (r === nRows - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - positions.size;
         } else if (fillingStrategy === FillingStrategy.OUTER_PRIORITY) {
@@ -138,10 +138,10 @@ export function getSeatsCenters(
         }
 
         // row radius : the radius of the circle crossing the center of each seat in the row
-        const rowArcRadius = .5 + 2*r*rowThicc;
+        const rowArcRadius = .5 + 2 * r * rowThicc;
 
         if (nSeatsThisRow === 1) {
-            positions.set([1, rowArcRadius], Math.PI/2);
+            positions.set([1, rowArcRadius], Math.PI / 2);
         } else {
             // the angle necessary in this row to put the first (and last) seats fully on the canvas
             const angleMargin = Math.asin(rowThicc / rowArcRadius)
@@ -151,14 +151,14 @@ export function getSeatsCenters(
             // const angleMargin = Math.max(angleMargin, spanAngleMargin);
 
             // the angle separating two seats on that row
-            const angleStep = (Math.PI - 2*angleMargin) / (nSeatsThisRow - 1);
+            const angleStep = (Math.PI - 2 * angleMargin) / (nSeatsThisRow - 1);
             // a fraction of the remaining space, keeping in mind that the same elevation
             // on start and end limits that remaining space to less than 2PI
 
             for (let s = 0; s < nSeatsThisRow; s++) {
-                const angle = angleMargin + s*angleStep;
+                const angle = angleMargin + s * angleStep;
                 // an oriented angle, so it goes trig positive (counterclockwise)
-                positions.set([rowArcRadius*Math.cos(angle), rowArcRadius*Math.sin(angle)], angle);
+                positions.set([rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], angle);
             }
         }
     }
