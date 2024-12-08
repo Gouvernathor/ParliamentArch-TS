@@ -1,7 +1,7 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters } from "./geometry";
-import { dispatchSeats, getGroupedSVG, SeatData } from "./svg";
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters } from "./parliamentarch/geometry";
+import { dispatchSeats, getGroupedSVG, SeatData } from "./parliamentarch/svg";
 
-export { SeatData } from "./svg";
+export { SeatData } from "./parliamentarch/svg";
 
 export function getSVGFromAttribution(
     attribution: Map<SeatData, number>,
