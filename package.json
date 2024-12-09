@@ -3,12 +3,38 @@
   "version": "1.0.3",
   "description": "Generating arch-styled SVG parliamentary diagrams",
   "main": "./dist/parliamentarch.js",
-  "module": "./dist/parliamentarch.mjs",
   "types": "./dist/parliamentarch.d.ts",
   "exports": {
-    ".": "./dist/parliamentarch.js",
-    "./geometry": "./dist/parliamentarch/geometry.js",
-    "./svg": "./dist/parliamentarch/svg.js"
+    ".": {
+      "import": {
+        "types": "./dist/parliamentarch.d.mts",
+        "default": "./dist/parliamentarch.mjs"
+      },
+      "require": {
+        "types": "./dist/parliamentarch.d.ts",
+        "default": "./dist/parliamentarch.js"
+      }
+    },
+    "./geometry": {
+      "import": {
+        "types": "./dist/parliamentarch/geometry.d.mts",
+        "default": "./dist/parliamentarch/geometry.mjs"
+      },
+      "require": {
+        "types": "./dist/parliamentarch/geometry.d.ts",
+        "default": "./dist/parliamentarch/geometry.js"
+      }
+    },
+    "./svg": {
+      "import": {
+        "types": "./dist/parliamentarch/svg.d.mts",
+        "default": "./dist/parliamentarch/svg.mjs"
+      },
+      "require": {
+        "types": "./dist/parliamentarch/svg.d.ts",
+        "default": "./dist/parliamentarch/svg.js"
+      }
+    }
   },
   "files": [
     "dist"
