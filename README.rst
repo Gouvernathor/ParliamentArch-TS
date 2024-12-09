@@ -98,11 +98,11 @@ These are found in the ``parliamentarch/svg`` module.
 
 ``SeatData({color: string, id?: string, data?: string, borderSize?: number, borderColor?: string})``
 
-A class holding data about a seat or a group of seats:
+An interface for data about a seat or a group of seats:
 
 - ``color: string``: The color with which to fill the seat circle, as a CSS color.
 - ``id?: string``: An optional id for the group of seats.
-- ``data?: string``: A text to display when hovering over the seat.
+- ``data?: string``: An optional text to display when hovering over the seat.
 - ``borderSize?: number``: The size of the border around the seat circle, defaults to 0.
 - ``borderColor?: string``: The color of the border, defaults to black.
 

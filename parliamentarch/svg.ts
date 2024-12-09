@@ -1,19 +1,9 @@
-export class SeatData {
+export interface SeatData {
     readonly color: string;
     readonly id?: string;
-    readonly data: string;
-    readonly borderSize: number;
-    readonly borderColor: string;
-    constructor({
-        color, id, data = "", borderSize = 0, borderColor = "black",
-    }: { color: string, id?: string, data?: string, borderSize?: number, borderColor?: string },
-    ) {
-        this.color = color;
-        this.id = id;
-        this.data = data;
-        this.borderSize = borderSize;
-        this.borderColor = borderColor;
-    }
+    readonly data?: string;
+    readonly borderSize?: number;
+    readonly borderColor?: string;
 }
 
 /**
@@ -144,20 +134,19 @@ function addGroupedSeats(
     let groupNumberFallback = 0;
 
     for (const [group, seatCenters] of seatCentersByGroup) {
-        const groupBorderWidth = group.borderSize * seatActualRadius * canvasSize;
+        const groupBorderWidth = (group.borderSize ?? 0) * seatActualRadius * canvasSize;
 
         const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
 
         let gStyle = `fill: ${group.color};`;
         if (groupBorderWidth > 0) {
-            gStyle += ` stroke: ${group.borderColor}; stroke-width: ${groupBorderWidth};`;
+            gStyle += ` stroke: ${group.borderColor ?? "black"}; stroke-width: ${groupBorderWidth};`;
         }
         groupG.setAttribute("style", gStyle);
 
         groupG.setAttribute("id", group.id ?? `group-${groupNumberFallback++}`);
 
-        if (group.data && group.data !== "") {
-            // TODO: sanitize/escape group.data ?
+        if (group.data) {
             groupG.appendChild(document.createElementNS(SVG_NS, "title")).textContent = group.data;
         }
 
