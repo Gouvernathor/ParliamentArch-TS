@@ -14,10 +14,6 @@ export class SeatData {
         this.borderSize = borderSize;
         this.borderColor = borderColor;
     }
-
-    get sanitizedData(): string {
-        return this.data.replace(/[a-zA-Z0-9_-]/g, "-");
-    }
 }
 
 /**
