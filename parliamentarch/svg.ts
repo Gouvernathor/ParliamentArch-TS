@@ -6,7 +6,7 @@ export class SeatData {
     readonly borderColor: string;
     constructor({
         color, id, data = "", borderSize = 0, borderColor = "black",
-    }: { color: string, id?: string, data: string, borderSize: number, borderColor: string },
+    }: { color: string, id?: string, data?: string, borderSize?: number, borderColor?: string },
     ) {
         this.color = color;
         this.id = id;
