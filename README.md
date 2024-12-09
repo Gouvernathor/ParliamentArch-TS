@@ -2,9 +2,11 @@
 
 Generation of arch-styled SVG parliamentary diagrams.
 
-This is a TypeScript port of the [ParliamentArch](https://github.com/Gouvernathor/parliamentarch) Python module.
+This is a TypeScript port of the [ParliamentArch](https://github.com/Gouvernathor/parliamentarch) Python module, itself a spin-off from David Richfield's [ParliamentDiagram](https://github.com/slashme/parliamentdiagram).
 
 You can install it as a [package](https://www.npmjs.com/package/parliamentarch) using `npm install parliamentarch`.
+
+![Example diagram](sample.svg)
 
 ## Base math and layout
 
