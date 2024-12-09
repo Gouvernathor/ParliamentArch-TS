@@ -21,7 +21,7 @@ export function dispatchSeats<S>(
     const seatIterator = seats[Symbol.iterator]();
     try {
         return new Map([...groupSeats.entries()].map(([group, nSeats]) =>
-            [group, Array(nSeats).map(() => {
+            [group, Array.from({length: nSeats}, () => {
                 const seatIteration = seatIterator.next();
                 if (seatIteration.done) {
                     throw new Error("Not enough seats");

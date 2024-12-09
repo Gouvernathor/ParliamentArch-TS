@@ -25,7 +25,7 @@ export function getRowThickness(nRows: number): number {
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
     const rad = getRowThickness(nRows);
     const radianSpanAngle = Math.PI * spanAngle / 180;
-    return Array(nRows).map((_, r) => {
+    return Array.from({length: nRows}, (_, r) => {
         const rowArcRadius = .5 + 2 * r * rad;
         return Math.floor(radianSpanAngle * rowArcRadius / (2 * rad));
     });
