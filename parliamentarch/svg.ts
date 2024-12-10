@@ -1,10 +1,11 @@
-export interface SeatData {
+export type SeatData = {
     readonly color: string;
     readonly id?: string;
     readonly data?: string;
     readonly borderSize?: number;
     readonly borderColor?: string;
 }
+export type SeatDataWithNumber = SeatData & { nSeats?: number };
 
 /**
  * Typically S is a tuple of x/y coordinates.
@@ -15,12 +16,16 @@ export interface SeatData {
  * @returns a mapping of each group to the seats it holds
  */
 export function dispatchSeats<S>(
-    groupSeats: Map<SeatData, number>,
+    groupSeats: Map<SeatData, number> | SeatDataWithNumber[],
     seats: Iterable<S>,
 ): Map<SeatData, S[]> {
     const seatIterator = seats[Symbol.iterator]();
+    const entries: [SeatData, number][] = groupSeats instanceof Map ?
+        Array.from(groupSeats) :
+        groupSeats.map(seatData => [seatData, seatData.nSeats ?? 1]);
+
     try {
-        return new Map([...groupSeats.entries()].map(([group, nSeats]) =>
+        return new Map(entries.map(([group, nSeats]) =>
             [group, Array.from({ length: nSeats }, () => {
                 const seatIteration = seatIterator.next();
                 if (seatIteration.done) {
@@ -37,7 +42,7 @@ export function dispatchSeats<S>(
 }
 
 export function getSVG(
-    seatCenters: Map<[number, number], SeatData>,
+    seatCenters: Iterable<[SeatData, [number, number][]]>,
     ...rest: [number, object]
 ): SVGSVGElement {
     const seatCentersByGroup = new Map();
@@ -53,7 +58,7 @@ export function getSVG(
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 export function getGroupedSVG(
-    seatCentersByGroup: Map<SeatData, [number, number][]>,
+    seatCentersByGroup: Iterable<[SeatData, [number, number][]]>,
     seatActualRadius: number,
     {
         canvasSize = 175,
@@ -82,7 +87,7 @@ export function getGroupedSVG(
     );
     if (writeNumberOfSeats) {
         addNumberOfSeats(svg,
-            Array.from(seatCentersByGroup.values(), group => group.length).reduce((a, b) => a + b, 0),
+            Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             leftMargin + canvasSize,
             topMargin + (canvasSize * 170 / 175),
             Math.round(fontSizeFactor * canvasSize),
@@ -125,7 +130,7 @@ function addNumberOfSeats(
 
 function addGroupedSeats(
     svg: SVGSVGElement,
-    seatCentersByGroup: Map<SeatData, [number, number][]>,
+    seatCentersByGroup: Iterable<[SeatData, [number, number][]]>,
     seatActualRadius: number,
     canvasSize: number,
     leftMargin: number,
