@@ -4,9 +4,34 @@ Generation of arch-styled SVG parliamentary diagrams.
 
 This is a TypeScript port of the [ParliamentArch](https://github.com/Gouvernathor/parliamentarch) Python module, itself a spin-off from David Richfield's [ParliamentDiagram](https://github.com/slashme/parliamentdiagram).
 
-You can install it as a [package](https://www.npmjs.com/package/parliamentarch) using `npm install parliamentarch`.
+You can install it as a [package](https://www.npmjs.com/package/parliamentarch) using `npm install parliamentarch`. Both browser and Node.js environments are supported, through the use of jsdom in the case of Node.js.
 
 ![Example diagram](sample.svg)
+
+## Node.js usage
+
+```cjs
+const fs = require('fs');
+const parliamentarch = require('parliamentarch');
+
+const attribution = new Map([
+    [{color: "#DD0000"}, 17],
+    [{color: "#cc2443"}, 71],
+    [{color: "#00c000"}, 38],
+    [{color: "#ff8080"}, 66],
+    [{color: "#e1a5e1"}, 23],
+    [{color: "#ff9900"}, 36],
+    [{color: "#ffeb00"}, 93],
+    [{color: "#0001b8"}, 34],
+    [{color: "#0066cc"}, 47],
+    [{color: "#162561"}, 16],
+    [{color: "#0d378a"}, 124],
+    [{color: "#dddddd"}, 9],
+    [{color: "#ffffff"}, 3],
+]);
+
+fs.writeFileSync("./sample.svg", parliamentarch.getSVGFromAttribution(attribution).outerHTML);
+```
 
 ## Base math and layout
 
