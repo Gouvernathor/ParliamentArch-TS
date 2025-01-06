@@ -114,6 +114,8 @@ function populateHeader(
     svg.setAttribute("version", "1.1");
     svg.setAttribute("width", width.toString());
     svg.setAttribute("height", height.toString());
+
+    svg.appendChild(new Comment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
 function addNumberOfSeats(
