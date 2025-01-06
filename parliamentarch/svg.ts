@@ -1,3 +1,5 @@
+import { JSDOM } from "jsdom";
+
 export interface SeatData {
     readonly color: string;
     readonly id?: string;
@@ -11,7 +13,7 @@ export interface SeatData {
  * without ever importing it in browser mode.
  */
 const doc = globalThis.document ??
-    new (require("jsdom").JSDOM)().window.document;
+    new JSDOM().window.document;
 
 /**
  * Typically S is a tuple of x/y coordinates.
