@@ -5,18 +5,14 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 function documentElementCreator(
     tag: string,
     attributes: Record<string, unknown>,
-    content?: any,
+    content?: (string|Element)[],
 ) {
     const e = document.createElementNS(SVG_NS, tag);
     for (const k in attributes) {
         e.setAttribute(k, attributes[k] as string);
     }
     if (content) {
-        if (Array.isArray(content)) {
-            e.append(...content);
-        } else {
-            e.append(content);
-        }
+        e.append(...content);
     }
     return e;
 }
@@ -47,7 +43,7 @@ export default function generateSVG(
                 'font-size': `${.25*radius}px`,
             },
             class: 'seatNumber',
-        }, elements.length));
+        }, [points.length.toString()]));
     }
 
     const svg = elementCreator('svg', {
