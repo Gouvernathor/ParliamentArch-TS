@@ -93,7 +93,7 @@ function nextRow(
     rows: ReadonlyArray<ReadonlyArray<unknown>>,
     rowProgress: ReadonlyArray<number>,
 ) {
-    const quotas = rows.map((row, i) => (rowProgress[i] || 0) / row.length);
+    const quotas = rows.map((row, i) => (rowProgress[i]) / row.length);
     return quotas.indexOf(Math.min(...quotas));
 }
 
