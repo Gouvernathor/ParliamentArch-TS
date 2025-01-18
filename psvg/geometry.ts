@@ -1,5 +1,6 @@
 export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-export type Seat = {x: number, y: number, r: number, party: string};
+type XYR = {x: number, y: number, r: number};
+export type Seat = XYR & {party: string};
 
 function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
     return (Math.PI * numberOfRows * r0) /
@@ -71,6 +72,29 @@ function nextRow(
     return quotas.indexOf(Math.min(...quotas));
 }
 
+function getXYRPerRow(
+    numberOfRows: number,
+    r0: number,
+    seatCount: number,
+    seatRadiusFactor: number,
+    seatDistance: number,
+): XYR[][] {
+    // calculate row radii
+    const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
+        r0 - i * seatDistance);
+
+    // calculate seats per row
+    const seatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
+
+    return rowRadii.map((radius, rowIdx) => {
+        // calculate row-specific distance (of what ?)
+        const a = (Math.PI * radius) / ((radius - 1) || 1);
+
+        return Array.from({length: seatsPerRow[rowIdx]}, (_, seatIdx) =>
+            ({...coords(radius, a * seatIdx), r: seatRadiusFactor * seatDistance}));
+    });
+}
+
 export default function generatePoints(
     parliament: Parliament,
     r0: number,
@@ -80,31 +104,16 @@ export default function generatePoints(
     const numberOfRows = calculateNumberOfRows(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
 
-    // calculate row radii
-    const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
-        r0 - i * seatDistance);
-
-    // calculate seats per row
-    const seatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
-    // Warning: not an array, but a non-sparse number:number object
-    // (meaning that length and array methods are missing, only indexing works)
-
-    const pointCoordinatesPerRow = rowRadii.map((radius, rowIdx) => {
-        // calculate row-specific distance (of what ?)
-        const a = (Math.PI * radius) / ((radius - 1) || 1);
-
-        return Array.from({length: seatsPerRow[rowIdx]}, (_, seatIdx) =>
-            ({...coords(radius, a * seatIdx), r: seatRadiusFactor * seatDistance}));
-    });
+    const xyrPerRow = getXYRPerRow(numberOfRows, r0, seatCount, seatRadiusFactor, seatDistance);
 
     // fill the seats
     const rowProgress = Array(numberOfRows).fill(0);
     const seats: Seat[][] = Array.from({length: numberOfRows}).map(() => []);
     for (const partyname in parliament) {
         for (let i = 0; i < parliament[partyname].seats; i++) {
-            const row = nextRow(pointCoordinatesPerRow, rowProgress);
+            const row = nextRow(xyrPerRow, rowProgress);
             seats[row].push({
-                ...pointCoordinatesPerRow[row][seats[row].length],
+                ...xyrPerRow[row][seats[row].length],
                 party: partyname,
             });
             rowProgress[row]++;
