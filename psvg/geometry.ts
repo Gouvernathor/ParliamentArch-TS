@@ -5,6 +5,15 @@ function seatSum(p: Parliament) {
     return Array.from(Object.values(p), v => v.seats).reduce((a, b) => a + b, 0);
 }
 
+function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
+    return (Math.PI * numberOfRows * r0) /
+        ((seatCount - numberOfRows) + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
+}
+
+function score(seatCount: number, n: number, r0: number) {
+    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
+}
+
 function calculateNumberOfRows(seatCount: number, r0: number) {
     let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
     let distance = score(seatCount, n, r0);
@@ -22,15 +31,6 @@ function calculateNumberOfRows(seatCount: number, r0: number) {
         n += direction;
     }
     return n;
-}
-
-function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
-    return (Math.PI * numberOfRows * r0) /
-        ((seatCount - numberOfRows) + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
-}
-
-function score(seatCount: number, n: number, r0: number) {
-    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
 }
 
 /**
