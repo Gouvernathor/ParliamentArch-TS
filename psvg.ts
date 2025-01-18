@@ -3,7 +3,7 @@ import generateSVG from "./psvg/svg";
 
 export function psvg(
     parliament: Parliament,
-    {seatCount = true, elementCreator = undefined, seatRadiusFactor = .8} = {},
+    {seatCount = true, elementCreator = undefined, seatRadiusFactor = .4} = {},
 ): SVGSVGElement {
     const outerRowRadius = 20;
     const points = generatePoints(parliament, outerRowRadius, seatRadiusFactor);
