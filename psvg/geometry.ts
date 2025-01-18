@@ -77,14 +77,14 @@ function nextRow(
 
 function getXYRPerRow(
     numberOfRows: number,
-    r0: number,
+    outerRowRadius: number,
     seatCount: number,
     seatRadiusFactor: number,
     seatDistance: number,
 ): XYR[][] {
     // calculate row radii
     const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
-        r0 - i * seatDistance);
+        outerRowRadius - i * seatDistance);
 
     // calculate seats per row
     const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
@@ -121,14 +121,14 @@ function getFlatSeats(
 
 export default function generatePoints(
     parliament: Parliament,
-    r0: number,
+    outerRowRadius: number,
     seatRadiusFactor: number,
 ): Seat[] & {seatDistance: number} {
     const seatCount = Object.values(parliament).map(v => v.seats).reduce((a, b) => a + b, 0);
     const numberOfRows = getNRows(seatCount);
-    const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * r0;
+    const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
 
-    const xyrPerRow = getXYRPerRow(numberOfRows, r0, seatCount, seatRadiusFactor, seatDistance);
+    const xyrPerRow = getXYRPerRow(numberOfRows, outerRowRadius, seatCount, seatRadiusFactor, seatDistance);
 
     const seats = getFlatSeats(parliament, xyrPerRow, numberOfRows);
 

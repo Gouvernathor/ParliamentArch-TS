@@ -20,7 +20,7 @@ function documentElementCreator(
 export default function generateSVG(
     parties: { [partyname: string]: {fill: string} },
     points: Seat[],
-    radius: number,
+    outerRowRadius: number,
     seatDistance: number,
     {seatCount, elementCreator}: {seatCount: boolean, elementCreator: undefined | typeof documentElementCreator},
 ): SVGSVGElement {
@@ -60,7 +60,7 @@ export default function generateSVG(
                 'text-anchor': 'middle',
                 style: {
                     'font-family': 'Helvetica',
-                    'font-size': `${.25*radius}px`,
+                    'font-size': `${.25*outerRowRadius}px`,
                 },
                 class: 'seatNumber',
             },
@@ -71,7 +71,7 @@ export default function generateSVG(
     return elementCreator('svg',
         {
             xmlns: SVG_NS,
-            viewBox: `${-radius - seatDistance/2}, ${-radius - seatDistance/2}, ${2*radius + seatDistance}, ${radius + seatDistance}`,
+            viewBox: `${-outerRowRadius - seatDistance/2}, ${-outerRowRadius - seatDistance/2}, ${2*outerRowRadius + seatDistance}, ${outerRowRadius + seatDistance}`,
         },
         (Object.values(groups) as SVGElement[]).concat(grouplessElements),
     ) as SVGSVGElement;
