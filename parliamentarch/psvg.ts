@@ -14,8 +14,8 @@ function coords(ringRadius: number, b: number) {
 }
 
 function calculateSeatDistance(seatCount: number, numberOfRings: number, r0: number) {
-    const x = (Math.PI * numberOfRings * r0) / (seatCount - numberOfRings);
-    const y = 1 + (Math.PI * (numberOfRings - 1) * numberOfRings/2) / (seatCount - numberOfRings);
+    const x = (Math.PI * numberOfRings * r0);
+    const y = (seatCount - numberOfRings) + (Math.PI * (numberOfRings - 1) * numberOfRings/2);
 
     return x / y;
 }
