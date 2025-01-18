@@ -54,7 +54,9 @@ function nextRing(
     return quotas.indexOf(Math.min(...quotas));
 }
 
-function attribution(partyscores: object, n: number): number[] {
+function attribution(partyscores: Record<number, number>, n: number): Record<number, number>;
+function attribution(partyscores: Record<string, number>, n: number): Record<string, number>;
+function attribution<K extends string|number>(partyscores: Record<K, number>, n: number): Record<K, number> {
     throw new Error("Not implemented");
 }
 
@@ -64,37 +66,27 @@ function generatePoints(parliament: Parliament, r0: number) {
     const seatDistance = calculateSeatDistance(seatCount, numberOfRings, r0);
 
     // calculate ring radii
-    const rings: number[] = Array(numberOfRings+1);
-    for (let i = 0; i <= numberOfRings; i++) {
-        rings[i] = r0 - (i - 1) * seatDistance;
-    }
-    // FIXME this is a sparse array starting at index 1
+    const rings = Array.from({length: numberOfRings}, (_, i) => r0 - i * seatDistance);
 
     // calculate seats per ring
     const seatsPerRing = attribution(rings, seatCount);
-    // FIXME sparse array again
-    // also don't use overkill sainte-laguë, just do iteratively
-    // from the legacy code and the `rings` formula above
-    // the attribution is just proportional to the ring radius
+    // Warning: not an array, but a non-sparse number:number object
+    // (meaning that length and array methods are missing, only indexing works)
 
-    const pointCoordinates: XYR[][] = [];
-
-    // build seats
-    // loop rings (?)
-    for (let i = 1; i <= numberOfRings; i++) {
-        const ring: XYR[] = [];
+    const pointCoordinates = Array.from({length: numberOfRings}, (_, i) => {
         // calculate the radius of the ring
-        const r = r0 - (i - 1) * seatDistance;
+        const r = r0 - i * seatDistance;
         // calculate ring-specific distance (of what ?)
         const a = (Math.PI * r) / ((rings[i] - 1) || 1);
 
         // loop over the points
+        const ring: XYR[] = [];
         for (let j = 0; j <= seatsPerRing[i] - 1; j++) {
             const point = {...coords(r, a * j), r: .4 * seatDistance};
             ring.push(point);
         }
-        pointCoordinates.push(ring);
-    }
+        return ring;
+    });
 
     // fill the seats
     const ringProgress = Array(numberOfRings).fill(0);
