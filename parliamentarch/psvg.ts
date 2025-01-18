@@ -79,13 +79,7 @@ function generatePoints(parliament: Parliament, r0: number) {
         // calculate ring-specific distance (of what ?)
         const a = (Math.PI * r) / ((rings[i] - 1) || 1);
 
-        // loop over the points
-        const ring: XYR[] = [];
-        for (let j = 0; j <= seatsPerRing[i] - 1; j++) {
-            const point = {...coords(r, a * j), r: .4 * seatDistance};
-            ring.push(point);
-        }
-        return ring;
+        return Array.from({length: seatsPerRing[i]}, (_, j) => ({...coords(r, a * j), r: .4 * seatDistance}));
     });
 
     // fill the seats
