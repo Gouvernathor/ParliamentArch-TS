@@ -75,7 +75,11 @@ function nextRow(
     return quotas.indexOf(Math.min(...quotas));
 }
 
-export default function generatePoints(parliament: Parliament, r0: number, seatRadiusFactor: number): Seat[] {
+export default function generatePoints(
+    parliament: Parliament,
+    r0: number,
+    seatRadiusFactor: number,
+): Seat[] & {seatDistance: number} {
     const seatCount = seatSum(parliament);
     const numberOfRows = calculateNumberOfRows(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
@@ -112,5 +116,5 @@ export default function generatePoints(parliament: Parliament, r0: number, seatR
         }
     }
 
-    return seats.flat();
+    return Object.assign(seats.flat(), {seatDistance});
 }
