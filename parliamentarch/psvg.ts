@@ -70,9 +70,7 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     // Warning: not an array, but a non-sparse number:number object
     // (meaning that length and array methods are missing, only indexing works)
 
-    const pointCoordinates = Array.from({length: numberOfRings}, (_, i) => {
-        // the radius of the ring
-        const r = ringRadii[i];
+    const pointCoordinatesPerRing = ringRadii.map((r, i) => {
         // calculate ring-specific distance (of what ?)
         const a = (Math.PI * r) / ((r - 1) || 1);
 
@@ -84,8 +82,8 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     const seats: Seat[][] = Array.from({length: numberOfRings}).map(() => []);
     for (const partyname in parliament) {
         for (let i = 0; i < parliament[partyname].seats; i++) {
-            const ring = nextRing(pointCoordinates, ringProgress);
-            seats[ring].push({...pointCoordinates[ring][seats[ring].length], fill: parliament[partyname].colour, party: partyname});
+            const ring = nextRing(pointCoordinatesPerRing, ringProgress);
+            seats[ring].push({...pointCoordinatesPerRing[ring][seats[ring].length], fill: parliament[partyname].colour, party: partyname});
             ringProgress[ring]++;
         }
     }
