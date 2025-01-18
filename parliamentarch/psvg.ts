@@ -2,42 +2,42 @@ type Parliament = {[partyname: string]: {seats: number, colour: string}};
 type XYR = {x: number, y: number, r: number};
 type Seat = XYR & {fill: string, party: string};
 
-function seatSum(o: Parliament) {
-    return Array.from(Object.values(o), v => v.seats).reduce((a, b) => a + b, 0);
+function seatSum(p: Parliament) {
+    return Array.from(Object.values(p), v => v.seats).reduce((a, b) => a + b, 0);
 }
 
-function coords(r: number, b: number) {
+function coords(ringRadius: number, b: number) {
     return {
-        x: r * Math.cos(b/r - Math.PI),
-        y: r * Math.sin(b/r - Math.PI),
+        x: ringRadius * Math.cos(b/ringRadius - Math.PI),
+        y: ringRadius * Math.sin(b/ringRadius - Math.PI),
     }
 }
 
-function calculateSeatDistance(seatCount: number, numberOfRings: number, r: number) {
-    const x = (Math.PI * numberOfRings * r) / (seatCount - numberOfRings);
+function calculateSeatDistance(seatCount: number, numberOfRings: number, r0: number) {
+    const x = (Math.PI * numberOfRings * r0) / (seatCount - numberOfRings);
     const y = 1 + (Math.PI * (numberOfRings - 1) * numberOfRings/2) / (seatCount - numberOfRings);
 
     return x / y;
 }
 
-function score(m: number, n: number, r: number) {
-    return Math.abs(calculateSeatDistance(m, n, r) * n / r - 5/7);
+function score(seatCount: number, n: number, r0: number) {
+    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
 }
 
-function calculateNumberOfRings(seatCount: number, r: number) {
+function calculateNumberOfRings(seatCount: number, r0: number) {
     let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
-    let distance = score(seatCount, n, r);
+    let distance = score(seatCount, n, r0);
 
     let direction = 0;
-    if (score(seatCount, n + 1, r) < distance) {
+    if (score(seatCount, n + 1, r0) < distance) {
         direction = 1;
     }
-    if (score(seatCount, n - 1, r) < distance && n > 1) {
+    if (score(seatCount, n - 1, r0) < distance && n > 1) {
         direction = -1;
     }
 
-    while (score(seatCount, n + direction, r) < distance && n > 0) {
-        distance = score(seatCount, n + direction, r);
+    while (score(seatCount, n + direction, r0) < distance && n > 0) {
+        distance = score(seatCount, n + direction, r0);
         n += direction;
     }
     return n;
@@ -70,11 +70,11 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     // Warning: not an array, but a non-sparse number:number object
     // (meaning that length and array methods are missing, only indexing works)
 
-    const pointCoordinatesPerRing = ringRadii.map((r, i) => {
+    const pointCoordinatesPerRing = ringRadii.map((radius, ringIdx) => {
         // calculate ring-specific distance (of what ?)
-        const a = (Math.PI * r) / ((r - 1) || 1);
+        const a = (Math.PI * radius) / ((radius - 1) || 1);
 
-        return Array.from({length: seatsPerRing[i]}, (_, j) => ({...coords(r, a * j), r: .4 * seatDistance}));
+        return Array.from({length: seatsPerRing[ringIdx]}, (_, seatIdx) => ({...coords(radius, a * seatIdx), r: .4 * seatDistance}));
     });
 
     // fill the seats
