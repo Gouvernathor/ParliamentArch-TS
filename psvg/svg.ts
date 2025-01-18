@@ -22,9 +22,18 @@ export default function generateSVG(
     points: Seat[],
     outerRowRadius: number,
     seatDistance: number,
-    {seatCount, elementCreator}: {seatCount: boolean, elementCreator: undefined | typeof documentElementCreator},
+    {
+        seatCount,
+        elementCreator,
+        seatRadiusFactor,
+    }: {
+        seatCount: boolean,
+        elementCreator: undefined | typeof documentElementCreator
+        seatRadiusFactor: number,
+    },
 ): SVGSVGElement {
     elementCreator ??= documentElementCreator;
+    const seatRadius = seatRadiusFactor * seatDistance;
 
     const groups = Object.fromEntries(Object.keys(parties).map(partyname => {
         const party = parties[partyname];
@@ -41,7 +50,7 @@ export default function generateSVG(
         const element = elementCreator('circle', {
             cx: point.x,
             cy: point.y,
-            r: point.r,
+            r: seatRadius,
             class: `seat_${point.party}`,
         }) as SVGCircleElement;
         const group = groups[point.party];
