@@ -91,43 +91,42 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     return seats.flat();
 }
 
-function h(a: string, o: Record<string, any>, content?: any) {
-    const e = document.createElementNS(SVG_NS, a);
-    for (const k in o) {
-        e.setAttribute(k, o[k]);
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function elementCreator(
+    tag: string,
+    attributes: Record<string, unknown>,
+    content?: any,
+) {
+    const e = document.createElementNS(SVG_NS, tag);
+    for (const k in attributes) {
+        e.setAttribute(k, attributes[k] as string);
     }
     if (content) {
-        e.textContent = content;
+        e.append(content);
     }
     return e;
 }
 
-function pointToSVG(hfn: typeof h) {
-    return function(point: Seat) {
-        return hfn('circle', {
-            cx: point.x,
-            cy: point.y,
-            r: point.r,
-            fill: point.fill,
-            class: point.party,
-        });
-    }
-}
-
 const defaults = {
     seatCount: false,
+    elementCreator: elementCreator,
 };
 
-const SVG_NS = "http://www.w3.org/2000/svg";
-
-export default function generate(parliament: Parliament, {seatCount} = defaults) {
+export default function generate(parliament: Parliament, {seatCount, elementCreator} = defaults) {
     const radius = 20;
     const points = generatePoints(parliament, radius);
     const a = points[0].r / .4;
-    const elements = points.map(pointToSVG(h));
+    const elements = points.map(p => elementCreator('circle', {
+        cx: p.x,
+        cy: p.y,
+        r: p.r,
+        fill: p.fill,
+        class: p.party,
+    }));
 
     if (seatCount) {
-        elements.push(h('text', {
+        elements.push(elementCreator('text', {
             x: 0,
             y: 0,
             'text-anchor': 'middle',
@@ -139,7 +138,7 @@ export default function generate(parliament: Parliament, {seatCount} = defaults)
         }, elements.length));
     }
 
-    const svg = h('svg', {
+    const svg = elementCreator('svg', {
         xmlns: SVG_NS,
         viewBox: `${-radius - a/2}, ${-radius - a/2}, ${2*radius + a}, ${radius + a}`,
     }, elements);
