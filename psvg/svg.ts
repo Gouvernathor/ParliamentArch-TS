@@ -12,7 +12,11 @@ function documentElementCreator(
         e.setAttribute(k, attributes[k] as string);
     }
     if (content) {
-        e.append(content);
+        if (Array.isArray(content)) {
+            e.append(...content);
+        } else {
+            e.append(content);
+        }
     }
     return e;
 }
