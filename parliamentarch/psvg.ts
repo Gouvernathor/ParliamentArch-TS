@@ -76,7 +76,7 @@ function distributeSeatsToRows(
     return rv;
 }
 
-function generatePoints(parliament: Parliament, r0: number): Seat[] {
+function generatePoints(parliament: Parliament, r0: number, seatRadiusFactor: number): Seat[] {
     const seatCount = seatSum(parliament);
     const numberOfRows = calculateNumberOfRows(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
@@ -95,7 +95,7 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
         const a = (Math.PI * radius) / ((radius - 1) || 1);
 
         return Array.from({length: seatsPerRow[rowIdx]}, (_, seatIdx) =>
-            ({...coords(radius, a * seatIdx), r: .4 * seatDistance}));
+            ({...coords(radius, a * seatIdx), r: seatRadiusFactor * seatDistance}));
     });
 
     // fill the seats
@@ -136,15 +136,16 @@ function elementCreator(
 const defaults = {
     seatCount: false,
     elementCreator: elementCreator,
+    seatRadiusFactor: .4,
 };
 
 export default function generate(
     parliament: Parliament,
-    {seatCount, elementCreator} = defaults,
+    {seatCount, elementCreator, seatRadiusFactor} = defaults,
 ) {
     const radius = 20;
-    const points = generatePoints(parliament, radius);
-    const a = points[0].r / .4;
+    const points = generatePoints(parliament, radius, seatRadiusFactor);
+    const a = points[0].r / seatRadiusFactor;
     const elements = points.map(p => elementCreator('circle', {
         cx: p.x,
         cy: p.y,
