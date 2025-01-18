@@ -67,14 +67,6 @@ function coords(rowRadius: number, b: number) {
     }
 }
 
-function nextRow(
-    rows: ReadonlyArray<ReadonlyArray<unknown>>,
-    rowProgress: ReadonlyArray<number>,
-) {
-    const quotas = rows.map((row, i) => (rowProgress[i] || 0) / row.length);
-    return quotas.indexOf(Math.min(...quotas));
-}
-
 function getXYPerRow(
     numberOfRows: number,
     outerRowRadius: number,
@@ -95,6 +87,14 @@ function getXYPerRow(
         return Array.from({length: nSeatsPerRow[rowIdx]}, (_, seatIdx) =>
             coords(radius, a * seatIdx));
     });
+}
+
+function nextRow(
+    rows: ReadonlyArray<ReadonlyArray<unknown>>,
+    rowProgress: ReadonlyArray<number>,
+) {
+    const quotas = rows.map((row, i) => (rowProgress[i] || 0) / row.length);
+    return quotas.indexOf(Math.min(...quotas));
 }
 
 function getFlatSeats(
