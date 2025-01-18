@@ -84,15 +84,36 @@ function getXYRPerRow(
         r0 - i * seatDistance);
 
     // calculate seats per row
-    const seatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
+    const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
 
     return rowRadii.map((radius, rowIdx) => {
         // calculate row-specific distance (of what ?)
         const a = (Math.PI * radius) / ((radius - 1) || 1);
 
-        return Array.from({length: seatsPerRow[rowIdx]}, (_, seatIdx) =>
+        return Array.from({length: nSeatsPerRow[rowIdx]}, (_, seatIdx) =>
             ({...coords(radius, a * seatIdx), r: seatRadiusFactor * seatDistance}));
     });
+}
+
+function getFlatSeats(
+    parliament: Parliament,
+    xyrPerRow: XYR[][],
+    numberOfRows: number,
+): Seat[] {
+    const rowProgress = Array(numberOfRows).fill(0);
+    const seatsPerRow: Seat[][] = rowProgress.map(() => []);
+    for (const partyname in parliament) {
+        for (let i = 0; i < parliament[partyname].seats; i++) {
+            const row = nextRow(xyrPerRow, rowProgress);
+            seatsPerRow[row].push({
+                ...xyrPerRow[row][seatsPerRow[row].length],
+                party: partyname,
+            });
+            rowProgress[row]++;
+        }
+    }
+
+    return seatsPerRow.flat();
 }
 
 export default function generatePoints(
@@ -106,19 +127,7 @@ export default function generatePoints(
 
     const xyrPerRow = getXYRPerRow(numberOfRows, r0, seatCount, seatRadiusFactor, seatDistance);
 
-    // fill the seats
-    const rowProgress = Array(numberOfRows).fill(0);
-    const seats: Seat[][] = Array.from({length: numberOfRows}).map(() => []);
-    for (const partyname in parliament) {
-        for (let i = 0; i < parliament[partyname].seats; i++) {
-            const row = nextRow(xyrPerRow, rowProgress);
-            seats[row].push({
-                ...xyrPerRow[row][seats[row].length],
-                party: partyname,
-            });
-            rowProgress[row]++;
-        }
-    }
+    const seats = getFlatSeats(parliament, xyrPerRow, numberOfRows);
 
-    return Object.assign(seats.flat(), {seatDistance});
+    return Object.assign(seats, {seatDistance});
 }
