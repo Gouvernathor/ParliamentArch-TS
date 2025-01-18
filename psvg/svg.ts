@@ -71,7 +71,12 @@ export default function generateSVG(
     return elementCreator('svg',
         {
             xmlns: SVG_NS,
-            viewBox: `${-outerRowRadius - seatDistance/2}, ${-outerRowRadius - seatDistance/2}, ${2*outerRowRadius + seatDistance}, ${outerRowRadius + seatDistance}`,
+            viewBox: [
+                -outerRowRadius - seatDistance/2,
+                -outerRowRadius - seatDistance/2,
+                2*outerRowRadius + seatDistance,
+                outerRowRadius + seatDistance,
+            ].join(', '),
         },
         (Object.values(groups) as SVGElement[]).concat(grouplessElements),
     ) as SVGSVGElement;
