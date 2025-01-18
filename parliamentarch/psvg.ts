@@ -51,9 +51,7 @@ function nextRing(
     return quotas.indexOf(Math.min(...quotas));
 }
 
-function attribution(partyscores: Record<number, number>, n: number): Record<number, number>;
-function attribution(partyscores: Record<string, number>, n: number): Record<string, number>;
-function attribution<K extends string|number>(partyscores: Record<K, number>, n: number): Record<K, number> {
+function attribution(partyscores: ReadonlyArray<number>, n: number): number[] {
     throw new Error("Not implemented");
 }
 
