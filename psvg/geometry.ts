@@ -4,7 +4,7 @@ export type Seat = SeatCenter & {party: string};
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
- * gives the standard seat distance.
+ * gives the minimal distance between any two seats.
  */
 function getSeatDistanceFactor(seatCount: number, numberOfRows: number) {
     return (Math.PI * numberOfRows) /
