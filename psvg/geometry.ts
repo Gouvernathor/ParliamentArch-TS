@@ -75,7 +75,7 @@ function nextRow(
     return quotas.indexOf(Math.min(...quotas));
 }
 
-function getXYRPerRow(
+function getXYPerRow(
     numberOfRows: number,
     outerRowRadius: number,
     seatCount: number,
@@ -99,16 +99,16 @@ function getXYRPerRow(
 
 function getFlatSeats(
     parliament: Parliament,
-    xyrPerRow: XY[][],
+    xyPerRow: XY[][],
     numberOfRows: number,
 ): Seat[] {
     const rowProgress = Array(numberOfRows).fill(0);
     const seatsPerRow: Seat[][] = rowProgress.map(() => []);
     for (const partyname in parliament) {
         for (let i = 0; i < parliament[partyname].seats; i++) {
-            const row = nextRow(xyrPerRow, rowProgress);
+            const row = nextRow(xyPerRow, rowProgress);
             seatsPerRow[row].push({
-                ...xyrPerRow[row][seatsPerRow[row].length],
+                ...xyPerRow[row][seatsPerRow[row].length],
                 party: partyname,
             });
             rowProgress[row]++;
@@ -126,9 +126,9 @@ export default function generatePoints(
     const numberOfRows = getNRows(seatCount);
     const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
 
-    const xyrPerRow = getXYRPerRow(numberOfRows, outerRowRadius, seatCount, seatDistance);
+    const xyPerRow = getXYPerRow(numberOfRows, outerRowRadius, seatCount, seatDistance);
 
-    const seats = getFlatSeats(parliament, xyrPerRow, numberOfRows);
+    const seats = getFlatSeats(parliament, xyPerRow, numberOfRows);
 
     return Object.assign(seats, {seatDistance});
 }
