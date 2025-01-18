@@ -39,21 +39,21 @@ function getNRows(seatCount: number) {
  * toned down to a simpler and faster version
  */
 function distributeSeatsToRows(
-    partyscores: ReadonlyArray<number>,
+    rowWeights: ReadonlyArray<number>,
     total: number,
 ): number[] {
-    const sumScores = partyscores.reduce((a, b) => a + b, 0);
-    const nRows = partyscores.length;
+    const sumWeights = rowWeights.reduce((a, b) => a + b, 0);
+    const nRows = rowWeights.length;
     const rv = Array(nRows) as number[];
     let acc = 0;
-    let remainingScores = sumScores;
+    let remainingWeight = sumWeights;
 
     for (let i = 0; i < nRows-1; i++) {
         // every row is best rounded except the last that cumulates all rounding errors
         // acc += rv[i] = Math.round(partyscores[i] * total / sumScores);
         // more precise rounding : avoid rounding errors to accumulate too much
-        acc += rv[i] = Math.round((total-acc) * partyscores[i] / remainingScores);
-        remainingScores -= partyscores[i];
+        acc += rv[i] = Math.round((total-acc) * rowWeights[i] / remainingWeight);
+        remainingWeight -= rowWeights[i];
     }
 
     rv[nRows-1] = total - acc;
