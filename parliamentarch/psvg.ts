@@ -14,10 +14,8 @@ function coords(ringRadius: number, b: number) {
 }
 
 function calculateSeatDistance(seatCount: number, numberOfRings: number, r0: number) {
-    const x = (Math.PI * numberOfRings * r0);
-    const y = (seatCount - numberOfRings) + (Math.PI * (numberOfRings - 1) * numberOfRings/2);
-
-    return x / y;
+    return (Math.PI * numberOfRings * r0) /
+        ((seatCount - numberOfRings) + (Math.PI * (numberOfRings - 1) * numberOfRings/2));
 }
 
 function score(seatCount: number, n: number, r0: number) {
@@ -56,7 +54,10 @@ function nextRing(
  * Previously done with the sainte-laguë method (through a dependency),
  * toned down to a simpler and faster version
  */
-function distributeSeatsToRows(partyscores: ReadonlyArray<number>, total: number): number[] {
+function distributeSeatsToRows(
+    partyscores: ReadonlyArray<number>,
+    total: number,
+): number[] {
     const sumScores = partyscores.reduce((a, b) => a + b, 0);
     const nRings = partyscores.length;
     const rv = Array(nRings) as number[];
@@ -81,7 +82,8 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     const seatDistance = calculateSeatDistance(seatCount, numberOfRings, r0);
 
     // calculate ring radii
-    const ringRadii = Array.from({length: numberOfRings}, (_, i) => r0 - i * seatDistance);
+    const ringRadii = Array.from({length: numberOfRings}, (_, i) =>
+        r0 - i * seatDistance);
 
     // calculate seats per ring
     const seatsPerRing = distributeSeatsToRows(ringRadii, seatCount);
@@ -92,7 +94,8 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
         // calculate ring-specific distance (of what ?)
         const a = (Math.PI * radius) / ((radius - 1) || 1);
 
-        return Array.from({length: seatsPerRing[ringIdx]}, (_, seatIdx) => ({...coords(radius, a * seatIdx), r: .4 * seatDistance}));
+        return Array.from({length: seatsPerRing[ringIdx]}, (_, seatIdx) =>
+            ({...coords(radius, a * seatIdx), r: .4 * seatDistance}));
     });
 
     // fill the seats
@@ -101,7 +104,11 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     for (const partyname in parliament) {
         for (let i = 0; i < parliament[partyname].seats; i++) {
             const ring = nextRing(pointCoordinatesPerRing, ringProgress);
-            seats[ring].push({...pointCoordinatesPerRing[ring][seats[ring].length], fill: parliament[partyname].colour, party: partyname});
+            seats[ring].push({
+                ...pointCoordinatesPerRing[ring][seats[ring].length],
+                fill: parliament[partyname].colour,
+                party: partyname,
+            });
             ringProgress[ring]++;
         }
     }
@@ -131,7 +138,10 @@ const defaults = {
     elementCreator: elementCreator,
 };
 
-export default function generate(parliament: Parliament, {seatCount, elementCreator} = defaults) {
+export default function generate(
+    parliament: Parliament,
+    {seatCount, elementCreator} = defaults,
+) {
     const radius = 20;
     const points = generatePoints(parliament, radius);
     const a = points[0].r / .4;
