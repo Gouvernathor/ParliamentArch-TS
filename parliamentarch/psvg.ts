@@ -5,9 +5,6 @@ type Seat = XYR & {fill: string, party: string};
 function seatSum(o: Parliament) {
     return Array.from(Object.values(o), v => v.seats).reduce((a, b) => a + b, 0);
 }
-function merge<T>(arrays: ReadonlyArray<ReadonlyArray<T>>): T[] {
-    return ([] as T[]).concat(...arrays);
-}
 
 function coords(r: number, b: number) {
     return {
@@ -60,7 +57,7 @@ function attribution<K extends string|number>(partyscores: Record<K, number>, n:
     throw new Error("Not implemented");
 }
 
-function generatePoints(parliament: Parliament, r0: number) {
+function generatePoints(parliament: Parliament, r0: number): Seat[] {
     const seatCount = seatSum(parliament);
     const numberOfRings = calculateNumberOfRings(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRings, r0);
@@ -93,7 +90,7 @@ function generatePoints(parliament: Parliament, r0: number) {
         }
     }
 
-    return merge(seats);
+    return seats.flat();
 }
 
 function h(a: string, o: Record<string, any>, content?: any) {
