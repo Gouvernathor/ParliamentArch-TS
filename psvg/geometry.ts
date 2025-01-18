@@ -1,6 +1,6 @@
 export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-type XYR = {x: number, y: number, r: number};
-export type Seat = XYR & {party: string};
+type XY = {x: number, y: number};
+export type Seat = XY & {party: string};
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
@@ -79,9 +79,8 @@ function getXYRPerRow(
     numberOfRows: number,
     outerRowRadius: number,
     seatCount: number,
-    seatRadiusFactor: number,
     seatDistance: number,
-): XYR[][] {
+): XY[][] {
     // calculate row radii
     const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
         outerRowRadius - i * seatDistance);
@@ -94,13 +93,13 @@ function getXYRPerRow(
         const a = (Math.PI * radius) / ((radius - 1) || 1);
 
         return Array.from({length: nSeatsPerRow[rowIdx]}, (_, seatIdx) =>
-            ({...coords(radius, a * seatIdx), r: seatRadiusFactor * seatDistance}));
+            coords(radius, a * seatIdx));
     });
 }
 
 function getFlatSeats(
     parliament: Parliament,
-    xyrPerRow: XYR[][],
+    xyrPerRow: XY[][],
     numberOfRows: number,
 ): Seat[] {
     const rowProgress = Array(numberOfRows).fill(0);
@@ -122,13 +121,12 @@ function getFlatSeats(
 export default function generatePoints(
     parliament: Parliament,
     outerRowRadius: number,
-    seatRadiusFactor: number,
 ): Seat[] & {seatDistance: number} {
     const seatCount = Object.values(parliament).map(v => v.seats).reduce((a, b) => a + b, 0);
     const numberOfRows = getNRows(seatCount);
     const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
 
-    const xyrPerRow = getXYRPerRow(numberOfRows, outerRowRadius, seatCount, seatRadiusFactor, seatDistance);
+    const xyrPerRow = getXYRPerRow(numberOfRows, outerRowRadius, seatCount, seatDistance);
 
     const seats = getFlatSeats(parliament, xyrPerRow, numberOfRows);
 
