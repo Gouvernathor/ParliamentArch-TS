@@ -1,5 +1,5 @@
 export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-export type Seat = {x: number, y: number, r: number, fill: string, party: string};
+export type Seat = {x: number, y: number, r: number, party: string};
 
 function seatSum(p: Parliament) {
     return Array.from(Object.values(p), v => v.seats).reduce((a, b) => a + b, 0);
@@ -109,7 +109,6 @@ export default function generatePoints(
             const row = nextRow(pointCoordinatesPerRow, rowProgress);
             seats[row].push({
                 ...pointCoordinatesPerRow[row][seats[row].length],
-                fill: parliament[partyname].colour,
                 party: partyname,
             });
             rowProgress[row]++;

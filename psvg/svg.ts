@@ -18,6 +18,7 @@ function documentElementCreator(
 }
 
 export default function generateSVG(
+    parties: { [partyname: string]: {fill: string} },
     points: Seat[],
     radius: number,
     seatDistance: number,
@@ -28,7 +29,7 @@ export default function generateSVG(
         cx: p.x,
         cy: p.y,
         r: p.r,
-        fill: p.fill,
+        fill: parties[p.party].fill,
         class: p.party,
     }));
 

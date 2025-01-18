@@ -7,5 +7,6 @@ export function psvg(
 ): SVGSVGElement {
     const radius = 20;
     const points = generatePoints(parliament, radius, seatRadiusFactor);
-    return generateSVG(points, radius, points.seatDistance, {seatCount, elementCreator});
+    const parties = Object.fromEntries(Object.keys(parliament).map(partyname => [partyname, {fill: parliament[partyname].colour}]));
+    return generateSVG(parties, points, radius, points.seatDistance, {seatCount, elementCreator});
 }
