@@ -11,19 +11,18 @@ function score(seatCount: number, n: number, r0: number) {
     return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
 }
 
-function calculateNumberOfRows(seatCount: number, r0: number) {
+function getNRows(seatCount: number, r0: number) {
     let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
     let distance = score(seatCount, n, r0);
 
     let direction = 0;
-    if (score(seatCount, n + 1, r0) < distance) {
+    if (n > 1 && score(seatCount, n - 1, r0) < distance) {
+        direction = -1;
+    } else if (score(seatCount, n + 1, r0) < distance) {
         direction = 1;
     }
-    if (score(seatCount, n - 1, r0) < distance && n > 1) {
-        direction = -1;
-    }
 
-    while (score(seatCount, n + direction, r0) < distance && n > 0) {
+    while (n > 0 && score(seatCount, n + direction, r0) < distance) {
         distance = score(seatCount, n + direction, r0);
         n += direction;
     }
@@ -122,7 +121,7 @@ export default function generatePoints(
     seatRadiusFactor: number,
 ): Seat[] & {seatDistance: number} {
     const seatCount = Object.values(parliament).map(v => v.seats).reduce((a, b) => a + b, 0);
-    const numberOfRows = calculateNumberOfRows(seatCount, r0);
+    const numberOfRows = getNRows(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
 
     const xyrPerRow = getXYRPerRow(numberOfRows, r0, seatCount, seatRadiusFactor, seatDistance);
