@@ -1,6 +1,6 @@
 export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-type XY = {x: number, y: number};
-export type Seat = XY & {party: string};
+type SeatCenter = {x: number, y: number};
+export type Seat = SeatCenter & {party: string};
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
@@ -60,14 +60,14 @@ function distributeSeatsToRows(
     return rv;
 }
 
-function coords(rowRadius: number, angle: number) {
+function polarToCartesian(rowRadius: number, angle: number) {
     return {
         x: rowRadius * Math.cos(angle - Math.PI),
         y: rowRadius * Math.sin(angle - Math.PI),
     }
 }
 
-function getXYWithAngle(
+function getSeatCentersWithAngle(
     numberOfRows: number,
     outerRowRadius: number,
     seatCount: number,
@@ -80,7 +80,7 @@ function getXYWithAngle(
     // calculate number of seats per row
     const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
 
-    const rv = new Map<XY, number>();
+    const rv = new Map<SeatCenter, number>();
     for (let rowIdx = 0; rowIdx < rowRadii.length; rowIdx++) {
         const nSeatsThisRow = nSeatsPerRow[rowIdx];
         if (nSeatsThisRow === 0) {
@@ -88,19 +88,19 @@ function getXYWithAngle(
         }
         const rowRadius = rowRadii[rowIdx];
         // angle increment between seats of this row
-        const angleIncrement = Math.PI / (nSeatsThisRow - 1);
+        const angleStep = Math.PI / (nSeatsThisRow - 1);
 
         for (let seatIdx = 0; seatIdx < nSeatsThisRow; seatIdx++) {
-            const angle = angleIncrement * seatIdx;
-            rv.set(coords(rowRadius, angle), angle);
+            const angle = angleStep * seatIdx;
+            rv.set(polarToCartesian(rowRadius, angle), angle);
         }
     }
     return rv;
 }
 
-function getSeatsCenters(
+function tagSeatCenters(
     parliament: Parliament,
-    xyWithAngle: Map<XY, number>,
+    xyWithAngle: Map<SeatCenter, number>,
 ): Seat[] {
     const sortedXY = [...xyWithAngle]
         .sort((a, b) => a[1] - b[1])
@@ -126,9 +126,9 @@ export default function generatePoints(
     const numberOfRows = getNRows(seatCount);
     const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
 
-    const xyWithAngle = getXYWithAngle(numberOfRows, outerRowRadius, seatCount, seatDistance);
+    const seatCentersWithAngle = getSeatCentersWithAngle(numberOfRows, outerRowRadius, seatCount, seatDistance);
 
-    const seats = getSeatsCenters(parliament, xyWithAngle);
+    const seats = tagSeatCenters(parliament, seatCentersWithAngle);
 
     return Object.assign(seats, {seatDistance});
 }
