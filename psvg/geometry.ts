@@ -77,12 +77,12 @@ function getXYPerRow(
     const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
         outerRowRadius - i * seatDistance);
 
-    // calculate seats per row
+    // calculate number of seats per row
     const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
 
     return rowRadii.map((radius, rowIdx) => {
         // calculate row-specific distance (of what ?)
-        const a = (Math.PI * radius) / ((radius - 1) || 1);
+        const a = (Math.PI * radius) / ((nSeatsPerRow[rowIdx] - 1) || 1);
 
         return Array.from({length: nSeatsPerRow[rowIdx]}, (_, seatIdx) =>
             coords(radius, a * seatIdx));
