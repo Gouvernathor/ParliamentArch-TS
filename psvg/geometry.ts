@@ -60,19 +60,19 @@ function distributeSeatsToRows(
     return rv;
 }
 
-function coords(rowRadius: number, b: number) {
+function coords(rowRadius: number, angle: number) {
     return {
-        x: rowRadius * Math.cos(b/rowRadius - Math.PI),
-        y: rowRadius * Math.sin(b/rowRadius - Math.PI),
+        x: rowRadius * Math.cos(angle - Math.PI),
+        y: rowRadius * Math.sin(angle - Math.PI),
     }
 }
 
-function getXYPerRow(
+function getXYWithAngle(
     numberOfRows: number,
     outerRowRadius: number,
     seatCount: number,
     seatDistance: number,
-): XY[][] {
+) {
     // calculate row radii
     const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
         outerRowRadius - i * seatDistance);
@@ -80,55 +80,55 @@ function getXYPerRow(
     // calculate number of seats per row
     const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
 
-    return rowRadii.map((radius, rowIdx) => {
-        // calculate row-specific distance (of what ?)
-        const a = (Math.PI * radius) / ((nSeatsPerRow[rowIdx] - 1) || 1);
+    const rv = new Map<XY, number>();
+    for (let rowIdx = 0; rowIdx < rowRadii.length; rowIdx++) {
+        const nSeatsThisRow = nSeatsPerRow[rowIdx];
+        if (nSeatsThisRow === 0) {
+            continue;
+        }
+        const rowRadius = rowRadii[rowIdx];
+        // angle increment between seats of this row
+        const angleIncrement = Math.PI / (nSeatsThisRow - 1);
 
-        return Array.from({length: nSeatsPerRow[rowIdx]}, (_, seatIdx) =>
-            coords(radius, a * seatIdx));
-    });
-}
-
-function nextRow(
-    rows: ReadonlyArray<ReadonlyArray<unknown>>,
-    rowProgress: ReadonlyArray<number>,
-) {
-    const quotas = rows.map((row, i) => (rowProgress[i]) / row.length);
-    return quotas.indexOf(Math.min(...quotas));
-}
-
-function getFlatSeats(
-    parliament: Parliament,
-    xyPerRow: XY[][],
-    numberOfRows: number,
-): Seat[] {
-    const rowProgress = Array(numberOfRows).fill(0);
-    const seatsPerRow: Seat[][] = rowProgress.map(() => []);
-    for (const partyname in parliament) {
-        for (let i = 0; i < parliament[partyname].seats; i++) {
-            const rowIndex = nextRow(xyPerRow, rowProgress);
-            seatsPerRow[rowIndex].push({
-                ...xyPerRow[rowIndex][seatsPerRow[rowIndex].length],
-                party: partyname,
-            });
-            rowProgress[rowIndex]++;
+        for (let seatIdx = 0; seatIdx < nSeatsThisRow; seatIdx++) {
+            const angle = angleIncrement * seatIdx;
+            rv.set(coords(rowRadius, angle), angle);
         }
     }
+    return rv;
+}
 
-    return seatsPerRow.flat();
+function getSeatsCenters(
+    parliament: Parliament,
+    xyWithAngle: Map<XY, number>,
+): Seat[] {
+    const sortedXY = [...xyWithAngle]
+        .sort((a, b) => a[1] - b[1])
+        .map(([xy, ]) => xy);
+    const rv = [] as Seat[];
+    let seatIdx = 0;
+    for (const partyname in parliament) {
+        const pSeats = parliament[partyname].seats;
+        for (let pSeatIdx = 0; pSeatIdx < pSeats; pSeatIdx++, seatIdx++) {
+            rv.push(Object.assign({party: partyname}, sortedXY[seatIdx]));
+        }
+    }
+    return rv;
 }
 
 export default function generatePoints(
     parliament: Parliament,
     outerRowRadius: number,
 ): Seat[] & {seatDistance: number} {
-    const seatCount = Object.values(parliament).map(v => v.seats).reduce((a, b) => a + b, 0);
+    const seatCount = Object.values(parliament)
+        .map(v => v.seats)
+        .reduce((a, b) => a + b, 0);
     const numberOfRows = getNRows(seatCount);
     const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
 
-    const xyPerRow = getXYPerRow(numberOfRows, outerRowRadius, seatCount, seatDistance);
+    const xyWithAngle = getXYWithAngle(numberOfRows, outerRowRadius, seatCount, seatDistance);
 
-    const seats = getFlatSeats(parliament, xyPerRow, numberOfRows);
+    const seats = getSeatsCenters(parliament, xyWithAngle);
 
     return Object.assign(seats, {seatDistance});
 }
