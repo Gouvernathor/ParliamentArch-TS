@@ -51,8 +51,28 @@ function nextRing(
     return quotas.indexOf(Math.min(...quotas));
 }
 
-function attribution(partyscores: ReadonlyArray<number>, n: number): number[] {
-    throw new Error("Not implemented");
+/**
+ * Proportional attribution of seats to rows
+ * Previously done with the sainte-laguë method (through a dependency),
+ * toned down to a simpler and faster version
+ */
+function distributeSeatsToRows(partyscores: ReadonlyArray<number>, total: number): number[] {
+    const sumScores = partyscores.reduce((a, b) => a + b, 0);
+    const nRings = partyscores.length;
+    const rv = Array(nRings) as number[];
+    let acc = 0;
+    let remainingScores = sumScores;
+
+    for (let i = 0; i < nRings-1; i++) {
+        // every ring is best rounded except the last that cumulates all rounding errors
+        // acc += rv[i] = Math.round(partyscores[i] * total / sumScores);
+        // more precise rounding : avoid rounding errors to accumulate too much
+        acc += rv[i] = Math.round((total-acc) * partyscores[i] / remainingScores);
+        remainingScores -= partyscores[i];
+    }
+
+    rv[nRings-1] = total - acc;
+    return rv;
 }
 
 function generatePoints(parliament: Parliament, r0: number): Seat[] {
@@ -64,7 +84,7 @@ function generatePoints(parliament: Parliament, r0: number): Seat[] {
     const ringRadii = Array.from({length: numberOfRings}, (_, i) => r0 - i * seatDistance);
 
     // calculate seats per ring
-    const seatsPerRing = attribution(ringRadii, seatCount);
+    const seatsPerRing = distributeSeatsToRows(ringRadii, seatCount);
     // Warning: not an array, but a non-sparse number:number object
     // (meaning that length and array methods are missing, only indexing works)
 
