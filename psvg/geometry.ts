@@ -106,12 +106,12 @@ function getFlatSeats(
     const seatsPerRow: Seat[][] = rowProgress.map(() => []);
     for (const partyname in parliament) {
         for (let i = 0; i < parliament[partyname].seats; i++) {
-            const row = nextRow(xyPerRow, rowProgress);
-            seatsPerRow[row].push({
-                ...xyPerRow[row][seatsPerRow[row].length],
+            const rowIndex = nextRow(xyPerRow, rowProgress);
+            seatsPerRow[rowIndex].push({
+                ...xyPerRow[rowIndex][seatsPerRow[rowIndex].length],
                 party: partyname,
             });
-            rowProgress[row]++;
+            rowProgress[rowIndex]++;
         }
     }
 
