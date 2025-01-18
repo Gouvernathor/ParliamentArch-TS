@@ -2,28 +2,32 @@ export type Parliament = {[partyname: string]: {seats: number, colour: string}};
 type XYR = {x: number, y: number, r: number};
 export type Seat = XYR & {party: string};
 
-function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
-    return (Math.PI * numberOfRows * r0) /
-        ((seatCount - numberOfRows) + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
+/**
+ * Returns a number such that, when multiplied by the radius of the outermost row,
+ * gives the standard seat distance.
+ */
+function getSeatDistanceFactor(seatCount: number, numberOfRows: number) {
+    return (Math.PI * numberOfRows) /
+        (seatCount - numberOfRows + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
 }
 
-function score(seatCount: number, n: number, r0: number) {
-    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
+function score(seatCount: number, n: number) {
+    return Math.abs(getSeatDistanceFactor(seatCount, n) * n - 5/7);
 }
 
-function getNRows(seatCount: number, r0: number) {
+function getNRows(seatCount: number) {
     let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
-    let distance = score(seatCount, n, r0);
+    let distance = score(seatCount, n);
 
     let direction = 0;
-    if (n > 1 && score(seatCount, n - 1, r0) < distance) {
+    if (n > 1 && score(seatCount, n - 1) < distance) {
         direction = -1;
-    } else if (score(seatCount, n + 1, r0) < distance) {
+    } else if (score(seatCount, n + 1) < distance) {
         direction = 1;
     }
 
-    while (n > 0 && score(seatCount, n + direction, r0) < distance) {
-        distance = score(seatCount, n + direction, r0);
+    while (n > 0 && score(seatCount, n + direction) < distance) {
+        distance = score(seatCount, n + direction);
         n += direction;
     }
     return n;
@@ -121,8 +125,8 @@ export default function generatePoints(
     seatRadiusFactor: number,
 ): Seat[] & {seatDistance: number} {
     const seatCount = Object.values(parliament).map(v => v.seats).reduce((a, b) => a + b, 0);
-    const numberOfRows = getNRows(seatCount, r0);
-    const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
+    const numberOfRows = getNRows(seatCount);
+    const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * r0;
 
     const xyrPerRow = getXYRPerRow(numberOfRows, r0, seatCount, seatRadiusFactor, seatDistance);
 
