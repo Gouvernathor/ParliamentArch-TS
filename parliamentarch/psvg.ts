@@ -1,6 +1,5 @@
-type Parliament = {[partyname: string]: {seats: number, colour: string}};
-type XYR = {x: number, y: number, r: number};
-type Seat = XYR & {fill: string, party: string};
+export type Parliament = {[partyname: string]: {seats: number, colour: string}};
+type Seat = {x: number, y: number, r: number, fill: string, party: string};
 
 function seatSum(p: Parliament) {
     return Array.from(Object.values(p), v => v.seats).reduce((a, b) => a + b, 0);
