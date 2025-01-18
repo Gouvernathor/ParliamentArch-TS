@@ -1,24 +1,8 @@
 export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-type Seat = {x: number, y: number, r: number, fill: string, party: string};
+export type Seat = {x: number, y: number, r: number, fill: string, party: string};
 
 function seatSum(p: Parliament) {
     return Array.from(Object.values(p), v => v.seats).reduce((a, b) => a + b, 0);
-}
-
-function coords(rowRadius: number, b: number) {
-    return {
-        x: rowRadius * Math.cos(b/rowRadius - Math.PI),
-        y: rowRadius * Math.sin(b/rowRadius - Math.PI),
-    }
-}
-
-function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
-    return (Math.PI * numberOfRows * r0) /
-        ((seatCount - numberOfRows) + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
-}
-
-function score(seatCount: number, n: number, r0: number) {
-    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
 }
 
 function calculateNumberOfRows(seatCount: number, r0: number) {
@@ -40,12 +24,13 @@ function calculateNumberOfRows(seatCount: number, r0: number) {
     return n;
 }
 
-function nextRow(
-    rows: ReadonlyArray<ReadonlyArray<unknown>>,
-    rowProgress: ReadonlyArray<number>,
-) {
-    const quotas = rows.map((row, i) => (rowProgress[i] || 0) / row.length);
-    return quotas.indexOf(Math.min(...quotas));
+function calculateSeatDistance(seatCount: number, numberOfRows: number, r0: number) {
+    return (Math.PI * numberOfRows * r0) /
+        ((seatCount - numberOfRows) + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
+}
+
+function score(seatCount: number, n: number, r0: number) {
+    return Math.abs(calculateSeatDistance(seatCount, n, r0) * n / r0 - 5/7);
 }
 
 /**
@@ -75,7 +60,22 @@ function distributeSeatsToRows(
     return rv;
 }
 
-function generatePoints(parliament: Parliament, r0: number, seatRadiusFactor: number): Seat[] {
+function coords(rowRadius: number, b: number) {
+    return {
+        x: rowRadius * Math.cos(b/rowRadius - Math.PI),
+        y: rowRadius * Math.sin(b/rowRadius - Math.PI),
+    }
+}
+
+function nextRow(
+    rows: ReadonlyArray<ReadonlyArray<unknown>>,
+    rowProgress: ReadonlyArray<number>,
+) {
+    const quotas = rows.map((row, i) => (rowProgress[i] || 0) / row.length);
+    return quotas.indexOf(Math.min(...quotas));
+}
+
+export default function generatePoints(parliament: Parliament, r0: number, seatRadiusFactor: number): Seat[] {
     const seatCount = seatSum(parliament);
     const numberOfRows = calculateNumberOfRows(seatCount, r0);
     const seatDistance = calculateSeatDistance(seatCount, numberOfRows, r0);
@@ -113,62 +113,4 @@ function generatePoints(parliament: Parliament, r0: number, seatRadiusFactor: nu
     }
 
     return seats.flat();
-}
-
-const SVG_NS = "http://www.w3.org/2000/svg";
-
-function elementCreator(
-    tag: string,
-    attributes: Record<string, unknown>,
-    content?: any,
-) {
-    const e = document.createElementNS(SVG_NS, tag);
-    for (const k in attributes) {
-        e.setAttribute(k, attributes[k] as string);
-    }
-    if (content) {
-        e.append(content);
-    }
-    return e;
-}
-
-const defaults = {
-    seatCount: false,
-    elementCreator: elementCreator,
-    seatRadiusFactor: .4,
-};
-
-export default function generate(
-    parliament: Parliament,
-    {seatCount, elementCreator, seatRadiusFactor} = defaults,
-) {
-    const radius = 20;
-    const points = generatePoints(parliament, radius, seatRadiusFactor);
-    const a = points[0].r / seatRadiusFactor;
-    const elements = points.map(p => elementCreator('circle', {
-        cx: p.x,
-        cy: p.y,
-        r: p.r,
-        fill: p.fill,
-        class: p.party,
-    }));
-
-    if (seatCount) {
-        elements.push(elementCreator('text', {
-            x: 0,
-            y: 0,
-            'text-anchor': 'middle',
-            style: {
-                'font-family': 'Helvetica',
-                'font-size': `${.25*radius}px`,
-            },
-            class: 'seatNumber',
-        }, elements.length));
-    }
-
-    const svg = elementCreator('svg', {
-        xmlns: SVG_NS,
-        viewBox: `${-radius - a/2}, ${-radius - a/2}, ${2*radius + a}, ${radius + a}`,
-    }, elements);
-    return svg;
 }
