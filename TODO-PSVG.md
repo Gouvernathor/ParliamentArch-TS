@@ -1,0 +1,6 @@
+- move seat attribution (after seat ordering through the angle) to the main psvg module
+- maybe don't put it in the svg module, leaving it in the main module
+  - if so, do the same thing to parliamentarch (incompatible API change)
+- in consequence, move the Parliament type away from the geometry module
+- align and rationalize input formats (objects or maps or lists of pairs ?) consistently with parliamentarch
+- consider breaking up parliamentarch's geometry module into subfunctions like psvg's current one
