@@ -5,16 +5,34 @@ export type Seat = SeatCenter & {party: string};
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
  * gives the minimal distance between any two seats.
+ *
+ * The details of the calculation remain mysterious.
+ * In particular, the denominator, and inside it, why a difference is computed
+ * between a number of seats and a number of rows.
+ * Or why pi, after being multiplied by a number of rows squared,
+ * can be summed with that difference.
  */
-function getSeatDistanceFactor(seatCount: number, numberOfRows: number) {
-    return (Math.PI * numberOfRows) /
-        (seatCount - numberOfRows + (Math.PI * (numberOfRows - 1) * numberOfRows/2));
+function getSeatDistanceFactor(seatCount: number, nRows: number) {
+    return (Math.PI * nRows) / // perimeter of the outermost row
+        (seatCount - nRows + (Math.PI * (nRows - 1) * nRows/2));
 }
 
-function score(seatCount: number, n: number) {
-    return Math.abs(getSeatDistanceFactor(seatCount, n) * n - 5/7);
+/**
+ * Makes the thickness of the hemicycle
+ * (from the inner side of the innermost row to the outer side of the outermost row)
+ * as close to 5/7 of the outermost row radius as possible.
+ * I.e, makes the "well" as close to 2/7 in radius (or 4/7 in diameter) as possible.
+ *
+ * Keep in mind that since the outermost seats' *centers* are on the outer limit,
+ * rather than the outer side of those seats, the well ends up larger than this.
+ */
+function score(seatCount: number, nRows: number) {
+    return Math.abs(getSeatDistanceFactor(seatCount, nRows) * nRows - 5/7);
 }
 
+/**
+ * Gradient descent following the score function.
+ */
 function getNRows(seatCount: number) {
     let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
     let distance = score(seatCount, n);
@@ -56,6 +74,7 @@ function distributeSeatsToRows(
         remainingWeight -= rowWeights[i];
     }
 
+    // the last row gets the rounding errors anyway, since it's the largest
     rv[nRows-1] = total - acc;
     return rv;
 }
@@ -68,13 +87,13 @@ function polarToCartesian(rowRadius: number, angle: number) {
 }
 
 function getSeatCentersWithAngle(
-    numberOfRows: number,
+    nRows: number,
     outerRowRadius: number,
     seatCount: number,
     seatDistance: number,
 ) {
     // calculate row radii
-    const rowRadii = Array.from({length: numberOfRows}, (_, i) =>
+    const rowRadii = Array.from({length: nRows}, (_, i) =>
         outerRowRadius - i * seatDistance);
 
     // calculate number of seats per row
@@ -123,10 +142,10 @@ export default function generatePoints(
     const seatCount = Object.values(parliament)
         .map(v => v.seats)
         .reduce((a, b) => a + b, 0);
-    const numberOfRows = getNRows(seatCount);
-    const seatDistance = getSeatDistanceFactor(seatCount, numberOfRows) * outerRowRadius;
+    const nRows = getNRows(seatCount);
+    const seatDistance = getSeatDistanceFactor(seatCount, nRows) * outerRowRadius;
 
-    const seatCentersWithAngle = getSeatCentersWithAngle(numberOfRows, outerRowRadius, seatCount, seatDistance);
+    const seatCentersWithAngle = getSeatCentersWithAngle(nRows, outerRowRadius, seatCount, seatDistance);
 
     const seats = tagSeatCenters(parliament, seatCentersWithAngle);
 
