@@ -34,7 +34,7 @@ function score(seatCount: number, nRows: number) {
  * Gradient descent following the score function.
  */
 function getNRows(seatCount: number) {
-    let n = Math.floor(Math.log(seatCount) / Math.log(2)) || 1;
+    let n = Math.floor(Math.log2(seatCount)) || 1;
     let distance = score(seatCount, n);
 
     let direction = 0;
