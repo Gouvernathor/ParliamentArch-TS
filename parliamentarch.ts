@@ -1,13 +1,13 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters } from "./parliamentarch/geometry";
-import { dispatchSeats, getGroupedSVG, SeatData, SeatDataWithNumber } from "./parliamentarch/svg";
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./parliamentarch/geometry";
+import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./parliamentarch/svg";
 
-export { SeatData } from "./parliamentarch/svg";
+export { type SeatData } from "./parliamentarch/svg";
 
 export function getSVGFromAttribution(
     attribution: Map<SeatData, number> | SeatDataWithNumber[],
     seatRadiusFactor: number = .8,
-    getSeatsCentersOptions: object = {},
-    getGroupedSVGOptions: object = {},
+    getSeatsCentersOptions: Partial<GetSeatsCentersOptions> = {},
+    getGroupedSVGOptions: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
     if (!(attribution instanceof Map)) {
         attribution = new Map(attribution.map(seatData => [seatData, seatData.nSeats ?? 1]));

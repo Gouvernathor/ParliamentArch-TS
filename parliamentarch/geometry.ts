@@ -61,13 +61,19 @@ export enum FillingStrategy {
     OUTER_PRIORITY = "outer_priority",
 }
 
+export type GetSeatsCentersOptions = {
+    minNRows: number,
+    fillingStrategy: FillingStrategy,
+    spanAngle: number,
+};
+
 export function getSeatsCenters(
     nSeats: number,
     {
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: { minNRows?: number, fillingStrategy?: FillingStrategy, spanAngle?: number } = {},
+    }: Partial<GetSeatsCentersOptions> = {},
 ): Map<[number, number], number> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
