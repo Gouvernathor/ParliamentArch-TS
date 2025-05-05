@@ -53,11 +53,11 @@ export function dispatchSeats<S>(
 }
 
 export function getSVG(
-    seatCenters: Iterable<[[number, number][], SeatData]>,
+    seatCenters: Iterable<[[number, number], SeatData]>,
     seatActualRadius: number,
     options: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
-    const seatCentersByGroup = new Map();
+    const seatCentersByGroup = new Map<SeatData, [number, number][]>();
     for (const [seat, group] of seatCenters) {
         if (!seatCentersByGroup.has(group)) {
             seatCentersByGroup.set(group, []);
