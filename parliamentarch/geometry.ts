@@ -67,6 +67,22 @@ export interface GetSeatsCentersOptions {
     spanAngle: number;
 }
 
+/**
+ * Computes the coordinates of the centers of the seats, with (as a bonus) the angle of each seat in the hemicycle.
+ * The canvas is assumed to be 2 in width and 1 in height, with the x axis pointing right and the y axis pointing up.
+ * The angle is calculated from the [1, 0] center of the hemicycle, in radians and in trigonometric positive direction,
+ * tending to 0 for the rightmost seats, 90° or PI/2 for the center, and 180° or PI for the leftmost seats.
+ * @param minNRows The minimal number of rows required to contain `nSeats` seats will be computed automatically.
+ * If `minNRows` is greater, then that will be the number of rows, otherwise the parameter is ignored.
+ * Passing a higher number of rows will make the diagram sparser,
+ * for which non-default filling strategies are more adapted.
+ * @param fillingStrategy determines how the seats are distributed among the rows, see the `FillingStrategy` enum.
+ * @param spanAngle is the angle from the side of the rightmost seats,
+ * through the center, to the side of the leftmost seats.
+ * It takes a value in degrees and defaults to 180 to make a true hemicycle.
+ * Values above 180 are not supported.
+ * @returns a map whose keys are the seat centers as [x, y] coordinates, with the angle of the seat as values.
+ */
 export function getSeatsCenters(
     nSeats: number,
     {
