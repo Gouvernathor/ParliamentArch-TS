@@ -1,11 +1,13 @@
-export type SeatData = {
+export interface SeatData {
     readonly color: string;
     readonly id?: string;
     readonly data?: string;
     readonly borderSize?: number;
     readonly borderColor?: string;
 }
-export type SeatDataWithNumber = SeatData & { nSeats?: number };
+export interface SeatDataWithNumber extends SeatData {
+    nSeats?: number;
+}
 
 /**
  * Typically S is a tuple of x/y coordinates.
@@ -58,12 +60,12 @@ export function getSVG(
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-export type GetGroupedSVGOptions = {
+export interface GetGroupedSVGOptions {
     canvasSize: number;
     margins: number | [number, number] | [number, number, number, number];
     writeNumberOfSeats: boolean;
     fontSizeFactor: number;
-};
+}
 
 export function getGroupedSVG(
     seatCentersByGroup: Iterable<[SeatData, [number, number][]]>,

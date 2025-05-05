@@ -61,11 +61,11 @@ export enum FillingStrategy {
     OUTER_PRIORITY = "outer_priority",
 }
 
-export type GetSeatsCentersOptions = {
-    minNRows: number,
-    fillingStrategy: FillingStrategy,
-    spanAngle: number,
-};
+export interface GetSeatsCentersOptions {
+    minNRows: number;
+    fillingStrategy: FillingStrategy;
+    spanAngle: number;
+}
 
 export function getSeatsCenters(
     nSeats: number,
