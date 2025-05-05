@@ -66,17 +66,17 @@ As hinted above, some parameters can be set to customize the layout of the diagr
 
 These are found in the `parliamentarch` module.
 
-`SeatData`
+`SeatData` and `SeatDataWithNumber`
 
-This class is defined and explained in the SVG submodule below, but it is also exposed as part of the main module. It stores values about how to draw a given seat (or a group of similar seats).
+These are typescript interfaces explained in the SVG submodule below, but also exposed as part of the main module. They store values about how to draw a given seat (or a group of similar seats).
 
 `getSVGFromAttribution()`
 
 This function creates the diagram as an SVG element which can then be integrated in the DOM. The parameters are as follows:
 
-- `attribution: Map<SeatData, number>`: a mapping from a SeatData object to a number of seats in the diagram. Typically, each SeatData object represents a group or party. The ordering of the elements matter, and the groups will be drawn from left to right in the diagram.
-- `seatRadiusFactor: number`: the ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
-- `getSeatsCentersOptions: object` and `getGroupedSVGOptions: object`: parameters passed through to the corresponding options parameters of the getSeatsCenters and groupedSVGOptions functions, respectively.
+- `attribution: Map<SeatData, number> | SeatDataWithNumber[]`: a mapping from a SeatData object to a number of seats in the diagram. Alternatively, an array of SeatDataWithNumber objects. Typically, each SeatData or SeatDataWithNumber object represents a group or party. The ordering of the elements matter, and the groups as provided will be drawn from left to right in the diagram.
+- `seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
+- `getSeatsCentersOptions` and `getGroupedSVGOptions`: optional parameters passed through to the corresponding options parameters of the getSeatsCenters and groupedSVGOptions functions, respectively.
 
 ## Geometry submodule contents
 
@@ -102,7 +102,7 @@ A string enum of the implemented strategies to fill the seats among the rows:
 - `EMPTY_INNER`: This selects as few outermost rows as necessary to hold the given seats, then distributes the seats proportionally among them. Depending on the number of seats and rows, this either leaves empty inner rows, or is equivalent to the `DEFAULT` strategy. This is equivalent to the legacy "dense rows" option, in that in non-empty rows, the distance between consecutive seats is the smallest possible, and is close among all rows.
 - `OUTER_PRIORITY`: This fills the rows to their maximal capacity, starting with the outermost rows going in. The result is that given a number of rows, adding one seat makes a change in only one row.
 
-`getSeatsCenters(nSeats: number, options?: object): Map<[number, number], number>`
+`getSeatsCenters(nSeats: number, options?): Map<[number, number], number>`
 
 This is the main function of the submodule. The options are as follows:
 
@@ -118,9 +118,9 @@ The values are the angle, in radians, calculated from the right-outermost point 
 
 These are found in the `parliamentarch/svg` module.
 
-`SeatData({color: string, id?: string, data?: string, borderSize?: number, borderColor?: string})`
+`SeatData`
 
-An interface for data about a seat or a group of seats:
+An interface for data about a seat or a group of seats. It contains:
 
 - `color: string`: The color with which to fill the seat circle, as a CSS color.
 - `id?: string`: An optional id for the group of seats.
@@ -128,11 +128,15 @@ An interface for data about a seat or a group of seats:
 - `borderSize?: number`: The size of the border around the seat circle, defaults to 0.
 - `borderColor?: string`: The color of the border, defaults to black.
 
-`getGroupedSVG(seatCentersByGroup: Map<SeatData, [number, number][]>, seatActualRadius: number, options?: object): SVGSVGElement`
+`SeatDataWithNumber`
+
+A sub-interface which extends SeatData with an optional `nSeats?: number` property, which defaults to 1. It allows you not to use Map objects.
+
+`getGroupedSVG(seatCentersByGroup, seatActualRadius, options?): SVGSVGElement`
 
 This function creates an SVG element containing the diagram. The parameters are as follows:
 
-- `seatCentersByGroup: Map<SeatData, [number, number][]>`: A mapping from the SeatData object of a group of seats to a list of the seat center coordinate pairs. The order of the seat centers is meaningless.
+- `seatCentersByGroup: Map<SeatData, [number, number][]> | [SeatData, [number, number][]]`: A mapping from the SeatData object of a group of seats to a list of the seat center coordinate pairs, but it can also be passed as an iterable of what wuold be its key-value pairs (the value being itself a pair of coordinates). The order of the seat centers is meaningless.
 - `seatActualRadius: number`: The actual radius of the seat circles, in the same unit as the coordinates which is a fraction of `canvasSize` (see below).
 
 The options are as follows:
@@ -141,9 +145,3 @@ The options are as follows:
 - `margins?: number|[number, number]|[number, number, number, number]`: The margins around that rectangle. If 4 values are given, they are the left, top, right and bottom margins in that order. If 2 values are given, they are the horizontal and vertical margins in that order. If only one value is given, it is used for all margins. Defaults to 5.
 - `writeNumberOfSeats?: boolean`: Whether to write the number of seats at the bottom center of the diagram - in the well of the house. Defaults to true.
 - `fontSizeFactor?: number`: A factor you should tweak to change the font size of the number of seats. The default value is around .2. Keeping this value constant will keep the font size in scale when changing the canvas size.
-
-<!--
-TODO
-
-everything called a Map<K, V> here can be replaced with a [K, V][] array
- -->
