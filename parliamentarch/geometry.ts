@@ -61,6 +61,12 @@ export enum FillingStrategy {
     OUTER_PRIORITY = "outer_priority",
 }
 
+export interface GetSeatsCentersOptions {
+    minNRows: number;
+    fillingStrategy: FillingStrategy;
+    spanAngle: number;
+}
+
 /**
  * Computes the coordinates of the centers of the seats, with (as a bonus) the angle of each seat in the hemicycle.
  * The canvas is assumed to be 2 in width and 1 in height, with the x axis pointing right and the y axis pointing up.
@@ -83,7 +89,7 @@ export function getSeatsCenters(
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: { minNRows?: number, fillingStrategy?: FillingStrategy, spanAngle?: number } = {},
+    }: Partial<GetSeatsCentersOptions> = {},
 ): Map<[number, number], number> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);

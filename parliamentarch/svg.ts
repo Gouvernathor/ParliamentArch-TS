@@ -7,6 +7,9 @@ export interface SeatData {
     readonly borderSize?: number;
     readonly borderColor?: string;
 }
+export interface SeatDataWithNumber extends SeatData {
+    nSeats?: number;
+}
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
@@ -24,12 +27,16 @@ const doc = globalThis.document ??
  * @returns a mapping of each group to the seats it holds
  */
 export function dispatchSeats<S>(
-    groupSeats: Map<SeatData, number>,
+    groupSeats: Map<SeatData, number> | SeatDataWithNumber[],
     seats: Iterable<S>,
 ): Map<SeatData, S[]> {
     const seatIterator = seats[Symbol.iterator]();
+    const entries: [SeatData, number][] = groupSeats instanceof Map ?
+        Array.from(groupSeats) :
+        groupSeats.map(seatData => [seatData, seatData.nSeats ?? 1]);
+
     try {
-        return new Map([...groupSeats.entries()].map(([group, nSeats]) =>
+        return new Map(entries.map(([group, nSeats]) =>
             [group, Array.from({ length: nSeats }, () => {
                 const seatIteration = seatIterator.next();
                 if (seatIteration.done) {
@@ -46,35 +53,38 @@ export function dispatchSeats<S>(
 }
 
 export function getSVG(
-    seatCenters: Map<[number, number], SeatData>,
-    ...rest: [number, object]
+    seatCenters: Iterable<[[number, number], SeatData]>,
+    seatActualRadius: number,
+    options: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
-    const seatCentersByGroup = new Map();
+    const seatCentersByGroup = new Map<SeatData, [number, number][]>();
     for (const [seat, group] of seatCenters) {
         if (!seatCentersByGroup.has(group)) {
             seatCentersByGroup.set(group, []);
         }
         seatCentersByGroup.get(group)!.push(seat);
     }
-    return getGroupedSVG(seatCentersByGroup, ...rest);
+    return getGroupedSVG(seatCentersByGroup, seatActualRadius, options);
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+export interface GetGroupedSVGOptions {
+    canvasSize: number;
+    margins: number | [number, number] | [number, number, number, number];
+    writeNumberOfSeats: boolean;
+    fontSizeFactor: number;
+}
+
 export function getGroupedSVG(
-    seatCentersByGroup: Map<SeatData, [number, number][]>,
+    seatCentersByGroup: Iterable<[SeatData, [number, number][]]>,
     seatActualRadius: number,
     {
         canvasSize = 175,
         margins = 5,
         writeNumberOfSeats = true,
         fontSizeFactor = 36 / 175,
-    }: {
-        canvasSize?: number,
-        margins?: number | [number, number] | [number, number, number, number],
-        writeNumberOfSeats?: boolean,
-        fontSizeFactor?: number
-    } = {},
+    }: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
     if (!Array.isArray(margins)) {
         margins = [margins, margins, margins, margins];
@@ -91,7 +101,7 @@ export function getGroupedSVG(
     );
     if (writeNumberOfSeats) {
         addNumberOfSeats(svg,
-            Array.from(seatCentersByGroup.values(), group => group.length).reduce((a, b) => a + b, 0),
+            Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             leftMargin + canvasSize,
             topMargin + (canvasSize * 170 / 175),
             Math.round(fontSizeFactor * canvasSize),
@@ -136,7 +146,7 @@ function addNumberOfSeats(
 
 function addGroupedSeats(
     svg: SVGSVGElement,
-    seatCentersByGroup: Map<SeatData, [number, number][]>,
+    seatCentersByGroup: Iterable<[SeatData, [number, number][]]>,
     seatActualRadius: number,
     canvasSize: number,
     leftMargin: number,
