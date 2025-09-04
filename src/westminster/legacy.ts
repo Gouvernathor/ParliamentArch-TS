@@ -1,4 +1,4 @@
-import { Area, areas, wings } from "./common";
+import { Area, areas, Wing, wings } from "./common";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
@@ -94,26 +94,13 @@ function seats({
     const nRanks = optionWingrows
         || Math.ceil(Math.sqrt(Math.max(1, sumDelegates.left, sumDelegates.right)/20))*2;
 
-    let wingCols: number;
-    if (cozy) {
-        wingCols = Math.ceil(Math.max(sumDelegates.left, sumDelegates.right) / nRanks);
-    } else {
-        // calculate the number of empty seats to add to each wing's delegate count
-        for (const wing of wings) {
-            for (const [party, ] of parties) {
-                if (party.group === wing) {
-                    const partycount = -party.nSeats % nRanks;
-                    // per-party count of empty seats needed to space out the diagram
-                    parties.set(party, partycount);
-                    // per-wing count kept separately for convenience
-                    emptySeats.set(wing, emptySeats.get(wing)! + partycount);
-                }
-            }
-        }
-
-        // calculate the number of columns in the diagram based on the spaced-out count
-        wingCols = Math.ceil(Math.max(sumDelegates.left+emptySeats.get("left")!, sumDelegates.right+emptySeats.get("right")!) / nRanks);
-    }
+    const wingCols = getWingCols({
+        cozy,
+        sumDelegates,
+        nRanks,
+        parties,
+        emptySeats,
+    });
 
     const wingRows = new Map(wings.map(area => [area, nRanks]));
     // slim down the diagram on one side if required
@@ -332,6 +319,40 @@ function seats({
         svgwidth,
         svgheight,
     };
+}
+
+function getWingCols({
+    cozy,
+    sumDelegates,
+    nRanks,
+    parties,
+    emptySeats,
+}: {
+    cozy: boolean,
+    sumDelegates: Record<Area, number>,
+    nRanks: number,
+    parties: Map<SeatDataWithNumber, number>,
+    emptySeats: Map<Area, number>,
+}): number {
+    if (cozy) {
+        return Math.ceil(Math.max(sumDelegates.left, sumDelegates.right) / nRanks);
+    } else {
+        // calculate the number of empty seats to add to each wing's delegate count
+        for (const wing of wings) {
+            for (const [party, ] of parties) {
+                if (party.group === wing) {
+                    const partycount = -party.nSeats % nRanks;
+                    // per-party count of empty seats needed to space out the diagram
+                    parties.set(party, partycount);
+                    // per-wing count kept separately for convenience
+                    emptySeats.set(wing, emptySeats.get(wing)! + partycount);
+                }
+            }
+        }
+
+        // calculate the number of columns in the diagram based on the spaced-out count
+        return Math.ceil(Math.max(sumDelegates.left+emptySeats.get("left")!, sumDelegates.right+emptySeats.get("right")!) / nRanks);
+    }
 }
 
 
