@@ -1,7 +1,7 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./geometry";
-import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg";
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./geometry.js";
+import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg.js";
 
-export { type SeatData, type SeatDataWithNumber } from "./svg";
+export { type SeatData, type SeatDataWithNumber } from "./svg.js";
 
 export function getSVGFromAttribution(
     attribution: Map<SeatData, number> | SeatDataWithNumber[],
