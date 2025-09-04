@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ParliamentArch-TS Demo</title>
+        <script type="module" src="../dist/component.js"></script>
+    </head>
+    <body>
+        <parliament-arch id="parliament1" data-span-angle="120">
+            <party data-data="Party A" data-color="#ff0000" data-n-seats="50"></party>
+            <party data-data="Party B" data-color="#0000ff">30</party>
+            <party data-data="Party C" data-color="#00ff00" data-border-size=".2" data-border-color="#00ffff">20</party>
+        </parliament-arch>
+
+        <parliament-arch id="parliament2"></parliament-arch>
+
+        <script type="module">
+            import { ParliamentArch } from "../dist/component.js";
+
+            const attribution = [
+                { data: "Party A", color: "#ff0000", nSeats: 50 },
+                { data: "Party B", color: "#0000ff", nSeats: 30 },
+                { data: "Party C", color: "#00ff00", borderSize: .2, borderColor: "#00ffff", nSeats: 20 },
+            ];
+            const options = { spanAngle: 120 };
+
+            const parliament2 = document.getElementById("parliament2");
+            parliament2.setAttributionAndOptions(attribution, options);
+
+            const parliament3 = new ParliamentArch(attribution, options);
+            parliament3.setAttribute("id", "parliament3");
+            document.body.appendChild(parliament3);
+        </script>
+    </body>
+</html>
