@@ -23,6 +23,12 @@
         "types": "./dist/svg.d.ts",
         "default": "./dist/svg.js"
       }
+    },
+    "./component": {
+      "import": {
+        "types": "./dist/component.d.ts",
+        "default": "./dist/component.js"
+      }
     }
   },
   "files": [
