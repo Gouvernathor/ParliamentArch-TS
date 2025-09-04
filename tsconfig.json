@@ -1,11 +1,19 @@
 {
     "compilerOptions": {
-        "target": "ES2019",
-        "module": "Preserve",
+        "target": "es2019",
+        "module": "preserve",
+
+        "rootDir": "src",
+        "outDir": "dist",
         "sourceMap": true,
-        "outDir": "out",
+
+        "preserveConstEnums": false,
+        "declaration": true,
+        "isolatedModules": false,
+
         "strict": true,
         "noImplicitOverride": true,
         "noImplicitReturns": true,
     },
+    "include": [ "src" ],
 }

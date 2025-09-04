@@ -3,37 +3,25 @@
   "version": "2.0.0",
   "description": "Generating arch-styled SVG parliamentary diagrams",
   "type": "module",
-  "main": "./dist/parliamentarch.js",
-  "types": "./dist/parliamentarch.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/parliamentarch.d.ts",
-        "default": "./dist/parliamentarch.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch.d.cts",
-        "default": "./dist/parliamentarch.cjs"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     },
     "./geometry": {
       "import": {
-        "types": "./dist/parliamentarch/geometry.d.ts",
-        "default": "./dist/parliamentarch/geometry.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch/geometry.d.cts",
-        "default": "./dist/parliamentarch/geometry.cjs"
+        "types": "./dist/geometry.d.ts",
+        "default": "./dist/geometry.js"
       }
     },
     "./svg": {
       "import": {
-        "types": "./dist/parliamentarch/svg.d.ts",
-        "default": "./dist/parliamentarch/svg.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch/svg.d.cts",
-        "default": "./dist/parliamentarch/svg.cjs"
+        "types": "./dist/svg.d.ts",
+        "default": "./dist/svg.js"
       }
     }
   },
@@ -41,7 +29,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -63,7 +51,6 @@
   "devDependencies": {
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.10.2",
-    "tsup": "^8.3.5",
     "typescript": "*"
   },
   "optionalDependencies": {

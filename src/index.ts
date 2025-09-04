@@ -1,7 +1,7 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./parliamentarch/geometry";
-import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./parliamentarch/svg";
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./geometry";
+import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg";
 
-export { type SeatData, type SeatDataWithNumber } from "./parliamentarch/svg";
+export { type SeatData, type SeatDataWithNumber } from "./svg";
 
 export function getSVGFromAttribution(
     attribution: Map<SeatData, number> | SeatDataWithNumber[],
