@@ -1,4 +1,7 @@
-import { Area, areas, Wing, wings } from "./common";
+export const wings = ["left", "right"] as const;
+export type Wing = (typeof wings)[number];
+export const areas = ["head", ...wings, "center"] as const;
+export type Area = (typeof areas)[number];
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
