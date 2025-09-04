@@ -22,11 +22,14 @@ type AllOptions = Partial<GetSeatsCentersOptions & GetGroupedSVGOptions & { seat
  * The attributes override the values set in the constructor.
  *
  * When passed through its children, there may be one or multiple party nodes.
- * The party nodes may be `<party>`, `<group>`, or `<seat-data>`,
- * and their attributes are the same as the properties of `SeatData` (in kebab-case, not camelCase).
- * The number of seats of the party may be specified either through the `n-seats` attribute or through the text content of the node.
- * As with `SeatData`, the color is required.
- * If any party node is present, the parties passed through the constructor are ignored.
+ * The party nodes may be `<party>`, `<group>`, or `<seat-data>`.
+ * The attributes are of the form data-*, where `*` is the kebab-case version of the property name.
+ * For example, `data-border-size="0.05"` sets the `borderSize` property to 0.05,
+ * and `data-data="Some info"` sets the `data` property to "Some info".
+ * The number of seats of the party may be specified
+ * either through the `data-n-seats` attribute or through the text content of the node.
+ * As with `SeatData`, the color (`data-color`) is required.
+ * If any party node is present, the parties passed through the constructor are discarded.
  */
 export class ParliamentArch extends HTMLElement {
     // The options
@@ -58,7 +61,7 @@ export class ParliamentArch extends HTMLElement {
         this.#options = options;
 
         // Setup MutationObserver to watch child changes
-        this.#observer = new MutationObserver(() => this.updateData());
+        this.#observer = new MutationObserver(() => this.updateAttribution());
 
         // this.render(); // not recommended in the constructor
     }
@@ -68,7 +71,7 @@ export class ParliamentArch extends HTMLElement {
         this.#observer.observe(this, { childList: true });
 
         // Initial data processing
-        this.updateData();
+        this.updateAttribution();
     }
 
     disconnectedCallback() {
@@ -117,24 +120,11 @@ export class ParliamentArch extends HTMLElement {
         }
     }
 
-    private updateData() {
+    private updateAttribution() {
         // Extract attribution data from child elements
         const attribution = Array.from(this.children, child => {
-            if (partyInnerTagsLowercase.has(child.tagName.toLowerCase())) {
-                const color = child.getAttribute("color");
-                if (!color) {
-                    throw new Error(`<${child.tagName.toLowerCase()}> is missing the required "color" attribute.`);
-                }
-                const borderSizeStr = child.getAttribute("border-size");
-                const nSeatsStr = child.getAttribute("n-seats") ?? child.textContent;
-                return {
-                    color,
-                    id: child.getAttribute("id") || undefined,
-                    data: child.getAttribute("data") || undefined,
-                    borderSize: borderSizeStr ? +borderSizeStr : undefined,
-                    borderColor: child.getAttribute("border-color") || undefined,
-                    nSeats: nSeatsStr ? +nSeatsStr : undefined,
-                };
+            if (child instanceof HTMLElement && partyInnerTagsLowercase.has(child.tagName.toLowerCase())) {
+                return this.convertParty(child.dataset, child.textContent);
             }
             return null;
         }).filter(party => party !== null);
@@ -145,7 +135,24 @@ export class ParliamentArch extends HTMLElement {
         this.render();
     }
 
-    render() {
+    private convertParty(data: DOMStringMap, textContent: string): SeatDataWithNumber|null {
+        const color = data["color"];
+        if (!color) {
+            return null;
+        }
+        const borderSizeStr = data["borderSize"];
+        const nSeatsStr = data["nSeats"] ?? textContent;
+        return {
+            color,
+            id: data["id"],
+            data: data["data"],
+            borderSize: borderSizeStr ? +borderSizeStr : undefined,
+            borderColor: data["borderColor"],
+            nSeats: nSeatsStr ? +nSeatsStr : undefined,
+        };
+    }
+
+    private render() {
         this.#shadow.replaceChildren();
         let svgElement;
         try {
