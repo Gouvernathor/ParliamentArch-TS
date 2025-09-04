@@ -9,18 +9,14 @@ export interface SeatDataWithNumber extends SeatData {
     nSeats?: number|undefined;
 }
 
-const jsdom = await import("jsdom")
-    .then(m => new m.JSDOM())
-    .catch(() => undefined);
-
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
  * without ever importing it in browser mode.
  */
 const doc = globalThis.document ??
-    jsdom!.window.document;
-const Com = globalThis.Comment ??
-    jsdom!.window.Comment;
+    (await import("jsdom")
+        .then(m => new m.JSDOM())
+    ).window.document;
 
 /**
  * Typically S is a tuple of x/y coordinates.
@@ -131,7 +127,7 @@ function populateHeader(
     svg.setAttribute("width", width.toString());
     svg.setAttribute("height", height.toString());
 
-    svg.appendChild(new Com("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+    svg.appendChild(doc.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
 function addNumberOfSeats(
