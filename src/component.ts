@@ -15,6 +15,7 @@ type AllOptions = Partial<GetSeatsCentersOptions & GetGroupedSVGOptions & { seat
  * It takes the same data as `getSVGFromAttribution`, in two possible ways:
  * - through its constructor, with the same signature as `getSVGFromAttribution`
  * - through its attributes and children.
+ * - through the `setAttributionAndOptions` method (same signature as `getSVGFromAttribution`).
  *
  * The attributes set the options. They are of the form `data-*`,
  * where `*` is the kebab-case version of the option name.
@@ -30,6 +31,8 @@ type AllOptions = Partial<GetSeatsCentersOptions & GetGroupedSVGOptions & { seat
  * either through the `data-n-seats` attribute or through the text content of the node.
  * As with `SeatData`, the color (`data-color`) is required.
  * If any party node is present, the parties passed through the constructor are discarded.
+ *
+ * It is advised to only set the attribution and options through one of the three methods.
  */
 export class ParliamentArch extends HTMLElement {
     // The options
@@ -62,8 +65,19 @@ export class ParliamentArch extends HTMLElement {
 
         // Setup MutationObserver to watch child changes
         this.#observer = new MutationObserver(() => this.updateAttribution());
+    }
 
-        // this.render(); // not recommended in the constructor
+    /**
+     * This method resets and overrides both the attribution and the options.
+     * If the DOM is updated, either through the attributes or the children,
+     * the changes will override the values set through this method.
+     */
+    setAttributionAndOptions(
+        attribution: readonly SeatDataWithNumber[] | Map<SeatData, number>,
+        options: AllOptions = {},
+    ) {
+        this.#attribution = attribution;
+        this.#options = options;
     }
 
     connectedCallback() {
