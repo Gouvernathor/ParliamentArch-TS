@@ -1,12 +1,12 @@
 export interface SeatData {
     readonly color: string;
-    readonly id?: string;
-    readonly data?: string;
-    readonly borderSize?: number;
-    readonly borderColor?: string;
+    readonly id?: string|undefined;
+    readonly data?: string|undefined;
+    readonly borderSize?: number|undefined;
+    readonly borderColor?: string|undefined;
 }
 export interface SeatDataWithNumber extends SeatData {
-    nSeats?: number;
+    nSeats?: number|undefined;
 }
 
 const jsdom = await import("jsdom")
