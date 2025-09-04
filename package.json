@@ -1,6 +1,6 @@
 {
   "name": "parliamentarch",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Generating arch-styled SVG parliamentary diagrams",
   "type": "module",
   "main": "./dist/index.js",
@@ -28,6 +28,30 @@
       "import": {
         "types": "./dist/component.d.ts",
         "default": "./dist/component.js"
+      }
+    },
+    "./westminster": {
+      "import": {
+        "types": "./dist/westminster/index.d.ts",
+        "default": "./dist/westminster/index.js"
+      }
+    },
+    "./westminster/geometry": {
+      "import": {
+        "types": "./dist/westminster/geometry.d.ts",
+        "default": "./dist/westminster/geometry.js"
+      }
+    },
+    "./westminster/svg": {
+      "import": {
+        "types": "./dist/westminster/svg.d.ts",
+        "default": "./dist/westminster/svg.js"
+      }
+    },
+    "./westminster/component": {
+      "import": {
+        "types": "./dist/westminster/component.d.ts",
+        "default": "./dist/westminster/component.js"
       }
     }
   },
