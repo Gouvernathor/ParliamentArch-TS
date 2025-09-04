@@ -1,5 +1,3 @@
-import { JSDOM } from "jsdom";
-
 export interface SeatData {
     readonly color: string;
     readonly id?: string;
@@ -11,14 +9,18 @@ export interface SeatDataWithNumber extends SeatData {
     nSeats?: number;
 }
 
+const jsdom = await import("jsdom")
+    .then(m => new m.JSDOM())
+    .catch(() => undefined);
+
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
  * without ever importing it in browser mode.
  */
 const doc = globalThis.document ??
-    new JSDOM().window.document;
+    jsdom!.window.document;
 const Com = globalThis.Comment ??
-    new JSDOM().window.Comment;
+    jsdom!.window.Comment;
 
 /**
  * Typically S is a tuple of x/y coordinates.
