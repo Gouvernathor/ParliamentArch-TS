@@ -72,7 +72,7 @@ export class ParliamentArch extends HTMLElement {
      * If the DOM is updated, either through the attributes or the children,
      * the changes will override the values set through this method.
      *
-     * This method should only be called on an instance already present in the DOM.
+     * The changes will not take effect until the next call to `render()`.
      */
     setAttributionAndOptions(
         attribution: readonly SeatDataWithNumber[] | Map<SeatData, number>,
@@ -80,8 +80,6 @@ export class ParliamentArch extends HTMLElement {
     ) {
         this.#attribution = attribution;
         this.#options = options;
-
-        this.render();
     }
 
     connectedCallback() {
@@ -170,6 +168,10 @@ export class ParliamentArch extends HTMLElement {
         };
     }
 
+    /**
+     * This method renders the SVG and places it in the shadow DOM.
+     * It should only be called when the component is connected to the DOM.
+     */
     render() {
         this.#shadow.replaceChildren();
         let svgElement;
