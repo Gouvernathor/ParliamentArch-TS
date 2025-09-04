@@ -1,4 +1,4 @@
-import { GetSeatsCentersOptions } from "./geometry.js";
+import { FillingStrategy, GetSeatsCentersOptions } from "./geometry.js";
 import { getSVGFromAttribution } from "./index.js";
 import { GetGroupedSVGOptions, SeatData, SeatDataWithNumber } from "./svg.js";
 
@@ -7,44 +7,42 @@ const partyInnerTagsLowercase = new Set([
     "group",
     "seat-data",
 ]);
-const optionsInnerTagsLowercaseCollapsed = new Set([
-    "options",
-    "paoptions",
-    "parliamentarchoptions",
-]);
 
 type AllOptions = Partial<GetSeatsCentersOptions & GetGroupedSVGOptions & { seatRadiusFactor: number }>;
-
-const numberOptions = new Set([
-    "canvasSize",
-    "fontSizeFactor",
-    "minNRows",
-    "spanAngle",
-    "seatRadiusFactor",
-]);
 
 /**
  * This element will generate a parliament arch SVG. Its tag name is `<parliament-arch>`.
  * It takes the same data as `getSVGFromAttribution`, in two possible ways:
  * - through its constructor, with the same signature as `getSVGFromAttribution`
- * - through its children.
+ * - through its attributes and children.
  *
- * When passed through its children, there may be one or multiple party nodes and zero or one options node.
+ * The attributes set the options. They are of the form `data-*`,
+ * where `*` is the kebab-case version of the option name.
+ * For example, `data-seat-radius-factor="0.8"` sets the `seatRadiusFactor` option to 0.8.
+ * The attributes override the values set in the constructor.
  *
+ * When passed through its children, there may be one or multiple party nodes.
  * The party nodes may be `<party>`, `<group>`, or `<seat-data>`,
  * and their attributes are the same as the properties of `SeatData` (in kebab-case, not camelCase).
  * The number of seats of the party may be specified either through the `n-seats` attribute or through the text content of the node.
  * As with `SeatData`, the color is required.
  * If any party node is present, the parties passed through the constructor are ignored.
- *
- * The options node may be `<options>`, `<paoptions>`, or `<parliamentarchoptions>`,
- * with dashes inserted anywhere in the name (for instance, `<parliament-arch-options>`).
- * There should not be several options nodes.
- * Its attributes are the same as the options taken by `getSVGFromAttribution`,
- * but this time in camelCase and not kebab-case.
- * Any option passed through the children overrides the options passed through the constructor.
  */
 export class ParliamentArch extends HTMLElement {
+    // The options
+    static observedAttributes = [
+        "data-seat-radius-factor", // number
+
+        "data-min-n-rows", // number
+        "data-filling-strategy",
+        "data-span-angle", // number
+
+        "data-canvas-size", // number
+        "data-margins",
+        "data-write-number-of-seats",
+        "data-font-size-factor", // number
+    ];
+
     #shadow;
     #attribution: readonly SeatDataWithNumber[] | Map<SeatData, number>;
     #options: AllOptions;
@@ -78,8 +76,49 @@ export class ParliamentArch extends HTMLElement {
         this.#observer.disconnect();
     }
 
-    updateData() {
-        // Extract data from child elements
+    attributeChangedCallback(_name: string, _oldValue: string|null, _newValue: string|null) {
+        this.updateOptions(this.dataset);
+    }
+
+    private updateOptions(data: DOMStringMap) {
+        for (const numberOption of ["seatRadiusFactor", "minNRows", "spanAngle", "canvasSize", "fontSizeFactor"] as const) {
+            if (numberOption in data) {
+                const value = +(data[numberOption]!);
+                if (!Number.isNaN(value)) {
+                    this.#options[numberOption] = value;
+                }
+            }
+        }
+        for (const booleanOption of ["writeNumberOfSeats"] as const) {
+            if (booleanOption in data) {
+                const value = data[booleanOption]!.toLowerCase();
+                this.#options[booleanOption] = value === "true";
+            }
+        }
+        for (const stringOption of ["fillingStrategy"] as const) {
+            if (stringOption in data) {
+                const value = data[stringOption]!;
+                if (value in Object.values(FillingStrategy)) {
+                    this.#options[stringOption] = value as FillingStrategy;
+                }
+            }
+        }
+        if ("margins" in data) {
+            const parts = data["margins"]!.split(",").map(s => +s.trim());
+            if (!parts.some(p => Number.isNaN(p))) {
+                if (parts.length === 1) {
+                    this.#options.margins = parts[0]!;
+                } else if (parts.length === 2) {
+                    this.#options.margins = [parts[0]!, parts[1]!];
+                } else if (parts.length === 4) {
+                    this.#options.margins = [parts[0]!, parts[1]!, parts[2]!, parts[3]!];
+                }
+            }
+        }
+    }
+
+    private updateData() {
+        // Extract attribution data from child elements
         const attribution = Array.from(this.children, child => {
             if (partyInnerTagsLowercase.has(child.tagName.toLowerCase())) {
                 const color = child.getAttribute("color");
@@ -101,33 +140,6 @@ export class ParliamentArch extends HTMLElement {
         }).filter(party => party !== null);
         if (attribution.length > 0) {
             this.#attribution = attribution;
-        }
-
-        for (const child of this.children) {
-            const lowercaseReplaced = child.tagName.toLowerCase().replace(/-/g, "");
-            if (optionsInnerTagsLowercaseCollapsed.has(lowercaseReplaced)) {
-                const newOptions: any = {};
-                for (const attr of child.attributes) {
-                    const name = attr.name.toLowerCase();
-                    const strValue = attr.value;
-                    if (numberOptions.has(name)) {
-                        newOptions[name] = +strValue;
-                    } else if (name === "margins") {
-                        const parts = strValue.split(",").map(s => +s.trim());
-                        if (parts.length === 1) {
-                            newOptions.margins = parts[0];
-                        } else {
-                            newOptions.margins = parts;
-                        }
-                    } else if (name === "writeNumberOfSeats") {
-                        newOptions.writeNumberOfSeats = strValue.toLowerCase() === "true";
-                    } else {
-                        newOptions[name] = strValue;
-                    }
-                }
-                this.#options = { ...this.#options, ...newOptions };
-                break; // only consider the first options-like tag
-            }
         }
 
         this.render();
