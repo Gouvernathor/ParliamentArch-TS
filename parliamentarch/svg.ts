@@ -17,6 +17,8 @@ export interface SeatDataWithNumber extends SeatData {
  */
 const doc = globalThis.document ??
     new JSDOM().window.document;
+const Com = globalThis.Comment ??
+    new JSDOM().window.Comment;
 
 /**
  * Typically S is a tuple of x/y coordinates.
@@ -127,7 +129,7 @@ function populateHeader(
     svg.setAttribute("width", width.toString());
     svg.setAttribute("height", height.toString());
 
-    svg.appendChild(new Comment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+    svg.appendChild(new Com("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
 function addNumberOfSeats(
