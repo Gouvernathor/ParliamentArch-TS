@@ -71,6 +71,8 @@ export class ParliamentArch extends HTMLElement {
      * This method resets and overrides both the attribution and the options.
      * If the DOM is updated, either through the attributes or the children,
      * the changes will override the values set through this method.
+     *
+     * This method should only be called on an instance already present in the DOM.
      */
     setAttributionAndOptions(
         attribution: readonly SeatDataWithNumber[] | Map<SeatData, number>,
@@ -78,6 +80,8 @@ export class ParliamentArch extends HTMLElement {
     ) {
         this.#attribution = attribution;
         this.#options = options;
+
+        this.render();
     }
 
     connectedCallback() {
