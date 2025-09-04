@@ -4,7 +4,7 @@ import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData,
 export { type SeatData, type SeatDataWithNumber } from "./svg.js";
 
 export function getSVGFromAttribution(
-    attribution: Map<SeatData, number> | SeatDataWithNumber[],
+    attribution: Map<SeatData, number> | readonly SeatDataWithNumber[],
     seatRadiusFactor: number = .8,
     getSeatsCentersOptions: Partial<GetSeatsCentersOptions> = {},
     getGroupedSVGOptions: Partial<GetGroupedSVGOptions> = {},

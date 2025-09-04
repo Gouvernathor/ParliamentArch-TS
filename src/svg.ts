@@ -31,7 +31,7 @@ const Com = globalThis.Comment ??
  * @returns a mapping of each group to the seats it holds
  */
 export function dispatchSeats<S>(
-    groupSeats: Map<SeatData, number> | SeatDataWithNumber[],
+    groupSeats: Map<SeatData, number> | readonly SeatDataWithNumber[],
     seats: Iterable<S>,
 ): Map<SeatData, S[]> {
     const seatIterator = seats[Symbol.iterator]();
