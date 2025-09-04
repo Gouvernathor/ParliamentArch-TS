@@ -44,7 +44,7 @@ const numberOptions = new Set([
  * but this time in camelCase and not kebab-case.
  * Any option passed through the children overrides the options passed through the constructor.
  */
-export class Parliamentarch extends HTMLElement {
+export class ParliamentArch extends HTMLElement {
     #shadow;
     #attribution: readonly SeatDataWithNumber[] | Map<SeatData, number>;
     #options: AllOptions;
@@ -148,4 +148,4 @@ export class Parliamentarch extends HTMLElement {
 }
 
 // Define the custom element
-customElements.define("parliament-arch", Parliamentarch);
+customElements.define("parliament-arch", ParliamentArch);
