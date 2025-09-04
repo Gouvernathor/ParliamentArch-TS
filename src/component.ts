@@ -152,7 +152,7 @@ export class ParliamentArch extends HTMLElement {
         };
     }
 
-    private render() {
+    render() {
         this.#shadow.replaceChildren();
         let svgElement;
         try {
