@@ -71,13 +71,13 @@ These are found in the `parliamentarch` module.
 
 These are typescript interfaces explained in the SVG submodule below, but also exposed as part of the main module. They store values about how to draw a given seat (or a group of similar seats).
 
-`getSVGFromAttribution()`
+`getSVGFromAttribution(attribution, options?): SVGSVGElement`
 
 This function creates the diagram as an SVG element which can then be integrated in the DOM. The parameters are as follows:
 
 - `attribution: Map<SeatData, number> | SeatDataWithNumber[]`: a mapping from a SeatData object to a number of seats in the diagram. Alternatively, an array of SeatDataWithNumber objects. Typically, each SeatData or SeatDataWithNumber object represents a group or party. The ordering of the elements matter, and the groups as provided will be drawn from left to right in the diagram.
-- `seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
-- `getSeatsCentersOptions` and `getGroupedSVGOptions`: optional parameters passed through to the corresponding options parameters of the getSeatsCenters and groupedSVGOptions functions, respectively.
+- `options.seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
+- `options`: the rest of the options are those passed through to the similar options parameters of the getSeatsCenters and groupedSVGOptions functions.
 
 ## Geometry submodule contents
 
