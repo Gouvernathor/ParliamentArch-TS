@@ -1,4 +1,5 @@
 {
+    "extends": "@tsconfig/strictest/tsconfig.json",
     "compilerOptions": {
         "target": "es2019",
         "module": "preserve",
@@ -10,10 +11,6 @@
         "preserveConstEnums": false,
         "declaration": true,
         "isolatedModules": false,
-
-        "strict": true,
-        "noImplicitOverride": true,
-        "noImplicitReturns": true,
     },
     "include": [ "src" ],
 }

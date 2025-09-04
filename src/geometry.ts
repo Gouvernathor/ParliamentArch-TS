@@ -150,11 +150,11 @@ export function getSeatsCenters(
             if (r === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
             } else {
-                nSeatsThisRow = maxedRows[r];
+                nSeatsThisRow = maxedRows[r]!;
             }
         } else {
             // fullness of the diagram times the maximal number of seats in this row
-            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]);
+            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
             // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }
