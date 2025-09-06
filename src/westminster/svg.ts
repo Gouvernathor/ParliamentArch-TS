@@ -67,8 +67,7 @@ export function buildSVG(
 function populateHeader(svg: SVGSVGElement): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
-    // width from input
-    // height from input
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     /* TODO
     add a viewBox
     the width is the maximum x coordinate of any square, plus 1 (square side)
