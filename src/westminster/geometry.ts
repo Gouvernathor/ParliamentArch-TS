@@ -36,6 +36,8 @@ type Demeter = Record<Area, { nRows: number; nCols: number }>;
 
 /**
  * Rank-file indices for each seat for each party of each area.
+ * The rank-file indices are relative to the top-left corner of the area.
+ * The extremum values override the demeter parameters.
  */
 type Poseidon = Record<Area, Map<Party, [number, number][]>>;
 
@@ -127,7 +129,7 @@ export function enter(preApollo: PreApollo, options: Partial<Options> = {}) {
 
     const apollo = makeApollo(preApollo);
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
-    const poseidon = makePoseidon(demeter);
+    const poseidon = makePoseidon(apollo, demeter, {});
 }
 
 function newRecord<K extends string, V>(
@@ -252,4 +254,66 @@ function doesItFit(
     // TODO some other checks depending on options
 
     return true;
+}
+
+function makePoseidon(
+    apollo: Apollo,
+    demeter: Demeter,
+    {}: Pick<Options, never>,
+): Poseidon {
+    const speak = new Map<Party, [number, number][]>();
+    let speakY = 0;
+    for (const [party, nSeats] of apollo.speak) {
+        speak.set(party, Array.from({ length: nSeats }, () => [0, speakY++]));
+    }
+
+    const opposition = new Map<Party, [number, number][]>();
+    let oppositionX = 0,
+        oppositionY = demeter.opposition.nRows - 1;
+    for (const [party, nSeats] of apollo.opposition) {
+        opposition.set(party, Array.from({ length: nSeats }, () => {
+            try {
+                return [oppositionX, oppositionY--];
+            } finally {
+                if (oppositionY < 0) {
+                    oppositionY = demeter.opposition.nRows - 1;
+                    oppositionX++;
+                }
+            }
+        }));
+    }
+
+    const government = new Map<Party, [number, number][]>();
+    let governmentX = 0,
+        governmentY = 0;
+    for (const [party, nSeats] of apollo.government) {
+        government.set(party, Array.from({ length: nSeats }, () => {
+            try {
+                return [governmentX, governmentY++];
+            } finally {
+                if (governmentY >= demeter.government.nRows) {
+                    governmentY = 0;
+                    governmentX++;
+                }
+            }
+        }));
+    }
+
+    const cross = new Map<Party, [number, number][]>();
+    let crossX = 0,
+        crossY = 0;
+    for (const [party, nSeats] of apollo.cross) {
+        cross.set(party, Array.from({ length: nSeats }, () => {
+            try {
+                return [crossX++, crossY];
+            } finally {
+                if (crossX >= demeter.cross.nCols) {
+                    crossX = 0;
+                    crossY++;
+                }
+            }
+        }));
+    }
+
+    return { speak, opposition, government, cross };
 }
