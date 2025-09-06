@@ -9,13 +9,14 @@ interface Party {
     borderColor?: string|undefined;
     roundingRadius?: number|undefined;
 }
-interface PartyLocated extends Party {
+type TWithArea<T> = T & {
     area: Area;
 }
-interface PartyWithNumber extends Party {
+type TWithNumber<T> = T & {
     nSeats: number;
 }
-type PartyLocatedWithNumber = PartyLocated & PartyWithNumber;
+type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
+type PartyLocatedWithNumber = TLocatedWithNumber<Party>;
 
 
 type PreApollo = readonly PartyLocatedWithNumber[];
