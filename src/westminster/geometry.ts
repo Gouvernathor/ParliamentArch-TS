@@ -101,7 +101,7 @@ The number of rows and columns of the various areas are optimized so that all th
 */
 
 
-export function enter(preApollo: PreApollo, options: Partial<Options> = {}) {
+export function getSeatCoordinatesPerArea(preApollo: PreApollo, options: Partial<Options> = {}) {
     const {
         requestedWingNRows,
         requestedCrossNCols,
