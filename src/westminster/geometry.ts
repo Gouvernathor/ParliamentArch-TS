@@ -67,34 +67,18 @@ interface Options {
      * over having equal rows.
      */
     fullWidth: boolean; // default false
-
-    /**
-     * The default value for the rounding radius of the corners of the squares,
-     * unless overridden for a specific party.
-     */
-    roundingRadius: number; // default 0
-
-    /**
-     * The relative spacing between neighboring squares of the same area.
-     * This is to be multiplied by the side of a square to get the actual spacing.
-     */
-    spacingFactor: number; // default .1
 }
 function defaultOptions({
     requestedWingNRows = 0,
     requestedCrossNCols = 0,
     cozy = true,
     fullWidth = false,
-    roundingRadius = 0,
-    spacingFactor = .1,
 }: Partial<Options> = {}): Options {
     return {
         requestedWingNRows,
         requestedCrossNCols,
         cozy,
         fullWidth,
-        roundingRadius,
-        spacingFactor,
     };
 }
 
@@ -123,13 +107,11 @@ export function enter(preApollo: PreApollo, options: Partial<Options> = {}) {
         requestedCrossNCols,
         cozy,
         fullWidth,
-        roundingRadius,
-        spacingFactor,
     } = defaultOptions(options);
 
     const apollo = makeApollo(preApollo);
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
-    const poseidon = makePoseidon(apollo, demeter, {});
+    return makePoseidon(apollo, demeter, {});
 }
 
 function newRecord<K extends string, V>(
