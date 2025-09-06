@@ -1,4 +1,4 @@
-import { Area, Poseidon } from "./common";
+import { Area, AREAS, newRecord, Poseidon } from "./common";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
@@ -67,9 +67,10 @@ export function buildSVG(
 function populateHeader(svg: SVGSVGElement): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
-    // width
-    // height
+    // width from input
+    // height from input
     /* TODO
+    add a viewBox
     the width is the maximum x coordinate of any square, plus 1 (square side)
     the height is the maximum y coordinate of any square, plus 1 (square side),
     plus the minimum y coordinate of any square.
@@ -78,10 +79,112 @@ function populateHeader(svg: SVGSVGElement): void {
     svg.appendChild(doc.createComment("Created with ParliamentArch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
+function extremum() {
+    const f = (v: number) => {
+        if (f.min === null || v < f.min) f.min = v;
+        if (f.max === null || v > f.max) f.max = v;
+    };
+    f.min = null as number|null;
+    f.max = null as number|null;
+    return f;
+}
+
 function addGroupedSeats(
-    svg: SVGSVGElement,
+    container: SVGElement,
     poseidon: Poseidon<Party>,
     options: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): void {
-    // TODO
+    const extremums = newRecord(AREAS, () => ({ x: extremum(), y: extremum() }));
+
+    // start with the opposition, which will give us the bottom opposition y coordinate
+    const oppositionXOffset = 1; // because of the speaker
+    const oppositionYOffset = 0;
+    container.appendChild(createArea(
+        poseidon.opposition,
+        oppositionXOffset, oppositionYOffset,
+        extremums.opposition,
+        options,
+    ));
+
+    // then the government using that bottom, which will give us the bottom y coordinate
+    const governmentXOffset = 1; // because of the speaker
+    const governmentYOffset = 2 + (extremums.opposition.y.max ?? 0); // TODO not true if both wings have equal rows and opposition is empty
+    container.appendChild(createArea(
+        poseidon.government,
+        governmentXOffset, governmentYOffset,
+        extremums.government,
+        options,
+    ));
+
+    // then the speaker from the bottom y coordinate
+    const speakerXOffset = 0;
+    const speakerYOffset = extremums.government.y.max ?? (extremums.opposition.y.max! + 2); // FIXME incorrect
+    container.appendChild(createArea(
+        poseidon.speak,
+        speakerXOffset, speakerYOffset,
+        extremums.speak,
+        options,
+    ));
+
+    // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
+    // we have the right x coordinate of the wings from the max x of both wings
+    const crossXOffset = 1/*speaker*/ + Math.max(extremums.opposition.x.max ?? 0, extremums.government.x.max ?? 0) + 1/*gap*/;
+    const crossYOffset = speakerYOffset;
+    container.appendChild(createArea(
+        poseidon.cross,
+        crossXOffset, crossYOffset,
+        extremums.cross,
+        options,
+    ));
+}
+
+function createArea(
+    a: Poseidon<Party>[Area],
+    xOffset: number, yOffset: number,
+    ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
+    options: Pick<Options, "roundingRadius"|"spacingFactor">,
+): SVGGElement {
+    const areaGroup = doc.createElementNS(SVG_NS, "g");
+    for (const [party, seats] of a) {
+        const partyGroup = areaGroup.appendChild(doc.createElementNS(SVG_NS, "g"));
+        populatePartyGroup(partyGroup, party);
+        // TODO three unused party parameters: borderSize, borderColor, roundingRadius
+
+        for (const [col, row] of seats) {
+            const x = xOffset + col;
+            const y = yOffset + row;
+            ex.x(x);
+            ex.y(y);
+            partyGroup.appendChild(rectWithCoordinates(y, x, options));
+        }
+    }
+    return areaGroup;
+}
+
+function populatePartyGroup(
+    partyGroup: SVGGElement,
+    party: Party,
+): void {
+    if (party.id !== undefined) {
+        partyGroup.setAttribute("id", party.id);
+    }
+    if (party.data !== undefined) {
+        partyGroup.appendChild(doc.createElementNS(SVG_NS, "title"))
+            .textContent = party.data;
+    }
+    partyGroup.setAttribute("fill", party.color);
+}
+
+function rectWithCoordinates(
+    x: number, y: number,
+    { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
+): SVGRectElement {
+    const rect = doc.createElementNS(SVG_NS, "rect");
+    rect.setAttribute("x", (spacingFactor + x).toString());
+    rect.setAttribute("y", (spacingFactor + y).toString());
+    rect.setAttribute("width", (1 - 2*spacingFactor).toString());
+    rect.setAttribute("height", (1 - 2*spacingFactor).toString());
+    rect.setAttribute("rx", roundingRadius.toString());
+    rect.setAttribute("ry", roundingRadius.toString());
+    return rect;
 }
