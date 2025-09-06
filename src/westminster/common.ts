@@ -1,7 +1,7 @@
-export const wings = ["opposition", "government"] as const;
-export type Wing = (typeof wings)[number];
-export const areas = ["speak", ...wings, "cross"] as const;
-export type Area = (typeof areas)[number];
+export const WINGS = ["opposition", "government"] as const;
+export type Wing = (typeof WINGS)[number];
+export const AREAS = ["speak", ...WINGS, "cross"] as const;
+export type Area = (typeof AREAS)[number];
 
 /**
  * Rank-file indices for each seat for each party of each area.

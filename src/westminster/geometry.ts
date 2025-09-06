@@ -1,4 +1,4 @@
-import { Area, areas, Poseidon } from "./common";
+import { Area, AREAS, Poseidon } from "./common";
 
 type TWithArea<T> = T & {
     area: Area;
@@ -109,7 +109,7 @@ function newRecord<K extends string, V>(
 }
 
 function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
-    const apollo: Apollo<Party> = newRecord(areas, () => new Map());
+    const apollo: Apollo<Party> = newRecord(AREAS, () => new Map());
     for (const party of preApollo) {
         apollo[party.area].set(party, party.nSeats);
     }
@@ -117,7 +117,7 @@ function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
 }
 
 function makeRequestedHera<Party>(apollo: Apollo<Party>): Hera {
-    return newRecord(areas, area => {
+    return newRecord(AREAS, area => {
         let nSeats = 0;
         for (const n of apollo[area].values()) {
             nSeats += n;
