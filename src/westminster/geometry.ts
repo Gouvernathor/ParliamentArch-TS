@@ -42,7 +42,7 @@ type Demeter = Record<Area, { nRows: number; nCols: number }>;
 type Poseidon = Record<Area, Map<Party, [number, number][]>>;
 
 
-interface Options {
+export interface Options {
     /**
      * A requested number of rows for each of the two wings.
      * Ignored if 0, invalid (and ignored) if negative.
