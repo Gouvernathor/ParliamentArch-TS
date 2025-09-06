@@ -1,3 +1,5 @@
+import { Area, Poseidon } from "./common";
+
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
  * without ever importing it in browser mode.
@@ -41,4 +43,45 @@ function defaultOptions({
         roundingRadius,
         spacingFactor,
     };
+}
+
+
+export function buildSVG(
+    poseidon: Poseidon<Party>,
+    options: Partial<Options> = {},
+): SVGSVGElement {
+    const { roundingRadius, spacingFactor } = defaultOptions(options);
+
+    const svg = doc.createElementNS(SVG_NS, "svg");
+
+    populateHeader(svg);
+
+    // TODO have the addGroupedSeats return the extremum coordinates,
+    // and use them to compute the width and height of the SVG after populating it ?
+
+    addGroupedSeats(svg, poseidon, { roundingRadius, spacingFactor });
+
+    return svg;
+}
+
+function populateHeader(svg: SVGSVGElement): void {
+    svg.setAttribute("xmlns", SVG_NS);
+    svg.setAttribute("version", "1.1");
+    // width
+    // height
+    /* TODO
+    the width is the maximum x coordinate of any square, plus 1 (square side)
+    the height is the maximum y coordinate of any square, plus 1 (square side),
+    plus the minimum y coordinate of any square.
+    */
+
+    svg.appendChild(doc.createComment("Created with ParliamentArch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+}
+
+function addGroupedSeats(
+    svg: SVGSVGElement,
+    poseidon: Poseidon<Party>,
+    options: Pick<Options, "roundingRadius"|"spacingFactor">,
+): void {
+    // TODO
 }
