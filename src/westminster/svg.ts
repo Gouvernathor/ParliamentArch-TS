@@ -10,6 +10,16 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 export {};
 
 
+export interface Party {
+    color: string;
+    id?: string|undefined;
+    data?: string|undefined;
+
+    borderSize?: number|undefined;
+    borderColor?: string|undefined;
+    roundingRadius?: number|undefined;
+}
+
 export interface Options {
     /**
      * The default value for the rounding radius of the corners of the squares,

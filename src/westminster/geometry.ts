@@ -1,14 +1,5 @@
 import { Area, areas } from "./common";
 
-interface Party {
-    color: string;
-    id?: string|undefined;
-    data?: string|undefined;
-
-    borderSize?: number|undefined;
-    borderColor?: string|undefined;
-    roundingRadius?: number|undefined;
-}
 type TWithArea<T> = T & {
     area: Area;
 }
@@ -16,14 +7,13 @@ type TWithNumber<T> = T & {
     nSeats: number;
 }
 type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
-type PartyLocatedWithNumber = TLocatedWithNumber<Party>;
 
 
-type PreApollo = readonly PartyLocatedWithNumber[];
+type PreApollo<Party> = readonly TLocatedWithNumber<Party>[];
 /**
  * Number of seats for each party for each area.
  */
-type Apollo = Record<Area, Map<Party, number>>;
+type Apollo<Party> = Record<Area, Map<Party, number>>;
 
 /**
  * Number of occupied seats for each area.
@@ -40,7 +30,7 @@ type Demeter = Record<Area, { nRows: number; nCols: number }>;
  * The rank-file indices are relative to the top-left corner of the area.
  * The extremum values override the demeter parameters.
  */
-type Poseidon = Record<Area, Map<Party, [number, number][]>>;
+type Poseidon<Party> = Record<Area, Map<Party, [number, number][]>>;
 
 
 export interface Options {
@@ -102,7 +92,7 @@ The number of rows and columns of the various areas are optimized so that all th
 */
 
 
-export function getSeatCoordinatesPerArea(preApollo: PreApollo, options: Partial<Options> = {}) {
+export function getSeatCoordinatesPerArea<Party>(preApollo: PreApollo<Party>, options: Partial<Options> = {}) {
     const {
         requestedWingNRows,
         requestedCrossNCols,
@@ -122,15 +112,15 @@ function newRecord<K extends string, V>(
     return Object.fromEntries(keys.map(k => [k, valueGenerator(k)])) as Record<K, V>;
 }
 
-function makeApollo(preApollo: PreApollo): Apollo {
-    const apollo: Apollo = newRecord(areas, () => new Map());
+function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
+    const apollo: Apollo<Party> = newRecord(areas, () => new Map());
     for (const party of preApollo) {
         apollo[party.area].set(party, party.nSeats);
     }
     return apollo;
 }
 
-function makeRequestedHera(apollo: Apollo): Hera {
+function makeRequestedHera<Party>(apollo: Apollo<Party>): Hera {
     return newRecord(areas, area => {
         let nSeats = 0;
         for (const n of apollo[area].values()) {
@@ -160,8 +150,8 @@ nCrossbenchers <= crossRows * crossCols
 crossRows <= wingRows * 2 + 2
 nSpeaker <= wingRows * 2 + 2
 */
-function makeDemeter(
-    apollo: Apollo,
+function makeDemeter<Party>(
+    apollo: Apollo<Party>,
     {}: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
@@ -202,13 +192,13 @@ function makeDemeter(
     throw new Error("An error occurred");
 }
 
-function doesItFit(
+function doesItFit<Party>(
     {
         wingRows, wingCols, crossRows, crossCols, heightInSquares,
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number;
     },
-    _apollo: Apollo,
+    _apollo: Apollo<Party>,
     requestedHera: Hera,
     {}: Pick<Options, never>,
 ): boolean {
@@ -239,11 +229,11 @@ function doesItFit(
     return true;
 }
 
-function makePoseidon(
-    apollo: Apollo,
+function makePoseidon<Party>(
+    apollo: Apollo<Party>,
     demeter: Demeter,
     {}: Pick<Options, never>,
-): Poseidon {
+): Poseidon<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
     for (const [party, nSeats] of apollo.speak) {
