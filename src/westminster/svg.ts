@@ -54,26 +54,21 @@ export function buildSVG(
 
     const svg = doc.createElementNS(SVG_NS, "svg");
 
-    populateHeader(svg);
+    const [maxX, maxY] = addGroupedSeats(svg, poseidon, { roundingRadius, spacingFactor });
 
-    // TODO have the addGroupedSeats return the extremum coordinates,
-    // and use them to compute the width and height of the SVG after populating it ?
-
-    addGroupedSeats(svg, poseidon, { roundingRadius, spacingFactor });
+    populateHeader(svg, [maxX, maxY]);
 
     return svg;
 }
 
-function populateHeader(svg: SVGSVGElement): void {
+function populateHeader(
+    svg: SVGSVGElement,
+    [viewBoxWidth, viewBoxHeight]: [number, number],
+): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    /* TODO
-    add a viewBox
-    the width is the maximum x coordinate of any square, plus 1 (square side)
-    the height is the maximum y coordinate of any square, plus 1 (square side),
-    plus the minimum y coordinate of any square.
-    */
+    svg.setAttribute("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`);
 
     svg.appendChild(doc.createComment("Created with ParliamentArch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
@@ -92,7 +87,7 @@ function addGroupedSeats(
     container: SVGElement,
     poseidon: Poseidon<Party>,
     options: Pick<Options, "roundingRadius"|"spacingFactor">,
-): void {
+): [number, number] {
     const extremums = newRecord(AREAS, () => ({ x: extremum(), y: extremum() }));
 
     // start with the opposition, which will give us the bottom opposition y coordinate
@@ -115,9 +110,12 @@ function addGroupedSeats(
         options,
     ));
 
+    const maxWingsX = Math.max(extremums.opposition.x.max ?? 0, extremums.government.x.max ?? 0);
+    const maxY = extremums.government.y.max ?? (2*extremums.opposition.y.max! + 2);
+
     // then the speaker from the bottom y coordinate
     const speakerXOffset = 0;
-    const speakerYOffset = (extremums.government.y.max ?? (extremums.opposition.y.max! + 2)) / 2;
+    const speakerYOffset = maxY / 2;
     const speakArea = createArea(
         poseidon.speak,
         speakerXOffset, speakerYOffset,
@@ -129,7 +127,7 @@ function addGroupedSeats(
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
     // we have the right x coordinate of the wings from the max x of both wings
-    const crossXOffset = 1/*speaker*/ + Math.max(extremums.opposition.x.max ?? 0, extremums.government.x.max ?? 0) + 1/*gap*/;
+    const crossXOffset = 1/*speaker*/ + maxWingsX + 1/*gap*/;
     const crossYOffset = speakerYOffset;
     const crossArea = createArea(
         poseidon.cross,
@@ -139,6 +137,11 @@ function addGroupedSeats(
     );
     crossArea.setAttribute("transform", "translateY(-50%)");
     container.appendChild(crossArea);
+
+    return [
+        (extremums.cross.x.max ?? crossXOffset) + 1,
+        maxY + 1,
+    ];
 }
 
 function createArea(
