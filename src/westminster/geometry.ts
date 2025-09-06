@@ -1,4 +1,4 @@
-import { Area, AREAS, Poseidon } from "./common";
+import { Area, AREAS, newRecord, Poseidon } from "./common";
 
 type TWithArea<T> = T & {
     area: Area;
@@ -99,13 +99,6 @@ export function getSeatCoordinatesPerArea<Party>(
     const apollo = makeApollo(preApollo);
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
     return makePoseidon(apollo, demeter, {});
-}
-
-function newRecord<K extends string, V>(
-    keys: readonly K[],
-    valueGenerator: (key: K) => V,
-): Record<K, V> {
-    return Object.fromEntries(keys.map(k => [k, valueGenerator(k)])) as Record<K, V>;
 }
 
 function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
