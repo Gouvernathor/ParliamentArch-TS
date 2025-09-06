@@ -1,4 +1,4 @@
-import { Area, areas } from "./common";
+import { Area, areas, Poseidon } from "./common";
 
 type TWithArea<T> = T & {
     area: Area;
@@ -24,13 +24,6 @@ type Hera = Record<Area, number>;
  * Number of rows and columns for each area.
  */
 type Demeter = Record<Area, { nRows: number; nCols: number }>;
-
-/**
- * Rank-file indices for each seat for each party of each area.
- * The rank-file indices are relative to the top-left corner of the area.
- * The extremum values override the demeter parameters.
- */
-type Poseidon<Party> = Record<Area, Map<Party, [number, number][]>>;
 
 
 export interface Options {
@@ -92,7 +85,10 @@ The number of rows and columns of the various areas are optimized so that all th
 */
 
 
-export function getSeatCoordinatesPerArea<Party>(preApollo: PreApollo<Party>, options: Partial<Options> = {}) {
+export function getSeatCoordinatesPerArea<Party>(
+    preApollo: PreApollo<Party>,
+    options: Partial<Options> = {},
+): Poseidon<Party> {
     const {
         requestedWingNRows,
         requestedCrossNCols,
