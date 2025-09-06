@@ -142,20 +142,23 @@ function createArea(
     a: Poseidon<Party>[Area],
     xOffset: number, yOffset: number,
     ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
-    options: Pick<Options, "roundingRadius"|"spacingFactor">,
+    { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGGElement {
     const areaGroup = doc.createElementNS(SVG_NS, "g");
     for (const [party, seats] of a) {
         const partyGroup = areaGroup.appendChild(doc.createElementNS(SVG_NS, "g"));
         populatePartyGroup(partyGroup, party);
-        // TODO three unused party parameters: borderSize, borderColor, roundingRadius
+        const partyOptions = {
+            roundingRadius: party.roundingRadius ?? roundingRadius,
+            spacingFactor,
+        };
 
         for (const [col, row] of seats) {
             const x = xOffset + col;
             const y = yOffset + row;
             ex.x(x);
             ex.y(y);
-            partyGroup.appendChild(rectWithCoordinates(y, x, options));
+            partyGroup.appendChild(rectWithCoordinates(y, x, partyOptions));
         }
     }
     return areaGroup;
@@ -172,7 +175,12 @@ function populatePartyGroup(
         partyGroup.appendChild(doc.createElementNS(SVG_NS, "title"))
             .textContent = party.data;
     }
+
     partyGroup.setAttribute("fill", party.color);
+    if (party.borderSize !== undefined) {
+        partyGroup.setAttribute("stroke-width", party.borderSize.toString());
+        partyGroup.setAttribute("stroke", party.borderColor ?? "black");
+    }
 }
 
 function rectWithCoordinates(
