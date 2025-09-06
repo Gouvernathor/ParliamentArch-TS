@@ -23,3 +23,12 @@ export interface Options {
      */
     spacingFactor: number; // default .1
 }
+function defaultOptions({
+    roundingRadius = 0,
+    spacingFactor = 0.1,
+}: Partial<Options> = {}): Options {
+    return {
+        roundingRadius,
+        spacingFactor,
+    };
+}
