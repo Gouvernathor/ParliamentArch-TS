@@ -127,7 +127,7 @@ export function enter(preApollo: PreApollo, options: Partial<Options> = {}) {
 
     const apollo = makeApollo(preApollo);
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
-    // const poseidon = makePoseidon(demeter);
+    const poseidon = makePoseidon(demeter);
 }
 
 function newRecord<K extends string, V>(
@@ -204,7 +204,7 @@ function makeDemeter(
             crossCols = 0;
         }
 
-        if (doesItFit(requestedHera, { wingRows, wingCols, crossRows, crossCols, heightInSquares, }, {})) {
+        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, }, apollo, requestedHera, {})) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: wingCols },
@@ -218,12 +218,13 @@ function makeDemeter(
 }
 
 function doesItFit(
-    requestedHera: Hera,
     {
         wingRows, wingCols, crossRows, crossCols, heightInSquares,
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number;
     },
+    _apollo: Apollo,
+    requestedHera: Hera,
     {}: Pick<Options, never>,
 ): boolean {
     if (heightInSquares < requestedHera.speak
