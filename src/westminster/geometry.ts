@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, Poseidon } from "./common";
+import { Area, AREAS, newRecord, Poseidon } from "./common.js";
 
 type TWithArea<T> = T & {
     area: Area;

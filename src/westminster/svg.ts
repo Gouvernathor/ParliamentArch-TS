@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, Poseidon } from "./common";
+import { Area, AREAS, newRecord, Poseidon } from "./common.js";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
