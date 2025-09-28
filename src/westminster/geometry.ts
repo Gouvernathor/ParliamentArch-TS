@@ -85,8 +85,16 @@ The number of rows and columns of the various areas are optimized so that all th
 */
 
 
+export function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
+    const apollo: Apollo<Party> = newRecord(AREAS, () => new Map());
+    for (const party of preApollo) {
+        apollo[party.area].set(party, party.nSeats);
+    }
+    return apollo;
+}
+
 export function getSeatCoordinatesPerArea<Party>(
-    preApollo: PreApollo<Party>,
+    apollo: Apollo<Party>,
     options: Partial<Options> = {},
 ): Poseidon<Party> {
     const {
@@ -96,17 +104,8 @@ export function getSeatCoordinatesPerArea<Party>(
         fullWidth,
     } = defaultOptions(options);
 
-    const apollo = makeApollo(preApollo);
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
     return makePoseidon(apollo, demeter, {});
-}
-
-function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
-    const apollo: Apollo<Party> = newRecord(AREAS, () => new Map());
-    for (const party of preApollo) {
-        apollo[party.area].set(party, party.nSeats);
-    }
-    return apollo;
 }
 
 function makeRequestedHera<Party>(apollo: Apollo<Party>): Hera {
