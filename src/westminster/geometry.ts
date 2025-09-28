@@ -1,19 +1,9 @@
 import { Area, AREAS, newRecord, Poseidon } from "./common.js";
 
-type TWithArea<T> = T & {
-    area: Area;
-}
-type TWithNumber<T> = T & {
-    nSeats: number;
-}
-type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
-
-
-type PreApollo<Party> = readonly TLocatedWithNumber<Party>[];
 /**
  * Number of seats for each party for each area.
  */
-type Apollo<Party> = Record<Area, Map<Party, number>>;
+export type Apollo<Party> = Record<Area, Map<Party, number>>;
 
 /**
  * Number of occupied seats for each area.
@@ -84,14 +74,6 @@ The speakers are in a single column.
 The number of rows and columns of the various areas are optimized so that all the squares fit in a 2:1 rectangle.
 */
 
-
-export function makeApollo<Party>(preApollo: PreApollo<Party>): Apollo<Party> {
-    const apollo: Apollo<Party> = newRecord(AREAS, () => new Map());
-    for (const party of preApollo) {
-        apollo[party.area].set(party, party.nSeats);
-    }
-    return apollo;
-}
 
 export function getSeatCoordinatesPerArea<Party>(
     apollo: Apollo<Party>,
