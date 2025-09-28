@@ -11,12 +11,16 @@ type TWithNumber<T> = T & {
 type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
 
 type AnyAttribution =
-        | Record<Area, readonly [Party, number][]>
-        | Record<Area, readonly TWithNumber<Party>[]>
-        | readonly TLocatedWithNumber<Party>[]
-        | readonly [TWithArea<Party>, number][]
-        | Apollo<Party>
+    | Record<Area, readonly [Party, number][]>
+    | Record<Area, readonly TWithNumber<Party>[]>
+    | readonly TLocatedWithNumber<Party>[]
+    | readonly [TWithArea<Party>, number][]
+    | Apollo<Party>
 ;
+
+function extractSeats<P extends Party>(party: TWithNumber<P>): [P, number] {
+    return [party, party.nSeats];
+}
 
 function apolloFromAnyAttribution(
     attribution: AnyAttribution,
@@ -32,7 +36,7 @@ function apolloFromAnyAttribution(
                 return new Map(entriesThisArea as readonly [Party, number][]);
             }
             return new Map((entriesThisArea as readonly TWithNumber<Party>[])
-                .map(p => [p, p.nSeats] as const));
+                .map(extractSeats));
         });
     } else if (Array.isArray(attribution)) {
         // pre-apollo or array of [partyWithArea, nSeats]
@@ -40,7 +44,7 @@ function apolloFromAnyAttribution(
         let preApollo: readonly [TWithArea<Party>, number][];
         if (attribution.every(p => "area" in p)) {
             preApollo = (attribution as readonly TLocatedWithNumber<Party>[])
-                .map(p => [p, p.nSeats] as const);
+                .map(extractSeats);
         } else {
             preApollo = attribution as readonly [TWithArea<Party>, number][];
         }
