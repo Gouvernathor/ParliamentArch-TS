@@ -1,6 +1,6 @@
 import { Area, AREAS, newRecord } from "./common";
-import { Apollo } from "./geometry";
-import { Party } from "./svg";
+import { Apollo, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry";
+import { buildSVG, Options as SVGOptions, Party } from "./svg";
 
 type TWithArea<T> = T & {
     area: Area;
@@ -10,13 +10,16 @@ type TWithNumber<T> = T & {
 }
 type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
 
-function apolloFromAnyAttribution(
-    attribution:
+type AnyAttribution =
         | Record<Area, readonly [Party, number][]>
         | Record<Area, readonly TWithNumber<Party>[]>
         | readonly TLocatedWithNumber<Party>[]
         | readonly [TWithArea<Party>, number][]
-        | Apollo<Party>,
+        | Apollo<Party>
+;
+
+function apolloFromAnyAttribution(
+    attribution: AnyAttribution,
 ): Apollo<Party> {
     if (Object.keys(attribution).every(k => AREAS.includes(k as Area))) {
         return newRecord(AREAS, area => {
@@ -48,4 +51,11 @@ function apolloFromAnyAttribution(
     }
 }
 
-export function getSVGFromAttribution() {}
+interface Options extends GeometryOptions, SVGOptions {}
+
+export function getSVGFromAttribution(
+    attribution: AnyAttribution,
+    options: Partial<Options> = {},
+): SVGSVGElement {
+    return buildSVG(getSeatCoordinatesPerArea(apolloFromAnyAttribution(attribution), options), options);
+}
