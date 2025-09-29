@@ -32,7 +32,7 @@ export function treat_inputlist(
         sumDelegates[party.group] += party.nSeats;
     }
 
-    const { poslist, wingRows, absoluteRoundingRadius, blockside, svgwidth, svgheight } = seats({
+    const { poslist, /*wingRows,*/ absoluteRoundingRadius, blockside, svgwidth, svgheight } = seats({
         parties,
         sumDelegates,
         optionWingrows,
@@ -47,7 +47,7 @@ export function treat_inputlist(
         parties.keys(),
         poslist,
         blockside*(1-spacing),
-        wingRows,
+        // wingRows,
         fullwidth || cozy,
         absoluteRoundingRadius,
         svgwidth,
@@ -374,7 +374,7 @@ export function buildSVG(
     parties: Iterable<SeatDataWithNumber>,
     poslist: Iterable<[Area, [number, number][]]>,
     blockside: number,
-    wingRows: unknown,
+    // wingRows: unknown,
     fullwidthOrCozy: boolean,
     roundingRadius: number,
     svgwidth: number,
