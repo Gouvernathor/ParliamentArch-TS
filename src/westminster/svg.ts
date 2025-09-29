@@ -119,7 +119,7 @@ function addGroupedSeats(
         extremums.speak,
         options,
     );
-    speakArea.setAttribute("transform", "translateY(-50%)");
+    speakArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
     container.appendChild(speakArea);
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
@@ -132,7 +132,7 @@ function addGroupedSeats(
         extremums.cross,
         options,
     );
-    crossArea.setAttribute("transform", "translateY(-50%)");
+    crossArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
     container.appendChild(crossArea);
 
     return [
