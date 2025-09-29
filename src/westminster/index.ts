@@ -1,6 +1,6 @@
-import { Area, AREAS, newRecord } from "./common";
-import { Apollo, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry";
-import { buildSVG, Options as SVGOptions, Party } from "./svg";
+import { Area, AREAS, newRecord } from "./common.js";
+import { Apollo, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry.js";
+import { buildSVG, Options as SVGOptions, Party } from "./svg.js";
 
 type TWithArea<T> = T & {
     area: Area;
