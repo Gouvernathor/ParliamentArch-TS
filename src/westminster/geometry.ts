@@ -42,19 +42,19 @@ export interface Options {
      * Whether to prioritize having equal columns between the two wings,
      * over having equal rows.
      */
-    fullWidth: boolean; // default false
+    // fullWidth: boolean; // default false
 }
 function defaultOptions({
     requestedWingNRows = 0,
     requestedCrossNCols = 0,
     cozy = true,
-    fullWidth = false,
+    // fullWidth = false,
 }: Partial<Options> = {}): Options {
     return {
         requestedWingNRows,
         requestedCrossNCols,
         cozy,
-        fullWidth,
+        // fullWidth,
     };
 }
 
@@ -85,10 +85,10 @@ export function getSeatCoordinatesPerArea<Party>(
         requestedWingNRows,
         requestedCrossNCols,
         cozy,
-        fullWidth,
+        // fullWidth,
     } = defaultOptions(options);
 
-    const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
+    const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, /*fullWidth*/ });
     return makePoseidon(apollo, demeter, { cozy });
 }
 
@@ -124,7 +124,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: Apollo<Party>,
-    { requestedWingNRows, requestedCrossNCols, cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
+    { requestedWingNRows, requestedCrossNCols, cozy }: Options,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
