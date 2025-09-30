@@ -113,27 +113,25 @@ function addGroupedSeats(
     // then the speaker from the bottom y coordinate
     const speakerXOffset = 0;
     const speakerYOffset = maxY / 2;
-    const speakArea = createArea(
+    const speakArea = container.appendChild(createArea(
         poseidon.speak,
         speakerXOffset, speakerYOffset,
         extremums.speak,
         options,
-    );
+    ));
     speakArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
-    container.appendChild(speakArea);
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
     // we have the right x coordinate of the wings from the max x of both wings
     const crossXOffset = 1/*speaker*/ + maxWingsX + 1/*gap*/;
     const crossYOffset = speakerYOffset;
-    const crossArea = createArea(
+    const crossArea = container.appendChild(createArea(
         poseidon.cross,
         crossXOffset, crossYOffset,
         extremums.cross,
         options,
-    );
+    ));
     crossArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
-    container.appendChild(crossArea);
 
     return [
         (extremums.cross.x.max ?? crossXOffset) + 1,
