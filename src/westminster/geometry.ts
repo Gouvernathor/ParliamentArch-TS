@@ -87,7 +87,7 @@ export function getSeatCoordinatesPerArea<Party>(
     } = defaultOptions(options);
 
     const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, fullWidth });
-    return makePoseidon(apollo, demeter, {});
+    return makePoseidon(apollo, demeter, { cozy });
 }
 
 function makeRequestedHera<Party>(apollo: Apollo<Party>): Hera {
@@ -228,7 +228,7 @@ function reduceNotCozy(
 function makePoseidon<Party>(
     apollo: Apollo<Party>,
     demeter: Demeter,
-    {}: Pick<Options, never>,
+    { cozy }: Pick<Options, "cozy">,
 ): Poseidon<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
@@ -250,6 +250,10 @@ function makePoseidon<Party>(
                 }
             }
         }));
+        if (!cozy) {
+            oppositionY = demeter.opposition.nRows - 1;
+            oppositionX++;
+        }
     }
 
     const government = new Map<Party, [number, number][]>();
@@ -266,6 +270,10 @@ function makePoseidon<Party>(
                 }
             }
         }));
+        if (!cozy) {
+            governmentY = 0;
+            governmentX++;
+        }
     }
 
     const cross = new Map<Party, [number, number][]>();
@@ -282,6 +290,10 @@ function makePoseidon<Party>(
                 }
             }
         }));
+        if (!cozy) {
+            crossX = 0;
+            crossY++;
+        }
     }
 
     return { speak, opposition, government, cross };
