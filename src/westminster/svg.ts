@@ -118,7 +118,7 @@ function addGroupedSeats(
     areaContainers.cross.setAttribute("transform", `translate(${crossXOffset}, ${crossYOffset})`);
 
     return [
-        crossXOffset + (extremums.cross.x.max ?? 0) + 1,
+        crossXOffset + (extremums.cross.x.max ?? -1) + 1,
         maxY + 1,
     ];
 }
