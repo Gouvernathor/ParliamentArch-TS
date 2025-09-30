@@ -25,8 +25,9 @@ export interface Options {
 
     /**
      * A requested number of columns for the crossbenchers.
-     * Ignored if 0, invalid (and ignored) if negative.
-     * Also called centerCols.
+     * Ignored if 0, invalid (and ignored) if negative,
+     * will also be ignored if inferior to the total number of crossbenchers.
+     * Previously called centerCols.
      */
     requestedCrossNCols: number; // default 0
 
@@ -122,15 +123,19 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: Apollo<Party>,
-    { cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
+    { requestedCrossNCols, cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
+    if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
+        requestedCrossNCols = 0;
+    }
+
     const sanityCheck = requestedHera.speak + requestedHera.opposition + requestedHera.government + requestedHera.cross;
     if (!Number.isSafeInteger(sanityCheck)) {
         throw new Error("Invalid number(s) of seats");
     }
 
-    for (let heightInSquares = Math.max(4, requestedHera.speak);
+    for (let heightInSquares = Math.max(4, requestedHera.speak, Math.min(requestedCrossNCols, requestedHera.cross));
          heightInSquares < 4*sanityCheck;
          heightInSquares++) {
         let crossRows: number,
@@ -138,10 +143,10 @@ function makeDemeter<Party>(
             wingRows: number,
             wingCols: number;
 
-        wingRows = Math.trunc(heightInSquares/2 - 2);
+        wingRows = Math.trunc(heightInSquares/2 - 1);
         wingCols = 2*heightInSquares - 1; // 1 for the speaker
         if (requestedHera.cross > 0) {
-            crossCols = Math.ceil(requestedHera.cross / heightInSquares);
+            crossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
             crossRows = Math.ceil(requestedHera.cross / crossCols);
             wingCols -= crossCols + 1; // 1 for the gap between wings and crossbenchers
         } else {
