@@ -16,6 +16,7 @@ type Hera = Record<Area, number>;
 type Demeter = Record<Area, { nRows: number; nCols: number }>;
 
 
+// TODO rename, remove "requested"
 export interface Options {
     /**
      * A requested number of rows for each of the two wings.
