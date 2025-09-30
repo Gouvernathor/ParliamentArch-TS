@@ -13,6 +13,6 @@ export type Poseidon<Party> = Record<Area, Map<Party, [number, number][]>>;
 export function newRecord<K extends string, V>(
     keys: readonly K[],
     valueGenerator: (key: K) => V,
-): Record<K, V> {
-    return Object.fromEntries(keys.map(k => [k, valueGenerator(k)])) as Record<K, V>;
+) {
+    return Object.fromEntries(keys.map(k => [k, valueGenerator(k)])) as { [k in K]: V; };
 }
