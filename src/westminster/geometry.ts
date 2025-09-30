@@ -123,7 +123,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: Apollo<Party>,
-    { requestedCrossNCols, cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
+    { requestedWingNRows, requestedCrossNCols, cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
@@ -143,7 +143,7 @@ function makeDemeter<Party>(
             wingRows: number,
             wingCols: number;
 
-        wingRows = Math.trunc(heightInSquares/2 - 1);
+        wingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
         wingCols = 2*heightInSquares - 1; // 1 for the speaker
         if (requestedHera.cross > 0) {
             crossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
