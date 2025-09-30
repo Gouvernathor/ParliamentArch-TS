@@ -161,7 +161,7 @@ function createArea(
             const y = yOffset + row;
             ex.x(x);
             ex.y(y);
-            partyGroup.appendChild(rectWithCoordinates(y, x, partyOptions));
+            partyGroup.appendChild(rectWithCoordinates(x, y, partyOptions));
         }
     }
     return areaGroup;
