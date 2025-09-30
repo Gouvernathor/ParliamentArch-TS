@@ -136,16 +136,17 @@ function makeDemeter<Party>(
         throw new Error("Invalid number(s) of seats");
     }
 
-    for (let heightInSquares = Math.max(4, requestedHera.speak, Math.min(requestedCrossNCols, requestedHera.cross));
-         heightInSquares < 4*sanityCheck;
-         heightInSquares++) {
+    for (let widthInSquares = 2*Math.max(4, requestedHera.speak, Math.min(requestedCrossNCols, requestedHera.cross));
+         widthInSquares < 8*sanityCheck;
+         widthInSquares++) {
+        const heightInSquares = Math.trunc(widthInSquares / 2);
         let crossRows: number,
             crossCols: number,
             wingRows: number,
             wingCols: number;
 
         wingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
-        wingCols = 2*heightInSquares - 1; // 1 for the speaker
+        wingCols = widthInSquares - 1; // 1 for the speaker
         if (requestedHera.cross > 0) {
             crossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
             crossRows = Math.ceil(requestedHera.cross / crossCols);
@@ -155,7 +156,7 @@ function makeDemeter<Party>(
             crossCols = 0;
         }
 
-        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, }, apollo, requestedHera, { cozy })) {
+        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, apollo, requestedHera, { cozy })) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: wingCols },
@@ -170,9 +171,9 @@ function makeDemeter<Party>(
 
 function doesItFit<Party>(
     {
-        wingRows, wingCols, crossRows, crossCols, heightInSquares,
+        wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares
     }: {
-        wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number;
+        wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number; widthInSquares: number;
     },
     apollo: Apollo<Party>,
     requestedHera: Hera,
@@ -183,7 +184,7 @@ function doesItFit<Party>(
      || heightInSquares < 2*wingRows + 2) {
         return false;
     }
-    if ((2 * heightInSquares) < 1 + wingCols + (crossCols > 0 ? crossCols + 1 : 0)) {
+    if (widthInSquares < 1 + wingCols + (crossCols > 0 ? crossCols + 1 : 0)) {
         return false;
     }
 
@@ -212,9 +213,6 @@ function doesItFit<Party>(
         if (crossNecessaryRows > crossRows) {
             return false;
         }
-    }
-    if (requestedHera.speak > heightInSquares) {
-        return false;
     }
 
     // TODO some other checks depending on options
