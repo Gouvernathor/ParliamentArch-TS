@@ -87,61 +87,46 @@ function addGroupedSeats(
 ): [number, number] {
     const extremums = newRecord(AREAS, () => ({ x: extremum(), y: extremum() }));
 
+    const areaContainers = newRecord(AREAS, (area) => {
+        const areaContainer = createArea(poseidon[area], extremums[area], options);
+        areaContainer.setAttribute("id", `area-${area}`);
+        return container.appendChild(areaContainer);
+    });
+
     // start with the opposition, which will give us the bottom opposition y coordinate
     const oppositionXOffset = 1; // because of the speaker
     const oppositionYOffset = 0;
-    container.appendChild(createArea(
-        poseidon.opposition,
-        oppositionXOffset, oppositionYOffset,
-        extremums.opposition,
-        options,
-    ));
+    areaContainers.opposition.setAttribute("transform", `translate(${oppositionXOffset}, ${oppositionYOffset})`);
 
     // then the government using that bottom, which will give us the bottom y coordinate
     const governmentXOffset = 1; // because of the speaker
     const governmentYOffset = 2 + (extremums.opposition.y.max ?? 0); // TODO not true if both wings have equal rows and opposition is empty
-    container.appendChild(createArea(
-        poseidon.government,
-        governmentXOffset, governmentYOffset,
-        extremums.government,
-        options,
-    ));
+    areaContainers.government.setAttribute("transform", `translate(${governmentXOffset}, ${governmentYOffset})`);
 
     const maxWingsX = Math.max(extremums.opposition.x.max ?? 0, extremums.government.x.max ?? 0);
-    const maxY = extremums.government.y.max ?? (2*extremums.opposition.y.max! + 2);
+    const maxY = governmentYOffset + (extremums.government.y.max ?? extremums.opposition.y.max ?? 0);
 
     // then the speaker from the bottom y coordinate
     const speakerXOffset = 0;
     const speakerYOffset = maxY / 2;
-    const speakArea = container.appendChild(createArea(
-        poseidon.speak,
-        speakerXOffset, speakerYOffset,
-        extremums.speak,
-        options,
-    ));
-    speakArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
+    // areaContainers.speak.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
+    areaContainers.speak.setAttribute("transform", `translate(${speakerXOffset}, ${speakerYOffset})`);
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
     // we have the right x coordinate of the wings from the max x of both wings
     const crossXOffset = 1/*speaker*/ + maxWingsX + 1/*gap*/;
     const crossYOffset = speakerYOffset;
-    const crossArea = container.appendChild(createArea(
-        poseidon.cross,
-        crossXOffset, crossYOffset,
-        extremums.cross,
-        options,
-    ));
-    crossArea.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
+    // areaContainers.cross.setAttribute("transform", "translateY(-50%)"); // FIXME: translateY is not supported in SVG
+    areaContainers.cross.setAttribute("transform", `translate(${crossXOffset}, ${crossYOffset})`);
 
     return [
-        (extremums.cross.x.max ?? crossXOffset) + 1,
+        crossXOffset + (extremums.cross.x.max ?? 0) + 1,
         maxY + 1,
     ];
 }
 
 function createArea(
     a: Poseidon<Party>[Area],
-    xOffset: number, yOffset: number,
     ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
     { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGGElement {
@@ -154,9 +139,7 @@ function createArea(
             spacingFactor,
         };
 
-        for (const [col, row] of seats) {
-            const x = xOffset + col;
-            const y = yOffset + row;
+        for (const [x, y] of seats) {
             ex.x(x);
             ex.y(y);
             partyGroup.appendChild(rectWithCoordinates(x, y, partyOptions));
