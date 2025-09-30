@@ -122,7 +122,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: Apollo<Party>,
-    {}: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
+    { cozy }: Pick<Options, "requestedWingNRows"|"requestedCrossNCols"|"cozy"|"fullWidth">,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
     const sanityCheck = requestedHera.speak + requestedHera.opposition + requestedHera.government + requestedHera.cross;
@@ -149,7 +149,7 @@ function makeDemeter<Party>(
             crossCols = 0;
         }
 
-        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, }, apollo, requestedHera, {})) {
+        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, }, apollo, requestedHera, { cozy })) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: wingCols },
@@ -168,9 +168,9 @@ function doesItFit<Party>(
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number;
     },
-    _apollo: Apollo<Party>,
+    apollo: Apollo<Party>,
     requestedHera: Hera,
-    {}: Pick<Options, never>,
+    { cozy }: Pick<Options, "cozy">,
 ): boolean {
     if (heightInSquares < requestedHera.speak
      || heightInSquares < crossRows
@@ -181,14 +181,31 @@ function doesItFit<Party>(
         return false;
     }
 
-    if (requestedHera.opposition > wingRows * wingCols) {
-        return false;
-    }
-    if (requestedHera.government > wingRows * wingCols) {
-        return false;
-    }
-    if (requestedHera.cross > crossRows * crossCols) {
-        return false;
+    if (cozy) {
+        if (requestedHera.opposition > wingRows * wingCols) {
+            return false;
+        }
+        if (requestedHera.government > wingRows * wingCols) {
+            return false;
+        }
+        if (requestedHera.cross > crossRows * crossCols) {
+            return false;
+        }
+    } else {
+        const oppositionNecessaryCols = reduceNotCozy(apollo.opposition.values(), wingRows);
+        if (oppositionNecessaryCols > wingCols) {
+            return false;
+        }
+
+        const governmentNecessaryCols = reduceNotCozy(apollo.government.values(), wingRows);
+        if (governmentNecessaryCols > wingCols) {
+            return false;
+        }
+
+        const crossNecessaryRows = reduceNotCozy(apollo.cross.values(), crossCols);
+        if (crossNecessaryRows > crossRows) {
+            return false;
+        }
     }
     if (requestedHera.speak > heightInSquares) {
         return false;
@@ -197,6 +214,15 @@ function doesItFit<Party>(
     // TODO some other checks depending on options
 
     return true;
+}
+
+function reduceNotCozy(
+    nSeatss: Iterable<number>,
+    otherDimension: number,
+): number {
+    return Array.from(nSeatss,
+        nSeats => Math.ceil(nSeats / otherDimension)
+    ).reduce((a, b) => a + b, 0);
 }
 
 function makePoseidon<Party>(
