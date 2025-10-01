@@ -28,7 +28,8 @@ export interface Options {
 
     /**
      * The relative spacing between neighboring squares of the same area.
-     * This is to be multiplied by the side of a square to get the actual spacing.
+     * This is to be multiplied by the side of a square
+     * to get the actual spacing between two neighboring squares.
      */
     spacingFactor: number; // default .1
 }

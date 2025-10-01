@@ -16,21 +16,22 @@ type Hera = Record<Area, number>;
 type Demeter = Record<Area, { nRows: number; nCols: number }>;
 
 
-// TODO rename, remove "requested"
 export interface Options {
     /**
-     * A requested number of rows for each of the two wings.
-     * Ignored if 0, invalid (and ignored) if negative.
+     * The number of rows for each of the two wings.
+     * Ignored if 0, invalid if negative.
+     * If ignored, the actual number of rows is computed automatically.
      */
-    requestedWingNRows: number; // default 0
+    wingNRows: number; // default 0
 
     /**
-     * A requested number of columns for the crossbenchers.
-     * Ignored if 0, invalid (and ignored) if negative,
+     * The number of columns for the crossbenchers.
+     * Ignored if 0, invalid if negative,
      * will also be ignored if inferior to the total number of crossbenchers.
      * Previously called centerCols.
+     * If ignored, the actual number of columns is computed automatically.
      */
-    requestedCrossNCols: number; // default 0
+    crossNCols: number; // default 0
 
     /**
      * Whether parties of the same wing are allowed to share the same column,
@@ -45,14 +46,14 @@ export interface Options {
     // fullWidth: boolean; // default false
 }
 function defaultOptions({
-    requestedWingNRows = 0,
-    requestedCrossNCols = 0,
+    wingNRows = 0,
+    crossNCols = 0,
     cozy = true,
     // fullWidth = false,
 }: Partial<Options> = {}): Options {
     return {
-        requestedWingNRows,
-        requestedCrossNCols,
+        wingNRows,
+        crossNCols,
         cozy,
         // fullWidth,
     };
@@ -82,13 +83,13 @@ export function getSeatCoordinatesPerArea<Party>(
     options: Partial<Options> = {},
 ): Poseidon<Party> {
     const {
-        requestedWingNRows,
-        requestedCrossNCols,
+        wingNRows,
+        crossNCols,
         cozy,
         // fullWidth,
     } = defaultOptions(options);
 
-    const demeter = makeDemeter(apollo, { requestedWingNRows, requestedCrossNCols, cozy, /*fullWidth*/ });
+    const demeter = makeDemeter(apollo, { wingNRows, crossNCols, cozy, /*fullWidth*/ });
     return makePoseidon(apollo, demeter, { cozy });
 }
 
@@ -124,7 +125,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: Apollo<Party>,
-    { requestedWingNRows, requestedCrossNCols, cozy }: Options,
+    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Options,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
