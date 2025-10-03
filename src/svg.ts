@@ -13,10 +13,10 @@ export interface SeatDataWithNumber extends SeatData {
  * Makes the document constant available, whether in a browser or in Node.js,
  * without ever importing it in browser mode.
  */
-const doc = globalThis.document ??
-    (await import("jsdom")
-        .then(m => new m.JSDOM())
-    ).window.document;
+if (!globalThis.document) {
+    globalThis.document = (await import("jsdom")
+        .then(m => new m.JSDOM().window.document));
+}
 
 /**
  * Typically S is a tuple of x/y coordinates.
@@ -93,7 +93,7 @@ export function getGroupedSVG(
     }
     const [leftMargin, topMargin, rightMargin, bottomMargin] = margins;
 
-    const svg = doc.createElementNS(SVG_NS, "svg");
+    const svg = document.createElementNS(SVG_NS, "svg");
 
     populateHeader(svg,
         leftMargin + 2 * canvasSize + rightMargin,
@@ -127,7 +127,7 @@ function populateHeader(
     svg.setAttribute("width", width.toString());
     svg.setAttribute("height", height.toString());
 
-    svg.appendChild(doc.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+    svg.appendChild(document.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
 function addNumberOfSeats(
@@ -137,7 +137,7 @@ function addNumberOfSeats(
     y: number,
     fontSize: number,
 ): void {
-    const text = svg.appendChild(doc.createElementNS(SVG_NS, "text"));
+    const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
     text.setAttribute("x", x.toString());
     text.setAttribute("y", y.toString());
     text.setAttribute("style", `font-size: ${fontSize}px; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
@@ -157,7 +157,7 @@ function addGroupedSeats(
     for (const [group, seatCenters] of seatCentersByGroup) {
         const groupBorderWidth = (group.borderSize ?? 0) * seatActualRadius * canvasSize;
 
-        const groupG = svg.appendChild(doc.createElementNS(SVG_NS, "g"));
+        const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
 
         let gStyle = `fill: ${group.color};`;
         if (groupBorderWidth > 0) {
@@ -168,11 +168,11 @@ function addGroupedSeats(
         groupG.setAttribute("id", group.id ?? `group-${groupNumberFallback++}`);
 
         if (group.data) {
-            groupG.appendChild(doc.createElementNS(SVG_NS, "title")).textContent = group.data;
+            groupG.appendChild(document.createElementNS(SVG_NS, "title")).textContent = group.data;
         }
 
         for (const [x, y] of seatCenters) {
-            const circle = groupG.appendChild(doc.createElementNS(SVG_NS, "circle"));
+            const circle = groupG.appendChild(document.createElementNS(SVG_NS, "circle"));
             circle.setAttribute("cx", (leftMargin + canvasSize * x).toString());
             circle.setAttribute("cy", (topMargin + canvasSize * (1 - y)).toString());
             circle.setAttribute("r", (seatActualRadius * canvasSize - groupBorderWidth / 2).toString());
