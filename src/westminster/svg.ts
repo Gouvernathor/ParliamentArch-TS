@@ -4,8 +4,12 @@ import { Area, AREAS, newRecord, Poseidon } from "./common.js";
  * Makes the document constant available, whether in a browser or in Node.js,
  * without ever importing it in browser mode.
  */
-const doc = globalThis.document ??
-    (new (await import("jsdom")).JSDOM()).window.document;
+if (!globalThis.document) {
+    await import("jsdom")
+        .then(m => globalThis.document = new m.JSDOM().window.document)
+        .catch(() =>
+            console.error("Failed to load jsdom or the document constant at ParliamentArch load time : you need to set globalThis.document before generating SVGs in Node.js"));
+}
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -50,7 +54,7 @@ export function buildSVG(
 ): SVGSVGElement {
     const { roundingRadius, spacingFactor } = defaultOptions(options);
 
-    const svg = doc.createElementNS(SVG_NS, "svg");
+    const svg = document.createElementNS(SVG_NS, "svg");
 
     const [maxX, maxY] = addGroupedSeats(svg, poseidon, { roundingRadius, spacingFactor });
 
@@ -68,7 +72,7 @@ function populateHeader(
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     svg.setAttribute("viewBox", `0 0 ${viewBoxWidth} ${viewBoxHeight}`);
 
-    svg.appendChild(doc.createComment("Created with ParliamentArch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+    svg.appendChild(document.createComment("Created with ParliamentArch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
 function extremum() {
@@ -129,9 +133,9 @@ function createArea(
     ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
     { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGGElement {
-    const areaGroup = doc.createElementNS(SVG_NS, "g");
+    const areaGroup = document.createElementNS(SVG_NS, "g");
     for (const [party, seats] of a) {
-        const partyGroup = areaGroup.appendChild(doc.createElementNS(SVG_NS, "g"));
+        const partyGroup = areaGroup.appendChild(document.createElementNS(SVG_NS, "g"));
         populatePartyGroup(partyGroup, party);
         const partyOptions = {
             roundingRadius: party.roundingRadius ?? roundingRadius,
@@ -155,7 +159,7 @@ function populatePartyGroup(
         partyGroup.setAttribute("id", party.id);
     }
     if (party.data !== undefined) {
-        partyGroup.appendChild(doc.createElementNS(SVG_NS, "title"))
+        partyGroup.appendChild(document.createElementNS(SVG_NS, "title"))
             .textContent = party.data;
     }
 
@@ -170,7 +174,7 @@ function rectWithCoordinates(
     x: number, y: number,
     { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGRectElement {
-    const rect = doc.createElementNS(SVG_NS, "rect");
+    const rect = document.createElementNS(SVG_NS, "rect");
     rect.setAttribute("x", (spacingFactor/2 + x).toString());
     rect.setAttribute("y", (spacingFactor/2 + y).toString());
     rect.setAttribute("width", (1 - spacingFactor).toString());
