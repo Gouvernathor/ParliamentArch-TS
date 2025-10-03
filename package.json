@@ -60,7 +60,12 @@
     "@types/node": "^22.10.2",
     "typescript": "*"
   },
-  "optionalDependencies": {
+  "peerDependencies": {
     "jsdom": "^25.0.1"
+  },
+  "peerDependenciesMeta": {
+    "jsdom": {
+      "optional": true
+    }
   }
 }
