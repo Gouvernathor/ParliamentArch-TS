@@ -1,6 +1,6 @@
 {
   "name": "parliamentarch",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Generating arch-styled SVG parliamentary diagrams",
   "type": "module",
   "main": "./dist/index.js",
