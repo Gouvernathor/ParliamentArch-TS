@@ -4,16 +4,21 @@ Generation of arch-styled SVG parliamentary diagrams.
 
 This is a TypeScript port of the [ParliamentArch](https://github.com/Gouvernathor/parliamentarch) Python module, itself a spin-off from David Richfield's [ParliamentDiagram](https://github.com/slashme/parliamentdiagram).
 
-You can install it as a [package](https://www.npmjs.com/package/parliamentarch) using `npm install parliamentarch`. Both browser and Node.js environments are supported, through the use of jsdom in the case of Node.js.
-If you know you will only use it in browsers, you can skip installing the jsdom dependency using `npm install --omit=optional parliamentarch`.
+You can install it as a [package](https://www.npmjs.com/package/parliamentarch) using `npm install parliamentarch`. Both browser and Node.js environments are supported, though it needs special handling in the case of Node.js.
 
 ![Example diagram](sample.svg)
 
 ## Node.js usage
 
+If you want to use ParliamentArch in Node.js, you need to provide a global `document` constant (`globalThis.document`) before importing the module.
+The easiest way to do this is to use the [jsdom](https://www.npmjs.com/package/jsdom) package, which you can install with `npm install jsdom`. Then, you can do something like this:
+
 ```js
-import * as fs from 'fs';
+import { JSDOM } from 'jsdom';
+globalThis.document = new JSDOM().window.document;
+
 import * as parliamentarch from 'parliamentarch';
+import * as fs from 'fs';
 
 const attribution = new Map([
     [{color: "#DD0000"}, 17],
