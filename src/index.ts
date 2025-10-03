@@ -15,6 +15,7 @@ export function getSVGFromAttribution(
     options?: Partial<GetSVGFromAttributionOptions>,
 ): SVGSVGElement;
 /**
+ * @deprecated
  * This version is deprecated. Please use the overload with the single options object instead.
  */
 export function getSVGFromAttribution(
