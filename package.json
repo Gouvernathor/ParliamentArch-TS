@@ -1,6 +1,6 @@
 {
   "name": "parliamentarch",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Generating arch-styled SVG parliamentary diagrams",
   "type": "module",
   "main": "./dist/index.js",
@@ -84,7 +84,12 @@
     "@types/node": "^22.10.2",
     "typescript": "*"
   },
-  "optionalDependencies": {
+  "peerDependencies": {
     "jsdom": "^25.0.1"
+  },
+  "peerDependenciesMeta": {
+    "jsdom": {
+      "optional": true
+    }
   }
 }
