@@ -120,13 +120,13 @@ function addGroupedSeats(
 
     // then the speaker from the bottom y coordinate
     const speakerXOffset = 0;
-    const speakerYOffset = (totalWingsNRowsWithAisle - (extremums.speak.y.max ?? 0)) / 2;
+    const speakerYOffset = (totalWingsNRowsWithAisle - ((extremums.speak.y.max ?? -1) + 1)) / 2;
     areaContainers.speak.setAttribute("transform", `translate(${speakerXOffset}, ${speakerYOffset})`);
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
     // we have the right x coordinate of the wings from the max x of both wings
     const crossXOffset = 1/*speaker*/ + maxWingsNCols + 1/*gap*/;
-    const crossYOffset = (totalWingsNRowsWithAisle - (extremums.cross.y.max ?? 0)) / 2;
+    const crossYOffset = (totalWingsNRowsWithAisle - ((extremums.cross.y.max ?? -1) + 1)) / 2;
     areaContainers.cross.setAttribute("transform", `translate(${crossXOffset}, ${crossYOffset})`);
 
     return [
