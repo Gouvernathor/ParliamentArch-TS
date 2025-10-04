@@ -3,7 +3,7 @@ import { Area, AREAS, newRecord, Poseidon } from "./common.js";
 /**
  * Number of seats for each party for each area.
  */
-export type Apollo<Party> = Record<Area, Map<Party, number>>;
+export type Apollo<Party> = Record<Area, ReadonlyMap<Party, number>>;
 
 /**
  * Number of occupied seats for each area.
