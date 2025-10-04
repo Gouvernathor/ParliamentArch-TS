@@ -14,6 +14,7 @@ type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
 
 type LocalAttri0 = ReadonlyMap<Party, number>;
 type LocalAttri1 = Iterable<readonly [Party, number]>;
+type LocalAttri1Array = readonly (readonly [Party, number])[];
 type LocalAttri2 = readonly TWithNumber<Party>[];
 type Attri1 = {readonly [area in Area]?: LocalAttri1};
 type Attri2 = {readonly [area in Area]?: LocalAttri2};
@@ -44,13 +45,23 @@ function localAttri2to0(attribution: LocalAttri2): LocalAttri0 {
 function attri12ToNSeatsPerPartyPerArea(attribution: Attri12): NSeatsPerPartyPerArea<Party> {
     return newRecord(AREAS, area => {
         const entriesThisArea = attribution[area];
-        if (!entriesThisArea || (Array.isArray(entriesThisArea) && entriesThisArea.length === 0)) {
+        if (!entriesThisArea) {
             return new Map();
         }
-        if (Array.isArray(entriesThisArea)) {
-            return localAttri2to0(entriesThisArea as LocalAttri2);
+        const entriesAsArray: LocalAttri1Array|LocalAttri2 = Array.isArray(entriesThisArea) ?
+            entriesThisArea :
+            [...entriesThisArea];
+        if (entriesAsArray.length === 0) {
+            return new Map();
         }
-        return localAttri1to0(entriesThisArea as LocalAttri1);
+        const first = entriesAsArray[0]!;
+        if (Array.isArray(first)) {
+            // 1
+            return localAttri1to0(entriesAsArray as LocalAttri1Array);
+        } else {
+            // 2
+            return localAttri2to0(entriesAsArray as LocalAttri2);
+        }
     });
 }
 function attri3ArrayToNSeatsPerPartyPerArea(attribution: Attri3Array): NSeatsPerPartyPerArea<Party> {
