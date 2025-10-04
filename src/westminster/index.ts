@@ -27,11 +27,14 @@ function extractSeats<P extends Party>(party: TWithNumber<P>): [P, number] {
 function apolloFromAnyAttribution(
     attribution: AnyAttribution,
 ): Apollo<Party> {
-    if (Object.keys(attribution).every(k => AREAS.includes(k as Area))) {
+    if (Object.keys(attribution).some(k => AREAS.includes(k as Area))) {
         return newRecord(AREAS, area => {
-            type Iter = readonly (readonly [Party, number] | TWithNumber<Party>)[];
-            const entriesThisArea = (attribution as any)[area] as Iter;
-            if (entriesThisArea.length === 0) {
+            type Iter = readonly (readonly [Party, number] | TWithNumber<Party>)[] | Map<Party, number>;
+            const entriesThisArea = (attribution as any)[area] as Iter|undefined;
+            if (entriesThisArea instanceof Map) {
+                return entriesThisArea;
+            }
+            if (!entriesThisArea || entriesThisArea.length === 0) {
                 return new Map();
             }
             if (Array.isArray(entriesThisArea[0])) {
@@ -53,7 +56,7 @@ function apolloFromAnyAttribution(
         return newRecord(AREAS, (area) =>
             new Map(preApollo.filter(([p]) => p.area === area)));
     } else {
-        return attribution as Apollo<Party>;
+        throw new Error("Invalid attribution format");
     }
 }
 
