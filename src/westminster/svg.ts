@@ -98,6 +98,16 @@ function addGroupedSeats(
         return container.appendChild(areaContainer);
     });
 
+    const maxWingsNCols = Math.max(
+        (extremums.opposition.x.max ?? -1) + 1,
+        (extremums.government.x.max ?? -1) + 1,
+    );
+    const oppositionRowsWithAisle =
+        + (extremums.opposition.y.max ?? extremums.government.y.max ?? -1) + 1
+        + 2; // aisle
+    const totalWingsNRowsWithAisle = oppositionRowsWithAisle
+        + (extremums.government.y.max ?? extremums.opposition.y.max ?? -1) + 1;
+
     // start with the opposition, which will give us the bottom opposition y coordinate
     const oppositionXOffset = 1; // because of the speaker
     const oppositionYOffset = 0;
@@ -105,26 +115,23 @@ function addGroupedSeats(
 
     // then the government using that bottom, which will give us the bottom y coordinate
     const governmentXOffset = 1; // because of the speaker
-    const governmentYOffset = 2 + (extremums.opposition.y.max ?? 0); // TODO not true if both wings have equal rows and opposition is empty
+    const governmentYOffset = oppositionRowsWithAisle;
     areaContainers.government.setAttribute("transform", `translate(${governmentXOffset}, ${governmentYOffset})`);
-
-    const maxWingsX = Math.max(extremums.opposition.x.max ?? 0, extremums.government.x.max ?? 0);
-    const maxY = governmentYOffset + (extremums.government.y.max ?? extremums.opposition.y.max ?? 0);
 
     // then the speaker from the bottom y coordinate
     const speakerXOffset = 0;
-    const speakerYOffset = (maxY - (extremums.speak.y.max ?? 0)) / 2;
+    const speakerYOffset = (totalWingsNRowsWithAisle - (extremums.speak.y.max ?? 0)) / 2;
     areaContainers.speak.setAttribute("transform", `translate(${speakerXOffset}, ${speakerYOffset})`);
 
     // then the crossbenchers from the bottom y coordinate and the right x coordinate of the wings
     // we have the right x coordinate of the wings from the max x of both wings
-    const crossXOffset = 1/*speaker*/ + maxWingsX + 1/*gap*/;
-    const crossYOffset = speakerYOffset - (extremums.cross.y.max ?? 0) / 2;
+    const crossXOffset = 1/*speaker*/ + maxWingsNCols + 1/*gap*/;
+    const crossYOffset = (totalWingsNRowsWithAisle - (extremums.cross.y.max ?? 0)) / 2;
     areaContainers.cross.setAttribute("transform", `translate(${crossXOffset}, ${crossYOffset})`);
 
     return [
         crossXOffset + (extremums.cross.x.max ?? -1) + 1,
-        maxY + 1,
+        totalWingsNRowsWithAisle,
     ];
 }
 
