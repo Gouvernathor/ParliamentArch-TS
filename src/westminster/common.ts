@@ -8,7 +8,7 @@ export type Area = (typeof AREAS)[number];
  * The rank-file indices are relative to the top-left corner of the area.
  * The extremum values override the demeter parameters.
  */
-export type Poseidon<Party> = Record<Area, Map<Party, [number, number][]>>;
+export type CoordinatesPerPartyPerArea<Party> = Record<Area, Map<Party, [number, number][]>>;
 
 export function newRecord<K extends string, V>(
     keys: readonly K[],

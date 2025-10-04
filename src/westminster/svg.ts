@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, Poseidon } from "./common.js";
+import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
@@ -49,7 +49,7 @@ function defaultOptions({
 
 
 export function buildSVG(
-    poseidon: Poseidon<Party>,
+    poseidon: CoordinatesPerPartyPerArea<Party>,
     options: Partial<Options> = {},
 ): SVGSVGElement {
     const { roundingRadius, spacingFactor } = defaultOptions(options);
@@ -87,7 +87,7 @@ function extremum() {
 
 function addGroupedSeats(
     container: SVGElement,
-    poseidon: Poseidon<Party>,
+    poseidon: CoordinatesPerPartyPerArea<Party>,
     options: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): [number, number] {
     const extremums = newRecord(AREAS, () => ({ x: extremum(), y: extremum() }));
@@ -129,7 +129,7 @@ function addGroupedSeats(
 }
 
 function createArea(
-    a: Poseidon<Party>[Area],
+    a: CoordinatesPerPartyPerArea<Party>[Area],
     ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
     { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGGElement {

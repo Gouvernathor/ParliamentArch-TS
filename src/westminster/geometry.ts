@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, Poseidon } from "./common.js";
+import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
 
 /**
  * Number of seats for each party for each area.
@@ -81,7 +81,7 @@ The number of rows and columns of the various areas are optimized so that all th
 export function getSeatCoordinatesPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     options: Partial<Options> = {},
-): Poseidon<Party> {
+): CoordinatesPerPartyPerArea<Party> {
     const {
         wingNRows,
         crossNCols,
@@ -234,7 +234,7 @@ function makePoseidon<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: Demeter,
     { cozy }: Pick<Options, "cozy">,
-): Poseidon<Party> {
+): CoordinatesPerPartyPerArea<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
     for (const [party, nSeats] of apollo.speak) {
