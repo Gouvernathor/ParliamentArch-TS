@@ -216,8 +216,6 @@ function doesItFit<Party>(
         }
     }
 
-    // TODO some other checks depending on options
-
     return true;
 }
 

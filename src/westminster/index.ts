@@ -64,9 +64,7 @@ function attri4ToNSeatsPerPartyPerArea(attribution: Attri4): NSeatsPerPartyPerAr
     });
 }
 
-function anyAttributionToNSeatsPerPartyPerArea(
-    attribution: AnyAttribution,
-): NSeatsPerPartyPerArea<Party> {
+function anyAttributionToNSeatsPerPartyPerArea(attribution: AnyAttribution): NSeatsPerPartyPerArea<Party> {
     if (AREAS.some(area => area in attribution)) {
         // 1 or 2
         return attri12ToNSeatsPerPartyPerArea(attribution as Attri12);
@@ -85,7 +83,7 @@ function anyAttributionToNSeatsPerPartyPerArea(
     }
 }
 
-interface Options extends GeometryOptions, SVGOptions {}
+export interface Options extends GeometryOptions, SVGOptions {}
 
 export function getSVGFromAttribution(
     attribution: AnyAttribution,
