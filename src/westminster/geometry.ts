@@ -3,7 +3,7 @@ import { Area, AREAS, newRecord, Poseidon } from "./common.js";
 /**
  * Number of seats for each party for each area.
  */
-export type Apollo<Party> = Record<Area, ReadonlyMap<Party, number>>;
+export type NSeatsPerPartyPerArea<Party> = Record<Area, ReadonlyMap<Party, number>>;
 
 /**
  * Number of occupied seats for each area.
@@ -79,7 +79,7 @@ The number of rows and columns of the various areas are optimized so that all th
 
 
 export function getSeatCoordinatesPerArea<Party>(
-    apollo: Apollo<Party>,
+    apollo: NSeatsPerPartyPerArea<Party>,
     options: Partial<Options> = {},
 ): Poseidon<Party> {
     const {
@@ -93,7 +93,7 @@ export function getSeatCoordinatesPerArea<Party>(
     return makePoseidon(apollo, demeter, { cozy });
 }
 
-function makeRequestedHera<Party>(apollo: Apollo<Party>): Hera {
+function makeRequestedHera<Party>(apollo: NSeatsPerPartyPerArea<Party>): Hera {
     return newRecord(AREAS, area => {
         let nSeats = 0;
         for (const n of apollo[area].values()) {
@@ -124,7 +124,7 @@ crossRows <= wingRows * 2 + 2
 nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
-    apollo: Apollo<Party>,
+    apollo: NSeatsPerPartyPerArea<Party>,
     { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Options,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
@@ -176,7 +176,7 @@ function doesItFit<Party>(
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number; widthInSquares: number;
     },
-    apollo: Apollo<Party>,
+    apollo: NSeatsPerPartyPerArea<Party>,
     requestedHera: Hera,
     { cozy }: Pick<Options, "cozy">,
 ): boolean {
@@ -231,7 +231,7 @@ function reduceNotCozy(
 }
 
 function makePoseidon<Party>(
-    apollo: Apollo<Party>,
+    apollo: NSeatsPerPartyPerArea<Party>,
     demeter: Demeter,
     { cozy }: Pick<Options, "cozy">,
 ): Poseidon<Party> {

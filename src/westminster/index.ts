@@ -1,5 +1,5 @@
 import { Area, AREAS, newRecord } from "./common.js";
-import { Apollo, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry.js";
+import { NSeatsPerPartyPerArea, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry.js";
 import { buildSVG, Options as SVGOptions, Party } from "./svg.js";
 
 export { Party };
@@ -17,7 +17,7 @@ type AnyAttribution =
     | Record<Area, readonly TWithNumber<Party>[]>
     | readonly TLocatedWithNumber<Party>[]
     | readonly [TWithArea<Party>, number][]
-    | Apollo<Party>
+    | NSeatsPerPartyPerArea<Party>
 ;
 
 function extractSeats<P extends Party>(party: TWithNumber<P>): [P, number] {
@@ -26,7 +26,7 @@ function extractSeats<P extends Party>(party: TWithNumber<P>): [P, number] {
 
 function apolloFromAnyAttribution(
     attribution: AnyAttribution,
-): Apollo<Party> {
+): NSeatsPerPartyPerArea<Party> {
     if (Object.keys(attribution).some(k => AREAS.includes(k as Area))) {
         return newRecord(AREAS, area => {
             type Iter = readonly (readonly [Party, number] | TWithNumber<Party>)[] | Map<Party, number>;
