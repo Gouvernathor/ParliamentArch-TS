@@ -124,19 +124,28 @@ The values are the angle, in radians, calculated from the right-outermost point 
 
 These are found in the `parliamentarch/svg` module.
 
-`SeatData`
+ParliamentArch can create SVG diagrams in two fashions:
+- either it uses ``<g>`` elements to apply group-level styles to the seats, skipping CSS altogether, which allows creating standalone SVG files.
+- or it only applies CSS classes to the seats, leaving the user with the task of defining the CSS rules for those classes in the embedding HTML document. In that case, the circle representing each seat are placed directly under the root SVG element, which makes it easier to compare and match structure and seats between diagrams.
+  - In that case, you can use ``:nth-child(x of .the-class)`` CSS selectors to target the x-th seat within a group - or among several, if several groups share the same CSS class.
 
-An interface for data about a seat or a group of seats. It contains:
+So, the `SeatData` type is an alternative between these two modes of operation. You can Mix and match them within the same diagram and even combine both modes for a single group of seats, but is is recommended to stick to one mode for the whole diagram.
 
-- `color: string`: The color with which to fill the seat circle, as a CSS color.
-- `id?: string`: An optional id for the group of seats.
+`ClassSeatData`
+
+- `class?: string| readonly string[]`: CSS class or classes to apply to all seats of this group.
+
+`StandaloneSeatData`
+
+- `id?: string`: An optional id to apply to the ``<g>`` element containing all seats of this group.
 - `data?: string`: An optional text to display when hovering over the seat.
+- `color: string`: The color with which to fill the seat circle, as a CSS color.
 - `borderSize?: number`: The size of the border around the seat circle, defaults to 0.
 - `borderColor?: string`: The color of the border, defaults to black.
 
 `SeatDataWithNumber`
 
-A sub-interface which extends SeatData with an optional `nSeats?: number` property, which defaults to 1. It allows you not to use Map objects.
+A sub-type which extends SeatData with an optional `nSeats?: number` property, which defaults to 1. It allows you not to use Map objects.
 
 `getGroupedSVG(seatCentersByGroup, seatActualRadius, options?): SVGSVGElement`
 

@@ -1,12 +1,40 @@
-export interface SeatData {
-    readonly color: string;
+export interface ClassSeatData {
+    /**
+     * CSS class or classes to apply to this group of seats.
+     */
+    readonly class?: string|readonly string[];
+}
+
+export interface StandaloneSeatData {
+    /**
+     * The id of this group of seats.
+     */
     readonly id?: string|undefined;
+    /**
+     * Some human-readable data about this group of seats.
+     */
     readonly data?: string|undefined;
+    /**
+     * Sets the fill color of the seats in this group.
+     * In CSS class mode, you can replace this with the "fill" property.
+     */
+    readonly color: string;
+    /**
+     * Sets the border size of the seats in this group, as a factor of the seat radius.
+     * In CSS class mode, you can replace this with the "stroke-width" property.
+     */
     readonly borderSize?: number|undefined;
+    /**
+     * Sets the color of the border of the seats in this group.
+     * In CSS class mode, you can replace this with the "stroke" property.
+     */
     readonly borderColor?: string|undefined;
 }
-export interface SeatDataWithNumber extends SeatData {
-    nSeats?: number|undefined;
+
+export type SeatData = ClassSeatData | StandaloneSeatData;
+
+export type SeatDataWithNumber = SeatData & {
+    readonly nSeats?: number|undefined;
 }
 
 /**
@@ -157,27 +185,50 @@ function addGroupedSeats(
     let groupNumberFallback = 0;
 
     for (const [group, seatCenters] of seatCentersByGroup) {
-        const groupBorderWidth = (group.borderSize ?? 0) * seatActualRadius * canvasSize;
+        const groupBorderWidth = ("borderSize" in group && group.borderSize ?
+            group.borderSize * seatActualRadius * canvasSize :
+            0);
 
-        const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
-
-        let gStyle = `fill: ${group.color};`;
-        if (groupBorderWidth > 0) {
-            gStyle += ` stroke: ${group.borderColor ?? "black"}; stroke-width: ${groupBorderWidth};`;
-        }
-        groupG.setAttribute("style", gStyle);
-
-        groupG.setAttribute("id", group.id ?? `group-${groupNumberFallback++}`);
-
-        if (group.data) {
-            groupG.appendChild(document.createElementNS(SVG_NS, "title")).textContent = group.data;
-        }
+        const seatsContainer = "color" in group || "borderSize" in group || "borderColor" in group ?
+            addGroupG(svg, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
+            svg;
 
         for (const [x, y] of seatCenters) {
-            const circle = groupG.appendChild(document.createElementNS(SVG_NS, "circle"));
+            const circle = seatsContainer.appendChild(document.createElementNS(SVG_NS, "circle"));
+            if ("class" in group && group.class) {
+                circle.classList = Array.isArray(group.class) ?
+                    group.class.join(" ") :
+                    group.class as string;
+            }
             circle.setAttribute("cx", (leftMargin + canvasSize * x).toString());
             circle.setAttribute("cy", (topMargin + canvasSize * (1 - y)).toString());
             circle.setAttribute("r", (seatActualRadius * canvasSize - groupBorderWidth / 2).toString());
         }
     }
+}
+
+function addGroupG(
+    svg: SVGSVGElement,
+    group: StandaloneSeatData,
+    groupBorderWidth: number,
+    groupNumber: number,
+): SVGGElement {
+    const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
+
+    const gStyle = [];
+    if (group.color) {
+        gStyle.push(`fill: ${group.color};`);
+    }
+    if (groupBorderWidth > 0) {
+        gStyle.push(`stroke: ${group.borderColor ?? "black"}; stroke-width: ${groupBorderWidth};`);
+    }
+    groupG.setAttribute("style", gStyle.join(" "));
+
+    groupG.setAttribute("id", group.id ?? `group-${groupNumber}`);
+
+    if (group.data) {
+        groupG.appendChild(document.createElementNS(SVG_NS, "title")).textContent = group.data;
+    }
+
+    return groupG;
 }
