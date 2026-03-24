@@ -1,0 +1,42 @@
+{
+  "name": "@parliamentarch/core",
+  "version": "4.0.0",
+  "description": "Tools to generate arch-styled parliamentary diagrams",
+  "type": "module",
+
+  "main": null,
+  "types": null,
+  "exports": {},
+
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+
+  "author": "Gouvernathor",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+  },
+  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
+  "bugs": {
+    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
+  },
+  "funding": "https://ko-fi.com/gouvernathor",
+  "keywords": [
+    "parliament",
+    "diagram",
+    "arch",
+    "hemicycle",
+    "svg"
+  ]
+}
