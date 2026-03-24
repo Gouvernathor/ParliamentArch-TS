@@ -8,12 +8,12 @@ type WithNumber<T> = T & { readonly nSeats?: number|undefined };
  * @param seats an iterable of seats in a given order, its length should be the sum of the values in attribution
  * @returns a mapping of each group to the seats it holds
  */
-export function dispatchSeats<SeatData, Seat>(
-    attribution: Map<SeatData, number> | readonly WithNumber<SeatData>[],
-    seats: Iterable<Seat>,
-): Map<SeatData, Seat[]> {
+export function dispatchSeats<SeatDisplay, SeatLocation>(
+    attribution: Map<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
+    seats: Iterable<SeatLocation>,
+): Map<SeatDisplay, SeatLocation[]> {
     const seatIterator = seats[Symbol.iterator]();
-    const entries: [SeatData, number][] = attribution instanceof Map ?
+    const entries: [SeatDisplay, number][] = attribution instanceof Map ?
         Array.from(attribution) :
         attribution.map(seatData => [seatData, seatData.nSeats ?? 1]);
 
