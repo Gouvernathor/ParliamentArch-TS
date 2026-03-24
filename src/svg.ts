@@ -1,4 +1,4 @@
-export { dispatchSeats as genericDispatchSeats, regroupSeatCenters } from "@parliamentarch/core/utils";
+import { dispatchSeats as genericDispatchSeats, regroupSeatCenters } from "@parliamentarch/core/utils";
 
 export interface ClassSeatData {
     /**
@@ -84,7 +84,7 @@ export interface GetGroupedSVGOptions {
 }
 
 export function getGroupedSVG(
-    seatCentersByGroup: Iterable<[SeatData, readonly (readonly [number, number])[]]>,
+    seatCentersByGroup: Iterable<readonly [SeatData, readonly (readonly [number, number])[]]>,
     seatActualRadius: number,
     {
         canvasSize = 175,
@@ -153,7 +153,7 @@ function addNumberOfSeats(
 
 function addGroupedSeats(
     svg: SVGSVGElement,
-    seatCentersByGroup: Iterable<[SeatData, readonly (readonly [number, number])[]]>,
+    seatCentersByGroup: Iterable<readonly [SeatData, readonly (readonly [number, number])[]]>,
     seatActualRadius: number,
     canvasSize: number,
     leftMargin: number,
