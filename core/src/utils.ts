@@ -1,5 +1,3 @@
-import { SeatCenter } from "./common";
-
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
 /**
@@ -36,6 +34,7 @@ export function dispatchSeats<SeatDisplay, SeatLocation>(
     }
 }
 
+type SeatCenter = readonly [number, number];
 type MappedSeatCenters<SeatDisplay> = Iterable<readonly [SeatCenter, SeatDisplay]>;
 type GroupedSeatCenters<SeatDisplay> = Iterable<readonly [SeatDisplay, readonly SeatCenter[]]>;
 
