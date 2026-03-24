@@ -1,3 +1,5 @@
+export { dispatchSeats as genericDispatchSeats } from "@parliamentarch/core/utils";
+
 export interface ClassSeatData {
     /**
      * CSS class or classes to apply to this group of seats.
@@ -60,26 +62,7 @@ export function dispatchSeats<S>(
     groupSeats: Map<SeatData, number> | readonly SeatDataWithNumber[],
     seats: Iterable<S>,
 ): Map<SeatData, S[]> {
-    const seatIterator = seats[Symbol.iterator]();
-    const entries: [SeatData, number][] = groupSeats instanceof Map ?
-        Array.from(groupSeats) :
-        groupSeats.map(seatData => [seatData, seatData.nSeats ?? 1]);
-
-    try {
-        return new Map(entries.map(([group, nSeats]) =>
-            [group, Array.from({ length: nSeats }, () => {
-                const seatIteration = seatIterator.next();
-                if (seatIteration.done) {
-                    throw new Error("Not enough seats");
-                }
-                return seatIteration.value;
-            })]
-        ));
-    } finally {
-        if (!seatIterator.next().done) {
-            throw new Error("Too many seats");
-        }
-    }
+    return genericDispatchSeats(groupSeats, seats);
 }
 
 export function getSVG(

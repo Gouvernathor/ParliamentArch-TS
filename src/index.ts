@@ -1,5 +1,6 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "./geometry.js";
-import { dispatchSeats, getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg.js";
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, type GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
+import { dispatchSeats } from "@parliamentarch/core/utils";
+import { getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg.js";
 
 export { type SeatData, type SeatDataWithNumber } from "./svg.js";
 
