@@ -4,9 +4,22 @@
   "description": "Tools to generate arch-styled parliamentary diagrams",
   "type": "module",
 
-  "main": null,
-  "types": null,
-  "exports": {},
+  "main": "./dist/geometry.js",
+  "types": "./dist/geometry.d.ts",
+  "exports": {
+    "geometry": {
+      "import": {
+        "types": "./dist/geometry.d.ts",
+        "default": "./dist/geometry.js"
+      }
+    },
+    "utils": {
+      "import": {
+        "types": "./dist/utils.d.ts",
+        "default": "./dist/utils.js"
+      }
+    }
+  },
 
   "files": [
     "dist"
