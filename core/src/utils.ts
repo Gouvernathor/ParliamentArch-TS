@@ -1,5 +1,7 @@
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
+const isReadonlyMap: (v: any) => v is ReadonlyMap<any, any> = v => v instanceof Map;
+
 /**
  * Typically Seats is a tuple of x/y coordinates, and SeatData gives infos on what seats should look like.
  * Typically the groups are ordered from the left to the right, and the seats are ordered from left to right.
@@ -9,11 +11,11 @@ type WithNumber<T> = T & { readonly nSeats?: number|undefined };
  * @returns a mapping of each group to the seats it holds
  */
 export function dispatchSeats<SeatDisplay, SeatLocation>(
-    attribution: Map<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
+    attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
     seats: Iterable<SeatLocation>,
 ): Map<SeatDisplay, SeatLocation[]> {
     const seatIterator = seats[Symbol.iterator]();
-    const entries: [SeatDisplay, number][] = attribution instanceof Map ?
+    const entries: [SeatDisplay, number][] = isReadonlyMap(attribution) ?
         Array.from(attribution) :
         attribution.map(seatData => [seatData, seatData.nSeats ?? 1]);
 
