@@ -7,13 +7,13 @@
   "main": "./dist/geometry.js",
   "types": "./dist/geometry.d.ts",
   "exports": {
-    "geometry": {
+    "./geometry": {
       "import": {
         "types": "./dist/geometry.d.ts",
         "default": "./dist/geometry.js"
       }
     },
-    "utils": {
+    "./utils": {
       "import": {
         "types": "./dist/utils.d.ts",
         "default": "./dist/utils.js"
