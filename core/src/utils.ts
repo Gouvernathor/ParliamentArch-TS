@@ -1,3 +1,5 @@
+import { SeatCenter } from "./common";
+
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
 /**
@@ -32,4 +34,25 @@ export function dispatchSeats<SeatDisplay, SeatLocation>(
             throw new Error("Too many seats");
         }
     }
+}
+
+type MappedSeatCenters<SeatDisplay> = Iterable<readonly [SeatCenter, SeatDisplay]>;
+type GroupedSeatCenters<SeatDisplay> = Iterable<readonly [SeatDisplay, readonly SeatCenter[]]>;
+
+/**
+ * Util function to convert seat centers representation
+ * @param seatCenters seating data oriented by seat center
+ * @returns grouped seat centers, organized by display, as taken by the component's input
+ */
+export function regroupSeatCenters<SeatDisplay>(
+    seatCenters: MappedSeatCenters<SeatDisplay>,
+): GroupedSeatCenters<SeatDisplay> {
+    const seatCentersByGroup = new Map<SeatDisplay, SeatCenter[]>();
+    for (const [seat, group] of seatCenters) {
+        if (!seatCentersByGroup.has(group)) {
+            seatCentersByGroup.set(group, []);
+        }
+        seatCentersByGroup.get(group)!.push(seat);
+    }
+    return seatCentersByGroup;
 }
