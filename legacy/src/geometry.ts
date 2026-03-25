@@ -2,6 +2,6 @@ export {
     getRowThickness,
     getRowsFromNRows,
     getNRowsFromNSeats,
-    GetSeatsCentersOptions,
-    getSeatsCenters,
+    GetSeatCentersOptions as GetSeatsCentersOptions,
+    getSeatCenters as getSeatsCenters,
 } from "@parliamentarch/core/geometry";

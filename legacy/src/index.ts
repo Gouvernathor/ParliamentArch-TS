@@ -1,4 +1,4 @@
-import { type GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
+import { type GetSeatCentersOptions as GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
 import { PrecomputeOptions } from "@parliamentarch/core/utils";
 import { getSVGFromAttribution as newGetSVGFromAttribution, type GetGroupedSVGOptions, type SeatData } from "@parliamentarch/svg";
 import { type SeatDataWithNumber } from "./svg";

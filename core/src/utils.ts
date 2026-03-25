@@ -1,4 +1,4 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, GetSeatsCentersOptions } from "./geometry";
+import { getNRowsFromNSeats, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry";
 
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
@@ -61,7 +61,7 @@ export function regroupSeatCenters<SeatDisplay>(
 }
 
 
-export interface PrecomputeOptions extends GetSeatsCentersOptions {
+export interface PrecomputeOptions extends GetSeatCentersOptions {
     seatRadiusFactor: number;
 }
 export interface PrecomputeReturn<SeatDisplay> {
@@ -91,7 +91,7 @@ export function precomputeFromAttribution<SeatDisplay>(
 
     const nSeats = [...attribution.values()].reduce((a, b) => a + b, 0);
 
-    const results = getSeatsCenters(nSeats, options);
+    const results = getSeatCenters(nSeats, options);
     const groupedSeatCenters = dispatchSeats(attribution, [...results.keys()].sort((a, b) => results.get(b)! - results.get(a)!));
     const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats));
     return {

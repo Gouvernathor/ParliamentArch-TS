@@ -1,4 +1,4 @@
-import { FillingStrategy, GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
+import { FillingStrategy, GetSeatCentersOptions } from "@parliamentarch/core/geometry";
 import { GetGroupedSVGOptions, getSVGFromAttribution, SeatData } from "@parliamentarch/svg";
 import { SeatDataWithNumber } from "./svg.js";
 
@@ -8,7 +8,7 @@ const partyInnerTagsLowercase = new Set([
     "seat-data",
 ]);
 
-type AllOptions = Partial<GetSeatsCentersOptions & GetGroupedSVGOptions & { seatRadiusFactor: number }>;
+type AllOptions = Partial<GetSeatCentersOptions & GetGroupedSVGOptions & { seatRadiusFactor: number }>;
 
 /**
  * This element will generate a parliament arch SVG. Its tag name is `<parliament-arch>`.

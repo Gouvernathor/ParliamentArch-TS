@@ -61,7 +61,7 @@ export enum FillingStrategy {
     OUTER_PRIORITY = "outer_priority",
 }
 
-export interface GetSeatsCentersOptions {
+export interface GetSeatCentersOptions {
     minNRows: number;
     fillingStrategy: FillingStrategy;
     spanAngle: number;
@@ -83,13 +83,13 @@ export interface GetSeatsCentersOptions {
  * Values above 180 are not supported.
  * @returns a map whose keys are the seat centers as [x, y] coordinates, with the angle of the seat as values.
  */
-export function getSeatsCenters(
+export function getSeatCenters(
     nSeats: number,
     {
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: Partial<GetSeatsCentersOptions> = {},
+    }: Partial<GetSeatCentersOptions> = {},
 ): Map<[number, number], number> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
