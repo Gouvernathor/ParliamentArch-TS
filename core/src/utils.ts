@@ -1,3 +1,5 @@
+import { getNRowsFromNSeats, getRowThickness, getSeatsCenters, GetSeatsCentersOptions } from "./geometry";
+
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
 const isReadonlyMap: (v: any) => v is ReadonlyMap<any, any> = v => v instanceof Map;
@@ -56,4 +58,44 @@ export function regroupSeatCenters<SeatDisplay>(
         seatCentersByGroup.get(group)!.push(seat);
     }
     return seatCentersByGroup;
+}
+
+
+export interface PrecomputeOptions extends GetSeatsCentersOptions {
+    seatRadiusFactor: number;
+}
+export interface PrecomputeReturn<SeatDisplay> {
+    groupedSeatCenters: Map<SeatDisplay, SeatCenter[]>,
+    seatActualRadius: number,
+}
+
+/**
+ * Pre-computes some values that are useful in the extensions that generate actual diagrams.
+ * The SeatDisplay type will depend on the extension.
+ * @param attribution
+ * @param options.seatRadiusFactor the ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
+ * @param options the rest of the options are those passed through to the options parameter of the getSeatsCenters function.
+ * @returns an object with two properties:
+ * a mapping of SeatDisplay objects to the list of the corresponding seats' coordinates,
+ * and the actual radius of the seats (in the same unit as the coordinates)
+ */
+export function precomputeFromAttribution<SeatDisplay>(
+    attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
+    options: Partial<PrecomputeOptions> = {},
+): PrecomputeReturn<SeatDisplay> {
+    if (!isReadonlyMap(attribution)) {
+        attribution = new Map(attribution.map(seatData => [seatData, seatData.nSeats ?? 1]));
+    }
+
+    const seatRadiusFactor = options?.seatRadiusFactor ?? .8;
+
+    const nSeats = [...attribution.values()].reduce((a, b) => a + b, 0);
+
+    const results = getSeatsCenters(nSeats, options);
+    const groupedSeatCenters = dispatchSeats(attribution, [...results.keys()].sort((a, b) => results.get(b)! - results.get(a)!));
+    const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats));
+    return {
+        groupedSeatCenters,
+        seatActualRadius,
+    };
 }
