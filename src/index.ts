@@ -1,6 +1,6 @@
 import { type GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
-import { precomputeFromAttribution, PrecomputeOptions } from "@parliamentarch/core/utils";
-import { getGroupedSVG, type GetGroupedSVGOptions, type SeatData } from "@parliamentarch/svg";
+import { PrecomputeOptions } from "@parliamentarch/core/utils";
+import { getSVGFromAttribution as newGetSVGFromAttribution, type GetGroupedSVGOptions, type SeatData } from "@parliamentarch/svg";
 import { type SeatDataWithNumber } from "./svg";
 
 export { type SeatData, type SeatDataWithNumber } from "./svg.js";
@@ -35,6 +35,5 @@ export function getSVGFromAttribution(
         options = { seatRadiusFactor: options, ...getSeatsCentersOptions, ...getGroupedSVGOptions };
     }
 
-    const precomputeReturn = precomputeFromAttribution(attribution, options);
-    return getGroupedSVG(precomputeReturn.groupedSeatCenters, precomputeReturn.seatActualRadius, options);
+    return newGetSVGFromAttribution(attribution, options);
 }

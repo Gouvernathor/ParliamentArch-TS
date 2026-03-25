@@ -23,6 +23,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
 
+  "dependencies": {
+    "@parliamentarch/core": "file:../core"
+  },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
     "typescript": "^6.0.2"
