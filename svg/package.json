@@ -31,7 +31,7 @@
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
-    "jsdom": "^25.0.1"
+    "jsdom": "*"
   },
   "peerDependenciesMeta": {
     "jsdom": {
