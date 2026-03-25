@@ -121,7 +121,7 @@ function addNumberOfSeats(
     const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
     text.setAttribute("x", x.toString());
     text.setAttribute("y", y.toString());
-    text.setAttribute("style", `font-size: ${fontSize*16}px; font-size: ${fontSize}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
+    text.setAttribute("style", `font-size: ${fontSize}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
 }
 
