@@ -38,6 +38,7 @@ export type SeatData = ClassSeatData | StandaloneSeatData;
  * without ever importing it in browser mode.
  */
 if (!globalThis.document) {
+//@ts-ignore
     await import("jsdom")
         .then(m => globalThis.document = new m.JSDOM().window.document)
         .catch(() =>
