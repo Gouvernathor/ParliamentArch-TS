@@ -51,7 +51,7 @@ export interface GetGroupedSVGOptions {
     canvasSize: number;
     margins: number | readonly [number, number] | readonly [number, number, number, number];
     /**
-     * The seat number will only be displayed for values superior to 0
+     * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
 }
@@ -64,7 +64,7 @@ export function getGroupedSVG(
     {
         canvasSize = 175,
         margins = 5,
-        seatNumberFontSizeFactor = 36 / 175,
+        seatNumberFontSizeFactor = 1,
     }: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
     if (!isArray(margins)) {
@@ -85,7 +85,7 @@ export function getGroupedSVG(
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             leftMargin + canvasSize,
             topMargin + (canvasSize * 170 / 175),
-            Math.round(seatNumberFontSizeFactor * canvasSize),
+            Math.round(seatNumberFontSizeFactor * 36 / 175 * canvasSize),
         );
     }
     addGroupedSeats(svg,

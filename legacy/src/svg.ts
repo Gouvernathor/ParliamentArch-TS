@@ -50,7 +50,7 @@ export function getGroupedSVG(
     if (options.writeNumberOfSeats === false) {
         newOptions.seatNumberFontSizeFactor = 0;
     } else if ("fontSizeFactor" in options) {
-        newOptions.seatNumberFontSizeFactor = options.fontSizeFactor;
+        newOptions.seatNumberFontSizeFactor = options.fontSizeFactor * 175/36;
     }
     return newGetGroupedSVG(groupedSeatCenters, seatActualRadius, newOptions);
 }
