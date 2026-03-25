@@ -1,6 +1,7 @@
 import { type GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
 import { precomputeFromAttribution, PrecomputeOptions } from "@parliamentarch/core/utils";
-import { getGroupedSVG, type GetGroupedSVGOptions, type SeatData, type SeatDataWithNumber } from "./svg.js";
+import { getGroupedSVG, type GetGroupedSVGOptions, type SeatData } from "@parliamentarch/svg";
+import { type SeatDataWithNumber } from "./svg";
 
 export { type SeatData, type SeatDataWithNumber } from "./svg.js";
 
