@@ -85,7 +85,7 @@ export function getGroupedSVG(
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             leftMargin + canvasSize,
             topMargin + (canvasSize * 170 / 175),
-            Math.round(seatNumberFontSizeFactor * 36 / 175 * canvasSize),
+            Math.round(seatNumberFontSizeFactor * 36 / 175 * canvasSize /16),
         );
     }
     addGroupedSeats(svg,
@@ -121,7 +121,7 @@ function addNumberOfSeats(
     const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
     text.setAttribute("x", x.toString());
     text.setAttribute("y", y.toString());
-    text.setAttribute("style", `font-size: ${fontSize}px; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
+    text.setAttribute("style", `font-size: ${fontSize}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
 }
 
