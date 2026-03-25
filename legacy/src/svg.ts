@@ -1,11 +1,9 @@
 import { dispatchSeats as genericDispatchSeats, regroupSeatCenters } from "@parliamentarch/core/utils";
-import { getGroupedSVG, GetGroupedSVGOptions, SeatData } from "@parliamentarch/svg";
+import { getGroupedSVG as newGetGroupedSVG, GetGroupedSVGOptions as NewGetGroupedSVGOptions, SeatData } from "@parliamentarch/svg";
 export {
     ClassSeatData,
     StandaloneSeatData,
     SeatData,
-    GetGroupedSVGOptions,
-    getGroupedSVG
 } from "@parliamentarch/svg";
 
 export type SeatDataWithNumber = SeatData & {
@@ -27,6 +25,13 @@ export function dispatchSeats<S>(
     return genericDispatchSeats(groupSeats, seats);
 }
 
+export interface GetGroupedSVGOptions {
+    canvasSize: number;
+    margins: number | readonly [number, number] | readonly [number, number, number, number];
+    writeNumberOfSeats: boolean;
+    fontSizeFactor: number;
+}
+
 export function getSVG(
     seatCenters: Iterable<readonly [readonly [number, number], SeatData]>,
     seatActualRadius: number,
@@ -34,4 +39,18 @@ export function getSVG(
 ): SVGSVGElement {
     const seatCentersByGroup = regroupSeatCenters(seatCenters);
     return getGroupedSVG(seatCentersByGroup, seatActualRadius, options);
+}
+
+export function getGroupedSVG(
+    groupedSeatCenters: ReturnType<typeof regroupSeatCenters<SeatData>>,
+    seatActualRadius: number,
+    options: Partial<GetGroupedSVGOptions> = {},
+): SVGSVGElement {
+    const newOptions: Partial<NewGetGroupedSVGOptions> = { ...options };
+    if (options.writeNumberOfSeats === false) {
+        newOptions.seatNumberFontSizeFactor = 0;
+    } else if ("fontSizeFactor" in options) {
+        newOptions.seatNumberFontSizeFactor = options.fontSizeFactor;
+    }
+    return newGetGroupedSVG(groupedSeatCenters, seatActualRadius, newOptions);
 }

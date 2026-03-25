@@ -38,7 +38,7 @@ export type SeatData = ClassSeatData | StandaloneSeatData;
  * without ever importing it in browser mode.
  */
 if (!globalThis.document) {
-//@ts-ignore
+    //@ts-ignore
     await import("jsdom")
         .then(m => globalThis.document = new m.JSDOM().window.document)
         .catch(() =>
@@ -50,8 +50,10 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 export interface GetGroupedSVGOptions {
     canvasSize: number;
     margins: number | readonly [number, number] | readonly [number, number, number, number];
-    writeNumberOfSeats: boolean;
-    fontSizeFactor: number;
+    /**
+     * The seat number will only be displayed for values superior to 0
+     */
+    seatNumberFontSizeFactor: number;
 }
 
 const isArray: (a: any) => a is readonly any[] = Array.isArray;
@@ -62,8 +64,7 @@ export function getGroupedSVG(
     {
         canvasSize = 175,
         margins = 5,
-        writeNumberOfSeats = true,
-        fontSizeFactor = 36 / 175,
+        seatNumberFontSizeFactor = 36 / 175,
     }: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
     if (!isArray(margins)) {
@@ -79,12 +80,12 @@ export function getGroupedSVG(
         leftMargin + 2 * canvasSize + rightMargin,
         topMargin + canvasSize + bottomMargin,
     );
-    if (writeNumberOfSeats) {
+    if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             leftMargin + canvasSize,
             topMargin + (canvasSize * 170 / 175),
-            Math.round(fontSizeFactor * canvasSize),
+            Math.round(seatNumberFontSizeFactor * canvasSize),
         );
     }
     addGroupedSeats(svg,
