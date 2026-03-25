@@ -39,7 +39,7 @@ export function dispatchSeats<S>(
 }
 
 export function getSVG(
-    seatCenters: Iterable<[[number, number], SeatData]>,
+    seatCenters: Iterable<readonly [readonly [number, number], SeatData]>,
     seatActualRadius: number,
     options: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
