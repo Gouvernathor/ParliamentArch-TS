@@ -63,13 +63,5 @@
   "dependencies": {
     "@parliamentarch/core": "file:./core",
     "@parliamentarch/svg": "file:./svg"
-  },
-  "peerDependencies": {
-    "jsdom": "^25.0.1"
-  },
-  "peerDependenciesMeta": {
-    "jsdom": {
-      "optional": true
-    }
   }
 }
