@@ -61,7 +61,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@parliamentarch/core": "file:./core",
-    "@parliamentarch/svg": "file:./svg"
+    "@parliamentarch/core": "file:../core",
+    "@parliamentarch/svg": "file:../svg"
   }
 }
