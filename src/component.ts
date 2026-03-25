@@ -1,6 +1,6 @@
-import { FillingStrategy, GetSeatsCentersOptions } from "./geometry.js";
-import { getSVGFromAttribution } from "./index.js";
-import { GetGroupedSVGOptions, SeatData, SeatDataWithNumber } from "./svg.js";
+import { FillingStrategy, GetSeatsCentersOptions } from "@parliamentarch/core/geometry";
+import { GetGroupedSVGOptions, getSVGFromAttribution, SeatData } from "@parliamentarch/svg";
+import { SeatDataWithNumber } from "./svg.js";
 
 const partyInnerTagsLowercase = new Set([
     "party",
