@@ -13,7 +13,7 @@ export interface GetSVGFromAttributionOptions extends PrecomputeOptions, GetGrou
 }
 
 export function getSVGFromAttribution(
-    attribution: ReadonlyMap<SeatData, number> | readonly (SeatData & { readonly nSeats?: number|undefined })[],
+    attribution: Parameters<typeof precomputeFromAttribution<SeatData>>[0],
     options?: Partial<GetSVGFromAttributionOptions>,
 ): SVGSVGElement {
     const precomputeReturn = precomputeFromAttribution(attribution, options);
