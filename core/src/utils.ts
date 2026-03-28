@@ -1,4 +1,4 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry";
+import { getNRowsFromNSeats, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry.js";
 
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
