@@ -11,7 +11,7 @@ export class ParliamentArch extends HTMLElement {
     // The options
     static observedAttributes = [
         // required
-        "data-seat-radius", // number
+        "data-seat-radius-factor", // number
 
         // geometry options
         "data-min-n-rows", // number
