@@ -95,5 +95,5 @@ This generic function turns one representation of how each seat is displayed, in
 This function pre-calculates some information from an attribution of seats, making it almost enough to be displayed. The return value is an object containing grouped seat centers as returned by the previous function, under the key `groupedSeatCenters`, and the radius of the seats in the same unit as the coordinates, under the key `seatActualRadius`.
 
 - `attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[]`
-- `PrecomputeOptions.seatRadiusFactor`: the factor between 0 and 1 described earlier. At 1, neighboring seats will touch one another.
-- `PrecomputeOptions`: the rest of the options are the same as taken by the `getSeatsCenters` function.
+- `options.seatRadiusFactor`: the factor between 0 and 1 described earlier. At 1, neighboring seats will touch one another.
+- `options`: the rest of the options are the same as taken by the `getSeatsCenters` function.
