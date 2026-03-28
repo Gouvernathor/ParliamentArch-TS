@@ -1,0 +1,53 @@
+{
+  "name": "@parliamentarch/web-component",
+  "version": "4.0.0",
+  "description": "Web component for arch-styled parliamentary diagrams",
+  "type": "module",
+
+  "main": "./dist/component.js",
+  "types": "./dist/component.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/component.d.ts",
+        "default": "./dist/component.js"
+      }
+    }
+  },
+
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "dependencies": {
+    "@parliamentarch/core": "file:../core",
+    "@parliamentarch/svg": "file:../svg"
+  },
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.8",
+    "typescript": "^6.0.2"
+  },
+
+  "author": "Gouvernathor",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+  },
+  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
+  "bugs": {
+    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
+  },
+  "funding": "https://ko-fi.com/gouvernathor",
+  "keywords": [
+    "parliament",
+    "diagram",
+    "arch",
+    "hemicycle",
+    "svg"
+  ]
+}
