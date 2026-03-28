@@ -81,13 +81,13 @@ export interface PrecomputeReturn<SeatDisplay> {
  */
 export function precomputeFromAttribution<SeatDisplay>(
     attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
-    options: Partial<PrecomputeOptions> = {},
+    options: Partial<Readonly<PrecomputeOptions>> = {},
 ): PrecomputeReturn<SeatDisplay> {
     if (!isReadonlyMap(attribution)) {
         attribution = new Map(attribution.map(seatData => [seatData, seatData.nSeats ?? 1]));
     }
 
-    const seatRadiusFactor = options?.seatRadiusFactor ?? .8;
+    const seatRadiusFactor = options.seatRadiusFactor ?? .8;
 
     const nSeats = [...attribution.values()].reduce((a, b) => a + b, 0);
 
