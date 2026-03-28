@@ -41,6 +41,35 @@ export function getSVG(
     return getGroupedSVG(seatCentersByGroup, seatActualRadius, options);
 }
 
+const isArray: (a: any) => a is readonly any[] = Array.isArray;
+
+function legacySizeHandling(
+    svg: SVGSVGElement,
+    {
+        canvasSize = 175,
+        margins = 5,
+    }: Partial<Pick<GetGroupedSVGOptions, "canvasSize"|"margins">>,
+): SVGSVGElement {
+    if (!isArray(margins)) {
+        margins = [margins, margins, margins, margins];
+    } else if (margins.length === 2) {
+        margins = [margins[0], margins[1], margins[0], margins[1]];
+    }
+    const [leftMargin, topMargin, rightMargin, bottomMargin] = margins;
+
+    const width = leftMargin + 2 * canvasSize + rightMargin;
+    const height = topMargin + canvasSize + bottomMargin;
+
+    svg.setAttribute("width", width.toString());
+    svg.setAttribute("height", height.toString());
+    svg.style.marginLeft = leftMargin.toString();
+    svg.style.marginRight = rightMargin.toString();
+    svg.style.marginTop = topMargin.toString();
+    svg.style.marginBottom = bottomMargin.toString();
+
+    return svg;
+}
+
 export function getGroupedSVG(
     groupedSeatCenters: ReturnType<typeof regroupSeatCenters<SeatData>>,
     seatActualRadius: number,
@@ -52,5 +81,5 @@ export function getGroupedSVG(
     } else if ("fontSizeFactor" in options) {
         newOptions.seatNumberFontSizeFactor = options.fontSizeFactor * 175/36;
     }
-    return newGetGroupedSVG(groupedSeatCenters, seatActualRadius, newOptions);
+    return legacySizeHandling(newGetGroupedSVG(groupedSeatCenters, seatActualRadius, newOptions), options);
 }
