@@ -75,7 +75,7 @@ export function getGroupedSVG(
     seatActualRadius: number,
     options: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
-    const newOptions: Partial<NewGetGroupedSVGOptions> = { ...options };
+    const newOptions: Partial<NewGetGroupedSVGOptions> = {};
     if (options.writeNumberOfSeats === false) {
         newOptions.seatNumberFontSizeFactor = 0;
     } else if ("fontSizeFactor" in options) {
