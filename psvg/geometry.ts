@@ -1,6 +1,6 @@
-export type Parliament = {[partyname: string]: {seats: number, colour: string}};
-type SeatCenter = {x: number, y: number};
-export type Seat = SeatCenter & {party: string};
+export type Parliament = { [partyname: string]: { seats: number, colour: string } };
+type SeatCenter = { x: number, y: number };
+export type Seat = SeatCenter & { party: string };
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
@@ -93,7 +93,7 @@ function getSeatCentersWithAngle(
     seatDistance: number,
 ) {
     // calculate row radii
-    const rowRadii = Array.from({length: nRows}, (_, i) =>
+    const rowRadii = Array.from({ length: nRows }, (_, i) =>
         outerRowRadius - i * seatDistance);
 
     // calculate number of seats per row
@@ -129,7 +129,7 @@ function tagSeatCenters(
     for (const partyname in parliament) {
         const pSeats = parliament[partyname].seats;
         for (let pSeatIdx = 0; pSeatIdx < pSeats; pSeatIdx++, seatIdx++) {
-            rv.push(Object.assign({party: partyname}, sortedXY[seatIdx]));
+            rv.push(Object.assign({ party: partyname }, sortedXY[seatIdx]));
         }
     }
     return rv;
@@ -138,7 +138,7 @@ function tagSeatCenters(
 export default function generatePoints(
     parliament: Parliament,
     outerRowRadius: number,
-): Seat[] & {seatDistance: number} {
+): Seat[] & { seatDistance: number } {
     const seatCount = Object.values(parliament)
         .map(v => v.seats)
         .reduce((a, b) => a + b, 0);
@@ -149,5 +149,5 @@ export default function generatePoints(
 
     const seats = tagSeatCenters(parliament, seatCentersWithAngle);
 
-    return Object.assign(seats, {seatDistance});
+    return Object.assign(seats, { seatDistance });
 }

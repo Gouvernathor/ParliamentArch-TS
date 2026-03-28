@@ -5,7 +5,7 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 function documentElementCreator(
     tag: string,
     attributes: Record<string, unknown>,
-    content?: (string|Element)[],
+    content?: readonly (string|Element)[],
 ) {
     const e = document.createElementNS(SVG_NS, tag);
     for (const k in attributes) {
@@ -18,8 +18,8 @@ function documentElementCreator(
 }
 
 export default function generateSVG(
-    parties: { [partyname: string]: {fill: string} },
-    points: Seat[],
+    parties: { readonly [partyname: string]: { readonly fill: string } },
+    points: readonly Seat[],
     outerRowRadius: number,
     seatDistance: number,
     {
@@ -28,7 +28,7 @@ export default function generateSVG(
         seatRadiusFactor,
     }: {
         seatCount: boolean,
-        elementCreator: undefined | typeof documentElementCreator
+        elementCreator: undefined | typeof documentElementCreator,
         seatRadiusFactor: number,
     },
 ): SVGSVGElement {
@@ -40,7 +40,7 @@ export default function generateSVG(
         const gStyle = [
             `fill: ${party.fill};`,
         ].join(' ');
-        const group = elementCreator('g', {id: partyname, style: gStyle}) as SVGGElement;
+        const group = elementCreator('g', { id: partyname, style: gStyle }) as SVGGElement;
         return [partyname, group];
     }));
 
