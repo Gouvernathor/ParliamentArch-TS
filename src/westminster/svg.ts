@@ -14,13 +14,13 @@ if (!globalThis.document) {
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 export interface Party {
-    color: string;
-    id?: string|undefined;
-    data?: string|undefined;
+    readonly color: string;
+    readonly id?: string|undefined;
+    readonly data?: string|undefined;
 
-    borderSize?: number|undefined;
-    borderColor?: string|undefined;
-    roundingRadius?: number|undefined;
+    readonly borderSize?: number|undefined;
+    readonly borderColor?: string|undefined;
+    readonly roundingRadius?: number|undefined;
 }
 
 export interface Options {
@@ -28,14 +28,14 @@ export interface Options {
      * The default value for the rounding radius of the corners of the squares,
      * unless overridden for a specific party.
      */
-    roundingRadius: number; // default 0
+    readonly roundingRadius: number; // default 0
 
     /**
      * The relative spacing between neighboring squares of the same area.
      * This is to be multiplied by the side of a square
      * to get the actual spacing between two neighboring squares.
      */
-    spacingFactor: number; // default .1
+    readonly spacingFactor: number; // default .1
 }
 function defaultOptions({
     roundingRadius = 0,
@@ -84,6 +84,7 @@ function extremum() {
     f.max = null as number|null;
     return f;
 }
+type ExtremumGatherer = ReturnType<typeof extremum>;
 
 function addGroupedSeats(
     container: SVGElement,
@@ -137,7 +138,7 @@ function addGroupedSeats(
 
 function createArea(
     a: CoordinatesPerPartyPerArea<Party>[Area],
-    ex: { x: ReturnType<typeof extremum>, y: ReturnType<typeof extremum> },
+    ex: { x: ExtremumGatherer, y: ExtremumGatherer },
     { roundingRadius, spacingFactor }: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): SVGGElement {
     const areaGroup = document.createElementNS(SVG_NS, "g");

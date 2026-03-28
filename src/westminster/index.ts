@@ -4,24 +4,24 @@ import { buildSVG, Options as SVGOptions, Party } from "./svg.js";
 
 export { Party };
 
-type TWithArea<T> = T & {
-    area: Area;
+type WithArea<T> = T & {
+    readonly area: Area;
 }
-type TWithNumber<T> = T & {
-    nSeats: number;
+type WithNumber<T> = T & {
+    readonly nSeats: number;
 }
-type TLocatedWithNumber<T> = TWithArea<TWithNumber<T>>;
+type LocatedWithNumber<T> = WithArea<WithNumber<T>>;
 
 type LocalAttri0 = ReadonlyMap<Party, number>;
 type LocalAttri1 = Iterable<readonly [Party, number]>;
 type LocalAttri1Array = readonly (readonly [Party, number])[];
-type LocalAttri2 = readonly TWithNumber<Party>[];
+type LocalAttri2 = readonly WithNumber<Party>[];
 type Attri1 = {readonly [area in Area]?: LocalAttri1};
 type Attri2 = {readonly [area in Area]?: LocalAttri2};
 type Attri12 = {readonly [area in Area]?: LocalAttri1|LocalAttri2};
-type Attri3 = Iterable<readonly [TWithArea<Party>, number]>;
-type Attri3Array = readonly (readonly [TWithArea<Party>, number])[];
-type Attri4 = readonly TLocatedWithNumber<Party>[];
+type Attri3 = Iterable<readonly [WithArea<Party>, number]>;
+type Attri3Array = readonly (readonly [WithArea<Party>, number])[];
+type Attri4 = readonly LocatedWithNumber<Party>[];
 
 type AnyAttribution =
     | Attri1
@@ -31,7 +31,7 @@ type AnyAttribution =
     | Attri4
 ;
 
-function extractSeats<P extends Party>(party: TWithNumber<P>): [P, number] {
+function extractSeats<P extends Party>(party: WithNumber<P>): [P, number] {
     return [party, party.nSeats];
 }
 

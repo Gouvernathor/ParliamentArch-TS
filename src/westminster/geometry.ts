@@ -3,17 +3,17 @@ import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js"
 /**
  * Number of seats for each party for each area.
  */
-export type NSeatsPerPartyPerArea<Party> = Record<Area, ReadonlyMap<Party, number>>;
+export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<Party, number> };
 
 /**
  * Number of occupied seats for each area.
  */
-type Hera = Record<Area, number>;
+type Hera = { readonly [a in Area]: number };
 
 /**
  * Number of rows and columns for each area.
  */
-type Demeter = Record<Area, { nRows: number; nCols: number }>;
+type Demeter = { readonly [a in Area]: { readonly nRows: number; readonly nCols: number } };
 
 
 export interface Options {
@@ -22,7 +22,7 @@ export interface Options {
      * Ignored if 0, invalid if negative.
      * If ignored, the actual number of rows is computed automatically.
      */
-    wingNRows: number; // default 0
+    readonly wingNRows: number; // default 0
 
     /**
      * The number of columns for the crossbenchers.
@@ -31,19 +31,19 @@ export interface Options {
      * Previously called centerCols.
      * If ignored, the actual number of columns is computed automatically.
      */
-    crossNCols: number; // default 0
+    readonly crossNCols: number; // default 0
 
     /**
      * Whether parties of the same wing are allowed to share the same column,
      * or the same row for crossbenchers.
      */
-    cozy: boolean; // default true
+    readonly cozy: boolean; // default true
 
     /**
      * Whether to prioritize having equal columns between the two wings,
      * over having equal rows.
      */
-    // fullWidth: boolean; // default false
+    // readonly fullWidth: boolean; // default false
 }
 function defaultOptions({
     wingNRows = 0,
