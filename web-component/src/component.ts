@@ -4,9 +4,6 @@ import { getSVGFromAttribution, GetSVGFromAttributionOptions } from "@parliament
 type Attribution = Parameters<typeof getSVGFromAttribution>[0];
 type SeatDataWithNumber = Exclude<Attribution, ReadonlyMap<any, any>>[number];
 
-// Prepare removing these options from the SVG package
-type AllOptions = Omit<GetSVGFromAttributionOptions, "margins"|"canvasSize">;
-
 export class ParliamentArch extends HTMLElement {
     // The options
     static observedAttributes = [
@@ -29,7 +26,7 @@ export class ParliamentArch extends HTMLElement {
 
     constructor(
         attribution: Attribution,
-        options: Partial<AllOptions> = {},
+        options: Partial<GetSVGFromAttributionOptions> = {},
     ) {
         super();
         this.#shadow = this.attachShadow({ mode: "open" });
@@ -49,7 +46,7 @@ export class ParliamentArch extends HTMLElement {
      */
     setAttributionAndOptions(
         attribution: Attribution,
-        options: Partial<AllOptions> = {},
+        options: Partial<GetSVGFromAttributionOptions> = {},
     ) {
         this.#attribution = attribution;
         this.#options = options;

@@ -48,65 +48,45 @@ if (!globalThis.document) {
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 export interface GetGroupedSVGOptions {
-    canvasSize: number;
-    margins: number | readonly [number, number] | readonly [number, number, number, number];
     /**
      * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
 }
 
-const isArray: (a: any) => a is readonly any[] = Array.isArray;
+const CANVAS_SIZE_BASE = 175;
 
 export function getGroupedSVG(
     seatCentersByGroup: Iterable<readonly [SeatData, readonly (readonly [number, number])[]]>,
     seatActualRadius: number,
     {
-        canvasSize = 175,
-        margins = 5,
         seatNumberFontSizeFactor = 1,
     }: Partial<GetGroupedSVGOptions> = {},
 ): SVGSVGElement {
-    if (!isArray(margins)) {
-        margins = [margins, margins, margins, margins];
-    } else if (margins.length === 2) {
-        margins = [margins[0], margins[1], margins[0], margins[1]];
-    }
-    const [leftMargin, topMargin, rightMargin, bottomMargin] = margins;
-
     const svg = document.createElementNS(SVG_NS, "svg");
 
-    populateHeader(svg,
-        leftMargin + 2 * canvasSize + rightMargin,
-        topMargin + canvasSize + bottomMargin,
-    );
+    populateHeader(svg);
     if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
-            leftMargin + canvasSize,
-            topMargin + (canvasSize * 170 / 175),
-            Math.round(seatNumberFontSizeFactor * 36 / 175 * canvasSize /16),
+            CANVAS_SIZE_BASE,
+            CANVAS_SIZE_BASE * 170 / 175,
+            Math.round(seatNumberFontSizeFactor * 36 / 175 * CANVAS_SIZE_BASE /16),
         );
     }
     addGroupedSeats(svg,
         seatCentersByGroup,
         seatActualRadius,
-        canvasSize,
-        leftMargin,
-        topMargin,
     );
     return svg;
 }
 
 function populateHeader(
     svg: SVGSVGElement,
-    width: number,
-    height: number,
 ): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
-    svg.setAttribute("width", width.toString());
-    svg.setAttribute("height", height.toString());
+    svg.setAttribute("viewBox", `0 0 ${CANVAS_SIZE_BASE} ${2*CANVAS_SIZE_BASE}`);
 
     svg.appendChild(document.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
@@ -129,15 +109,12 @@ function addGroupedSeats(
     svg: SVGSVGElement,
     seatCentersByGroup: Iterable<readonly [SeatData, readonly (readonly [number, number])[]]>,
     seatActualRadius: number,
-    canvasSize: number,
-    leftMargin: number,
-    topMargin: number,
 ): void {
     let groupNumberFallback = 0;
 
     for (const [group, seatCenters] of seatCentersByGroup) {
         const groupBorderWidth = ("borderSize" in group && group.borderSize ?
-            group.borderSize * seatActualRadius * canvasSize :
+            group.borderSize * seatActualRadius * CANVAS_SIZE_BASE :
             0);
 
         const seatsContainer = "color" in group || "borderSize" in group || "borderColor" in group ?
@@ -151,9 +128,9 @@ function addGroupedSeats(
                     group.class.join(" ") :
                     group.class as string;
             }
-            circle.setAttribute("cx", (leftMargin + canvasSize * x).toString());
-            circle.setAttribute("cy", (topMargin + canvasSize * (1 - y)).toString());
-            circle.setAttribute("r", (seatActualRadius * canvasSize - groupBorderWidth / 2).toString());
+            circle.setAttribute("cx", (CANVAS_SIZE_BASE * x).toString());
+            circle.setAttribute("cy", (CANVAS_SIZE_BASE * (1 - y)).toString());
+            circle.setAttribute("r", (seatActualRadius * CANVAS_SIZE_BASE - groupBorderWidth / 2).toString());
         }
     }
 }
