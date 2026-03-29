@@ -62,10 +62,10 @@ function legacySizeHandling(
 
     svg.setAttribute("width", width.toString());
     svg.setAttribute("height", height.toString());
-    svg.style.marginLeft = leftMargin.toString();
-    svg.style.marginRight = rightMargin.toString();
-    svg.style.marginTop = topMargin.toString();
-    svg.style.marginBottom = bottomMargin.toString();
+    svg.style.marginLeft = `${leftMargin}px`;
+    svg.style.marginRight = `${rightMargin}px`;
+    svg.style.marginTop = `${topMargin}px`;
+    svg.style.marginBottom = `${bottomMargin}px`;
 
     return svg;
 }
