@@ -60,17 +60,17 @@ function legacySizeHandling(
     const width = leftMargin + 2 * canvasSize + rightMargin;
     const height = topMargin + canvasSize + bottomMargin;
 
-    const [oldx, oldy, oldwidth, oldheight] = svg.getAttribute("viewBox")!.split(" ");
-    const newwidth = +oldwidth! * (1 + leftMargin/width + rightMargin/width);
-    const newheight = +oldheight! * (1 + topMargin/height + bottomMargin/height);
-    const newx = +oldx! - leftMargin/width*newwidth;
-    const newy = +oldy! - topMargin/height*newheight;
-
-    svg.setAttribute("width", width.toString());
-    svg.setAttribute("height", height.toString()); // extraneous
-    svg.setAttribute("viewBox", `${newx} ${newy} ${newwidth} ${newheight}`);
-
-    return svg;
+    // if the new SVG module made it, then document is available
+    const outerSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    outerSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    outerSVG.appendChild(svg);
+    svg.setAttribute("x", leftMargin.toString());
+    svg.setAttribute("y", topMargin.toString());
+    svg.setAttribute("width", (2*canvasSize).toString());
+    svg.setAttribute("height", canvasSize.toString());
+    outerSVG.setAttribute("width", width.toString());
+    outerSVG.setAttribute("height", height.toString());
+    return outerSVG;
 }
 
 export function getGroupedSVG(
