@@ -60,12 +60,15 @@ function legacySizeHandling(
     const width = leftMargin + 2 * canvasSize + rightMargin;
     const height = topMargin + canvasSize + bottomMargin;
 
+    const [oldx, oldy, oldwidth, oldheight] = svg.getAttribute("viewBox")!.split(" ");
+    const newwidth = +oldwidth! * (1 + leftMargin/width + rightMargin/width);
+    const newheight = +oldheight! * (1 + topMargin/height + bottomMargin/height);
+    const newx = +oldx! - leftMargin/width*newwidth;
+    const newy = +oldy! - topMargin/height*newheight;
+
     svg.setAttribute("width", width.toString());
-    svg.setAttribute("height", height.toString());
-    svg.style.marginLeft = `${leftMargin}px`;
-    svg.style.marginRight = `${rightMargin}px`;
-    svg.style.marginTop = `${topMargin}px`;
-    svg.style.marginBottom = `${bottomMargin}px`;
+    svg.setAttribute("height", height.toString()); // extraneous
+    svg.setAttribute("viewBox", `${newx} ${newy} ${newwidth} ${newheight}`);
 
     return svg;
 }
