@@ -54,7 +54,7 @@ export interface GetGroupedSVGOptions {
     seatNumberFontSizeFactor: number;
 }
 
-const CANVAS_SIZE_BASE = 175;
+const ARCH_RADIUS = 175;
 
 export function getGroupedSVG(
     seatCentersByGroup: Iterable<readonly [SeatData, readonly (readonly [number, number])[]]>,
@@ -69,9 +69,9 @@ export function getGroupedSVG(
     if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
-            CANVAS_SIZE_BASE,
-            CANVAS_SIZE_BASE * 170 / 175,
-            seatNumberFontSizeFactor * 36 / 175 * CANVAS_SIZE_BASE /16,
+            ARCH_RADIUS,
+            ARCH_RADIUS * 170 / 175,
+            seatNumberFontSizeFactor * 36 / 175 * ARCH_RADIUS /16,
         );
     }
     addGroupedSeats(svg,
@@ -86,7 +86,7 @@ function populateHeader(
 ): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
-    svg.setAttribute("viewBox", `0 0 ${2*CANVAS_SIZE_BASE} ${CANVAS_SIZE_BASE}`);
+    svg.setAttribute("viewBox", `0 0 ${2*ARCH_RADIUS} ${ARCH_RADIUS}`);
 
     svg.appendChild(document.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
@@ -114,7 +114,7 @@ function addGroupedSeats(
 
     for (const [group, seatCenters] of seatCentersByGroup) {
         const groupBorderWidth = ("borderSize" in group && group.borderSize ?
-            group.borderSize * seatActualRadius * CANVAS_SIZE_BASE :
+            group.borderSize * seatActualRadius * ARCH_RADIUS :
             0);
 
         const seatsContainer = "color" in group || "borderSize" in group || "borderColor" in group ?
@@ -128,9 +128,9 @@ function addGroupedSeats(
                     group.class.join(" ") :
                     group.class as string;
             }
-            circle.setAttribute("cx", (CANVAS_SIZE_BASE * x).toString());
-            circle.setAttribute("cy", (CANVAS_SIZE_BASE * (1 - y)).toString());
-            circle.setAttribute("r", (seatActualRadius * CANVAS_SIZE_BASE - groupBorderWidth / 2).toString());
+            circle.setAttribute("cx", (ARCH_RADIUS * x).toString());
+            circle.setAttribute("cy", (ARCH_RADIUS * (1 - y)).toString());
+            circle.setAttribute("r", (seatActualRadius * ARCH_RADIUS - groupBorderWidth / 2).toString());
         }
     }
 }
