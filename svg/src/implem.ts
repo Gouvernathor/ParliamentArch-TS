@@ -71,7 +71,7 @@ export function getGroupedSVG(
             Array.from(seatCentersByGroup, group => group[1].length).reduce((a, b) => a + b, 0),
             CANVAS_SIZE_BASE,
             CANVAS_SIZE_BASE * 170 / 175,
-            Math.round(seatNumberFontSizeFactor * 36 / 175 * CANVAS_SIZE_BASE /16),
+            seatNumberFontSizeFactor * 36 / 175 * CANVAS_SIZE_BASE /16,
         );
     }
     addGroupedSeats(svg,
