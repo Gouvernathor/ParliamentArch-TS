@@ -86,7 +86,7 @@ function populateHeader(
 ): void {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("version", "1.1");
-    svg.setAttribute("viewBox", `0 0 ${CANVAS_SIZE_BASE} ${2*CANVAS_SIZE_BASE}`);
+    svg.setAttribute("viewBox", `0 0 ${2*CANVAS_SIZE_BASE} ${CANVAS_SIZE_BASE}`);
 
     svg.appendChild(document.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
