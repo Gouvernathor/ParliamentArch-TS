@@ -1,12 +1,12 @@
 # Parliamentarch-TS Core
 
-Tools to generate arch-styled SVG parliamentary diagrams.
+Tools to generate arch-styled parliamentary diagrams.
 
 ![Example diagram](../sample.svg)
 
 This package handles two things: majorly (in the `geometry` submodule), the geometry of how the seats are arranged in space, and as an aside (in the `utils` submodule), some util functions shared by the other modules taking over from there.
 
-Those won't be enough to generate SVG files or nodes by themselves.
+Those won't be enough to generate SVG files or nodes by themselves. In fact, there is nothing specific to SVG in this package, and a wholly different display system could be used to generate a diagram from what this package provides.
 
 ## Base math and layout
 
@@ -51,7 +51,7 @@ Returns a list of each row's maximum seat capacity, starting from inner to outer
 
 `getRowThickness(nRows: number): number`
 
-Returns the row thickness, i.e the difference between the radii of two consecutive rows, for a given number of rows. This can help converting a seat radius factor (as passed to getSVGFromAttribution) to a seat actual radius as taken by the getSVG functions.
+Returns the row thickness, i.e the difference between the radii of two consecutive rows, for a given number of rows.
 
 `FillingStrategy`
 
