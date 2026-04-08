@@ -2,7 +2,10 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/core",
+      "packages/svg",
+      "packages/web-component",
+      "packages/legacy"
     ]
   },
   "description": "Root package for all the @parliamentarch packages",
