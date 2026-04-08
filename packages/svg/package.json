@@ -20,7 +20,9 @@
   ],
   "scripts": {
     "clean": "node ../../scripts/clean.ts -d ./dist",
-    "build": "tsc",
+    "compile": "tsc",
+    "build": "npm run clean & npm run compile",
+    "pub": "npm run build & npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
 
