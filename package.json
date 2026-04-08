@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "description": "Root package for all the @parliamentarch packages",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git"
+  },
+  "author": "Gouvernathor",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
