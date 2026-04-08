@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "workspaces": {
     "packages": [
       "packages/core",
@@ -16,6 +17,7 @@
   },
   "author": "Gouvernathor",
   "scripts": {
+    "clean": "npm run clean --workspaces",
     "build": "npm run build --workspaces",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

@@ -19,6 +19,7 @@
     "dist"
   ],
   "scripts": {
+    "clean": "node ../../scripts/clean.ts -d ./dist",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
