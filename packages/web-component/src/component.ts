@@ -146,12 +146,7 @@ export class ParliamentArch extends HTMLElement {
     }
 
     private makeSVGElement(): SVGSVGElement {
-        const options: Partial<GetSVGFromAttributionOptions> = {
-            // canvasSize
-            margins: 0,
-            ...this.#options,
-        };
-        return getSVGFromAttribution(this.#attribution, options);
+        return getSVGFromAttribution(this.#attribution, this.#options);
     }
 }
 
