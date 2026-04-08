@@ -36,7 +36,8 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+    "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git",
+    "directory": "packages/web-component"
   },
   "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
   "bugs": {
