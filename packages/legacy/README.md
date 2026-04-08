@@ -9,7 +9,7 @@ This is a TypeScript port of the [ParliamentArch](https://github.com/Gouvernatho
 
 Both browser and Node.js environments are supported, though it needs special handling in the case of Node.js.
 
-![Example diagram](../sample.svg)
+![Example diagram](../../sample.svg)
 
 ## Node.js usage
 

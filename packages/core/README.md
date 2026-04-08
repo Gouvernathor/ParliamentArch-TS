@@ -2,7 +2,7 @@
 
 Tools to generate arch-styled parliamentary diagrams.
 
-![Example diagram](../sample.svg)
+![Example diagram](../../sample.svg)
 
 This package handles two things: majorly (in the `geometry` submodule), the geometry of how the seats are arranged in space, and as an aside (in the `utils` submodule), some util functions shared by the other modules taking over from there.
 

@@ -2,7 +2,7 @@
 
 Tools to generate arch-styled SVG parliamentary diagrams.
 
-![Example diagram](../sample.svg)
+![Example diagram](../../sample.svg)
 
 This package generates SVG DOM nodes (SVGSVGElement objects), which can be serialized into SVG image files.
 
