@@ -44,7 +44,7 @@
     "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
+  "homepage": "https://codeberg.org/Gouvernathor/ParliamentArch-TS/src/packages/core#readme",
   "bugs": {
     "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
   },
