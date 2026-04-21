@@ -5,7 +5,7 @@ type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 const isReadonlyMap: (v: any) => v is ReadonlyMap<any, any> = v => v instanceof Map;
 
 /**
- * Typically Seats is a tuple of x/y coordinates, and SeatData gives infos on what seats should look like.
+ * Typically SeatLocation is a tuple of x/y coordinates, and SeatDisplay gives infos on what seats should look like.
  * Typically the groups are ordered from the left to the right, and the seats are ordered from left to right.
  * If too few or too many seats are provided, an error is thrown.
  * @param attribution a mapping of groups associating the groups in a given order to the number of seats each group holds
@@ -72,12 +72,11 @@ export interface PrecomputeReturn<SeatDisplay> {
 /**
  * Pre-computes some values that are useful in the extensions that generate actual diagrams.
  * The SeatDisplay type will depend on the extension.
- * @param attribution
  * @param options.seatRadiusFactor the ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
  * @param options the rest of the options are those passed through to the options parameter of the getSeatsCenters function.
  * @returns an object with two properties:
- * a mapping of SeatDisplay objects to the list of the corresponding seats' coordinates,
- * and the actual radius of the seats (in the same unit as the coordinates)
+ * the groupedSeatCenters key, a mapping of SeatDisplay objects to the list of the corresponding seats' coordinates,
+ * and the seatActualRadius key, the actual radius of the seats (in the same unit as the coordinates)
  */
 export function precomputeFromAttribution<SeatDisplay>(
     attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
