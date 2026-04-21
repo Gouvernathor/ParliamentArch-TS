@@ -27,8 +27,8 @@
   },
 
   "dependencies": {
-    "@parliamentarch/core": "file:../core",
-    "@parliamentarch/svg": "file:../svg"
+    "@parliamentarch/core": "4.0.0",
+    "@parliamentarch/svg": "4.0.0"
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",

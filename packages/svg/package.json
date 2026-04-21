@@ -27,7 +27,7 @@
   },
 
   "dependencies": {
-    "@parliamentarch/core": "file:../core"
+    "@parliamentarch/core": "4.0.0"
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
