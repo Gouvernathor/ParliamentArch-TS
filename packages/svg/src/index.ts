@@ -16,6 +16,6 @@ export function getSVGFromAttribution(
     attribution: Parameters<typeof precomputeFromAttribution<SeatData>>[0],
     options?: Partial<GetSVGFromAttributionOptions>,
 ): SVGSVGElement {
-    const precomputeReturn = precomputeFromAttribution(attribution, options);
-    return getGroupedSVG(precomputeReturn.groupedSeatCenters, precomputeReturn.seatActualRadius, options);
+    const { groupedSeatCenters, seatActualRadius } = precomputeFromAttribution(attribution, options);
+    return getGroupedSVG(groupedSeatCenters, seatActualRadius, options);
 }
