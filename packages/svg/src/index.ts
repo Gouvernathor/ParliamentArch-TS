@@ -14,7 +14,7 @@ export interface GetSVGFromAttributionOptions extends PrecomputeOptions, GetGrou
 
 export function getSVGFromAttribution(
     attribution: Parameters<typeof precomputeFromAttribution<SeatData>>[0],
-    options?: Partial<GetSVGFromAttributionOptions>,
+    options?: Partial<Readonly<GetSVGFromAttributionOptions>>,
 ): SVGSVGElement {
     const { groupedSeatCenters, seatActualRadius } = precomputeFromAttribution(attribution, options);
     return getGroupedSVG(groupedSeatCenters, seatActualRadius, options);
