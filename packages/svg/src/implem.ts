@@ -62,10 +62,8 @@ export function getGroupedSVG(
 
     populateHeader(svg);
     if (seatNumberFontSizeFactor > 0) {
-        const s = seatCentersByGroup = convertToArray(seatCentersByGroup);
-
         addNumberOfSeats(svg,
-            s.reduce((a, b) => a + b[1].length, 0),
+            (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
         );
     }
