@@ -1,5 +1,10 @@
 import "./document-loader.js";
 
+const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
+const convertToArray: <T>(i: Iterable<T>) => readonly T[] = (i) => isReadonlyArray(i) ?
+    i :
+    [...i];
+
 export interface ClassSeatData {
     /**
      * CSS class or classes to apply to this group of seats.
@@ -57,12 +62,10 @@ export function getGroupedSVG(
 
     populateHeader(svg);
     if (seatNumberFontSizeFactor > 0) {
-        if (!Array.isArray(seatCentersByGroup)) {
-            return getGroupedSVG([...seatCentersByGroup], seatActualRadius, { seatNumberFontSizeFactor });
-        }
+        const s = seatCentersByGroup = convertToArray(seatCentersByGroup);
 
         addNumberOfSeats(svg,
-            seatCentersByGroup.map(group => group[1].length).reduce((a, b) => a + b, 0),
+            s.map(group => group[1].length).reduce((a, b) => a + b, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
         );
     }
