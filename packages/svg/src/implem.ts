@@ -115,9 +115,9 @@ function addGroupedSeats(
         for (const [x, y] of seatCenters) {
             const circle = seatsContainer.appendChild(document.createElementNS(SVG_NS, "circle"));
             if ("class" in group && group.class) {
-                circle.classList = Array.isArray(group.class) ?
+                circle.classList = isReadonlyArray(group.class) ?
                     group.class.join(" ") :
-                    group.class as string;
+                    group.class;
             }
             circle.setAttribute("cx", (ARCH_RADIUS * x).toString());
             circle.setAttribute("cy", (ARCH_RADIUS * (1 - y)).toString());
