@@ -18,9 +18,9 @@ export function getRowThickness(nRows: number): number {
 
 /**
  * This indicates the maximal number of seats for each row for a given number of rows.
+ * @param spanAngle if provided, it is the angle in degrees that the hemicycle, as an annulus arc, covers.
  * @returns an array of number of seats per row, from inner to outer.
- * The length of the array nRows.
- * spanAngle, if provided, is the angle in degrees that the hemicycle, as an annulus arc, covers.
+ * The length of the array is nRows.
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
     const rad = getRowThickness(nRows);
@@ -32,7 +32,7 @@ export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE):
 }
 
 /**
- * Returns the minial number of rows necessary to contain nSeats seats.
+ * Returns the minimal number of rows necessary to contain nSeats seats.
  */
 export function getNRowsFromNSeats(nSeats: number, spanAngle = DEFAULT_SPAN_ANGLE): number {
     let nRows = 1;
