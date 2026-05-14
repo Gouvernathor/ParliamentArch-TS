@@ -92,7 +92,7 @@ export function precomputeFromAttribution<SeatDisplay>(
 
     const results = getSeatCenters(nSeats, options);
     const groupedSeatCenters = dispatchSeats(attribution, [...results.keys()].sort((a, b) => results.get(b)! - results.get(a)!));
-    const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats));
+    const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats, options.spanAngle));
     return {
         groupedSeatCenters,
         seatActualRadius,
