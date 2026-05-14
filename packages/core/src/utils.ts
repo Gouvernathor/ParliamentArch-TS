@@ -73,7 +73,7 @@ export interface PrecomputeReturn<SeatDisplay> {
  * Pre-computes some values that are useful in the extensions that generate actual diagrams.
  * The SeatDisplay type will depend on the extension.
  * @param options.seatRadiusFactor the ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
- * @param options the rest of the options are those passed through to the options parameter of the getSeatsCenters function.
+ * @param options the rest of the options are those passed through to the options parameter of the getSeatCenters function.
  * @returns an object with two properties:
  * the groupedSeatCenters key, a mapping of SeatDisplay objects to the list of the corresponding seats' coordinates,
  * and the seatActualRadius key, the actual radius of the seats (in the same unit as the coordinates)

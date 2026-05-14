@@ -61,7 +61,7 @@ A string enum of the implemented strategies to fill the seats among the rows:
 - `EMPTY_INNER`: This selects as few outermost rows as necessary to hold the given seats, then distributes the seats proportionally among them. Depending on the number of seats and rows, this either leaves empty inner rows, or is equivalent to the `DEFAULT` strategy. This is equivalent to the legacy "dense rows" option, in that in non-empty rows, the distance between consecutive seats is the smallest possible, and is close among all rows.
 - `OUTER_PRIORITY`: This fills the rows to their maximal capacity, starting with the outermost rows going in. The result is that given a number of rows, adding one seat makes a change in only one row.
 
-`getSeatsCenters(nSeats: number, options?): Map<[number, number], number>`
+`getSeatCenters(nSeats: number, options?): Map<[number, number], number>`
 
 This is the main function of the submodule. The options are as follows:
 
@@ -96,4 +96,4 @@ This function pre-calculates some information from an attribution of seats, maki
 
 - `attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[]`
 - `options.seatRadiusFactor`: the factor between 0 and 1 described earlier. At 1, neighboring seats will touch one another.
-- `options`: the rest of the options are the same as taken by the `getSeatsCenters` function.
+- `options`: the rest of the options are the same as taken by the `getSeatCenters` function.
