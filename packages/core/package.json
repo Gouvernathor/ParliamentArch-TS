@@ -28,7 +28,7 @@
     "clean": "node ../../scripts/clean.ts -d ./dist",
     "compile": "tsc",
     "build": "npm run clean & npm run compile",
-    "pub": "npm run build & npm publish",
+    "pub": "npm run build & npm publish --access public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
 
