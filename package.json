@@ -5,8 +5,7 @@
     "packages": [
       "packages/core",
       "packages/svg",
-      "packages/web-component",
-      "packages/legacy"
+      "packages/web-component"
     ]
   },
   "description": "Root package for all the @parliamentarch packages",
