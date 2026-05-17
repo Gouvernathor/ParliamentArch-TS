@@ -1,6 +1,6 @@
 {
   "name": "@parliamentarch/web-component",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Web component for arch-styled parliamentary diagrams",
   "type": "module",
 
@@ -26,13 +26,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
 
-  "dependencies": {
-    "@parliamentarch/core": "4.0.0",
-    "@parliamentarch/svg": "4.0.0"
-  },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
     "typescript": "^6.0.2"
+  },
+  "peerDependencies": {
+    "@parliamentarch/core": "4.0.1",
+    "@parliamentarch/svg": "4.0.1"
   },
 
   "author": "Gouvernathor",
