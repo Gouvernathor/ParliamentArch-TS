@@ -2,7 +2,8 @@
 
 Tools to generate arch-styled SVG parliamentary diagrams.
 
-![Example diagram](../../sample.svg)
+![Example diagram](https://codeberg.org/Gouvernathor/ParliamentArch-TS/raw/sample.svg)
+<!-- absolute link for NPM support -->
 
 This package generates SVG DOM nodes (SVGSVGElement objects), which can be serialized into SVG image files.
 

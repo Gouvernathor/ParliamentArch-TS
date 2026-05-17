@@ -2,7 +2,8 @@
 
 Tools to generate arch-styled parliamentary diagrams.
 
-![Example diagram](../../sample.svg)
+![Example diagram](https://codeberg.org/Gouvernathor/ParliamentArch-TS/raw/sample.svg)
+<!-- absolute link for NPM support -->
 
 This package handles two things: majorly (in the `geometry` submodule), the geometry of how the seats are arranged in space, and as an aside (in the `utils` submodule), some util functions shared by the other modules taking over from there.
 
