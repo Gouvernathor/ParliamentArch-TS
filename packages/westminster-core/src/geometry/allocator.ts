@@ -14,9 +14,16 @@ export function getCoordinates<Party>(
 ): CoordinatesPerPartyPerArea<Party> {
     return {
         speak: getSpeakCoordinates<Party>(apollo.speak),
-        opposition: getWingCoordinates<Party>(apollo.opposition, demeter.opposition.nRows, packed, (x, y) => [x, demeter.opposition.nRows-1-y]),
-        government: getWingCoordinates<Party>(apollo.government, demeter.government.nRows, packed),
-        cross: getCrossbenchCoordinates<Party>(apollo.cross, demeter.cross.nCols, packed),
+        opposition: getWingCoordinates<Party>(
+            apollo.opposition, demeter.opposition.nRows, packed,
+            (x, y) => [x, demeter.opposition.nRows-1-y]
+        ),
+        government: getWingCoordinates<Party>(
+            apollo.government, demeter.government.nRows, packed,
+        ),
+        cross: getCrossbenchCoordinates<Party>(
+            apollo.cross, demeter.cross.nCols, packed,
+        ),
     };
 }
 
