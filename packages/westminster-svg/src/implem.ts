@@ -3,9 +3,6 @@ import "./document-loader.js";
 import { NRowsAndColsPerArea } from "../../westminster-core/dist/geometry/rows-cols.js";
 
 const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
-const convertToArray: <T>(i: Iterable<T>) => readonly T[] = i => isReadonlyArray(i) ?
-    i :
-    [...i];
 
 export interface ClassSeatData {
     /**
