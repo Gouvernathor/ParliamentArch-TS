@@ -23,8 +23,10 @@ export interface RowCols {
     readonly nCols: number;
 }
 
-export type AllocatedSeats<Party> = {
-    readonly [a in Area]: RowCols & CoordinatesPerParty<Party>;
+type AllocatedSeats<Party> = RowCols & CoordinatesPerParty<Party>;
+
+export type AllocatedSeatsPerArea<Party> = {
+    readonly [a in Area]: AllocatedSeats<Party>;
 }
 
 function newRecord<K extends string, V>(
