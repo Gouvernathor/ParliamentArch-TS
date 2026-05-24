@@ -36,8 +36,10 @@ export interface GetSeatCoordinatesPerAreaOptions {
     /**
      * Whether parties of the same wing are allowed to share the same column,
      * or the same row for crossbenchers.
+     *
+     * Formerly called "cozy".
      */
-    cozy: boolean; // default true
+    packed: boolean; // default true
 
     /**
      * Whether to prioritize having equal columns between the two wings,
@@ -48,13 +50,13 @@ export interface GetSeatCoordinatesPerAreaOptions {
 function defaultOptions({
     wingNRows = 0,
     crossNCols = 0,
-    cozy = true,
+    packed = true,
     // fullWidth = false,
 }: Partial<Readonly<GetSeatCoordinatesPerAreaOptions>> = {}): GetSeatCoordinatesPerAreaOptions {
     return {
         wingNRows,
         crossNCols,
-        cozy,
+        packed,
         // fullWidth,
     };
 }
@@ -85,12 +87,12 @@ export function getSeatCoordinatesPerArea<Party>(
     const {
         wingNRows,
         crossNCols,
-        cozy,
+        packed,
         // fullWidth,
     } = defaultOptions(options);
 
-    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, cozy, /*fullWidth*/ });
-    return getCoordinates(apollo, demeter, { cozy });
+    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
+    return getCoordinates(apollo, demeter, { packed });
 }
 
 /*
@@ -115,7 +117,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function getNumberOfRowsAndColsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Readonly<GetSeatCoordinatesPerAreaOptions>,
+    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, packed }: Readonly<GetSeatCoordinatesPerAreaOptions>,
 ): NRowsAndColsPerArea {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
@@ -147,7 +149,7 @@ function getNumberOfRowsAndColsPerArea<Party>(
             crossCols = 0;
         }
 
-        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, apollo, requestedHera, { cozy })) {
+        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, apollo, requestedHera, { packed })) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: wingCols },
@@ -178,7 +180,7 @@ function doesItFit<Party>(
     },
     apollo: NSeatsPerPartyPerArea<Party>,
     requestedHera: NSeatsPerArea,
-    { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
+    { packed }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "packed">,
 ): boolean {
     if (heightInSquares < requestedHera.speak
      || heightInSquares < crossRows
@@ -189,7 +191,7 @@ function doesItFit<Party>(
         return false;
     }
 
-    if (cozy) {
+    if (packed) {
         if (requestedHera.opposition > wingRows * wingCols) {
             return false;
         }
@@ -231,7 +233,7 @@ function reduceNotCozy(
 function getCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: NRowsAndColsPerArea,
-    { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
+    { packed }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "packed">,
 ): CoordinatesPerPartyPerArea<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
@@ -253,7 +255,7 @@ function getCoordinates<Party>(
                 }
             }
         }));
-        if (!cozy) {
+        if (!packed) {
             oppositionY = demeter.opposition.nRows - 1;
             oppositionX++;
         }
@@ -273,7 +275,7 @@ function getCoordinates<Party>(
                 }
             }
         }));
-        if (!cozy) {
+        if (!packed) {
             governmentY = 0;
             governmentX++;
         }
@@ -293,7 +295,7 @@ function getCoordinates<Party>(
                 }
             }
         }));
-        if (!cozy) {
+        if (!packed) {
             crossX = 0;
             crossY++;
         }
