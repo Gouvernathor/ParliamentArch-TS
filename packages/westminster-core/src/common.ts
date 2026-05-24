@@ -23,7 +23,7 @@ export interface RowCols {
     readonly nCols: number;
 }
 
-type AllocatedSeats<Party> = RowCols & CoordinatesPerParty<Party>;
+export type AllocatedSeats<Party> = RowCols & CoordinatesPerParty<Party>;
 
 export type AllocatedSeatsPerArea<Party> = {
     readonly [a in Area]: AllocatedSeats<Party>;

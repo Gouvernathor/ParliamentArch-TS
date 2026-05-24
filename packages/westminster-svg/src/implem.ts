@@ -1,4 +1,4 @@
-import { AllocatedSeatsPerArea, Area, areaRecord } from "@parliamentarch/westminster-core/utils";
+import { AllocatedSeats, AllocatedSeatsPerArea, areaRecord } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
 import { NRowsAndColsPerArea } from "../../westminster-core/dist/geometry/rows-cols.js";
 
@@ -142,7 +142,7 @@ function addAreas(
 }
 
 function createArea(
-    partyData: AllocatedSeatsPerArea<SeatData>[Area],
+    partyData: AllocatedSeats<SeatData>,
     options: Readonly<GetSVGOptions>,
 ): SVGGElement {
     const areaGroup = document.createElementNS(SVG_NS, "g");
