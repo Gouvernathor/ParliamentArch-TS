@@ -67,4 +67,17 @@ export function getSVG(
         spacingFactor = .1,
     }: Partial<Readonly<GetSVGOptions>> = {},
 ): SVGSVGElement {
+    const svg = document.createElementNS(SVG_NS, "svg");
+
+    populateHeader(svg);
+
+    return svg;
+}
+
+function populateHeader(svg: SVGSVGElement) {
+    svg.setAttribute("xmlns", SVG_NS);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    // TODO viewBox
+
+    svg.appendChild(document.createComment("Created with ParliamentArch-Westminster (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
