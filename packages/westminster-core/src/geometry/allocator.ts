@@ -1,30 +1,35 @@
-import { Area, CoordinatesPerPartyPerArea, CoordinatesPerParty } from "../common";
+import { Area, AllocatedSeatsPerArea, CoordinatesPerParty } from "../common";
 import { Options } from "./common";
 import { NRowsAndColsPerArea } from "./rows-cols";
 
 /**
  * Number of seats for each party for each area.
  */
-export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<Party, number> };
+export type NSeatsPerPartyPerArea<Party> = {
+    readonly [a in Area]: ReadonlyMap<Party, number>;
+};
 
-export function getCoordinates<Party>(
+export function getAllocatedSeatsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: NRowsAndColsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
-): CoordinatesPerPartyPerArea<Party> {
+): AllocatedSeatsPerArea<Party> {
     return {
-        speak: getSpeakCoordinates<Party>(apollo.speak),
-        opposition: getWingCoordinates<Party>(
+        speak: Object.assign(getSpeakCoordinates<Party>(apollo.speak), demeter.speak),
+
+        opposition: Object.assign(getWingCoordinates<Party>(
             apollo.opposition, demeter.opposition.nRows, packed,
             (x, y) => [x, demeter.opposition.nRows-1 - y],
-        ),
-        government: getWingCoordinates<Party>(
+        ), demeter.opposition),
+
+        government: Object.assign(getWingCoordinates<Party>(
             apollo.government, demeter.government.nRows, packed,
-        ),
-        cross: getWingCoordinates<Party>(
+        ), demeter.government),
+
+        cross: Object.assign(getWingCoordinates<Party>(
             apollo.cross, demeter.cross.nCols, packed,
             (x, y) => [y, x],
-        ),
+        ), demeter.cross),
     };
 }
 

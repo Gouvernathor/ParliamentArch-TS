@@ -1,5 +1,5 @@
-import { CoordinatesPerPartyPerArea } from "../common.js";
-import { NSeatsPerPartyPerArea, getCoordinates } from "./allocator.js";
+import { AllocatedSeatsPerArea } from "../common.js";
+import { NSeatsPerPartyPerArea, getAllocatedSeatsPerArea as getAllocatedSeatsInternal } from "./allocator.js";
 import { Options, defaultOptions } from "./common.js";
 import { getRowsAndColsPerArea, NRowsAndColsPerArea, NSeatsIterablePerArea } from "./rows-cols.js";
 
@@ -7,6 +7,7 @@ export {
     Options as GeometryOptions,
     NSeatsIterablePerArea,
     NSeatsPerPartyPerArea,
+    AllocatedSeatsPerArea,
 };
 
 export function getNumberOfRowsAndColsPerArea(
@@ -16,10 +17,10 @@ export function getNumberOfRowsAndColsPerArea(
     return getRowsAndColsPerArea(ares, defaultOptions(options));
 }
 
-export function getSeatCoordinatesPerArea<Party>(
+export function getAllocatedSeatsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     options: Partial<Readonly<Options>> = {},
-): CoordinatesPerPartyPerArea<Party> {
+): AllocatedSeatsPerArea<Party> {
     const {
         wingNRows,
         crossNCols,
@@ -28,7 +29,7 @@ export function getSeatCoordinatesPerArea<Party>(
     } = defaultOptions(options);
 
     const demeter = getRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
-    return getCoordinates(apollo, demeter, { packed });
+    return getAllocatedSeatsInternal(apollo, demeter, { packed });
 }
 
 /*
