@@ -74,24 +74,33 @@ export function getSVG(
 ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, "svg");
 
-    populateHeader(svg);
+    populateHeader(svg, poseidon);
 
     addAreas(svg, poseidon, { roundingRadius, spacingFactor });
 
     return svg;
 }
 
-function populateHeader(svg: SVGSVGElement) {
+function populateHeader(
+    svg: SVGSVGElement,
+    poseidon: AllocatedSeatsPerArea<SeatData>,
+) {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    // TODO viewBox
 
-    // the left border is the number of speaker columns
-    // the top border is the max between half of the number of speaker rows/seats,
-    // and the number of opposition rows
-    // the width is the sum of the speaker columns,
-    // the crossbench columns + 1, if any, or 0,
-    // and the max of the number of columns of the two wings
+    svg.setAttribute("viewBox", `${
+        -poseidon.speak.nCols
+    } ${
+        Math.max(poseidon.speak.nRows/2, poseidon.opposition.nRows)
+    } ${
+        poseidon.speak.nCols + (poseidon.cross.nCols && poseidon.cross.nCols+1) + Math.max(poseidon.government.nCols, poseidon.opposition.nCols)
+    } ${
+        Math.max(
+            poseidon.speak.nRows/2, poseidon.opposition.nRows+1, poseidon.cross.nCols/2,
+        ) + Math.max(
+            poseidon.speak.nRows/2, poseidon.government.nRows+1, poseidon.cross.nCols/2,
+        )
+    }`);
 
     svg.appendChild(document.createComment("Created with ParliamentArch-Westminster (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
