@@ -102,6 +102,10 @@ function createArea(
 ): SVGGElement {
     const areaGroup = document.createElementNS(SVG_NS, "g");
 
+    const sSize = `${1 - options.spacingFactor}`;
+    areaGroup.setAttribute("width", sSize);
+    areaGroup.setAttribute("height", sSize);
+
     for (const [party, nSeats] of partyData) {}
 
     return areaGroup;
@@ -138,10 +142,5 @@ function rectWithCoordinates(
     const rect = document.createElementNS(SVG_NS, "rect");
     rect.setAttribute("x", `${spacingFactor/2 + x}`);
     rect.setAttribute("y", `${spacingFactor/2 + y}`);
-
-    // TODO move those up at least to the <g>
-    rect.setAttribute("width", `${1 - spacingFactor}`);
-    rect.setAttribute("height", `${1 - spacingFactor}`);
-
     return rect;
 }
