@@ -1,17 +1,23 @@
 import { getSeatCoordinatesPerArea, GeometryOptions } from "@parliamentarch/westminster-core/geometry";
 import { AnyAttribution, anyAttributionToNSeatsPerPartyPerArea } from "@parliamentarch/westminster-core/utils";
-import { buildSVG, Options as SVGOptions, Party } from "./implem.js";
+import { getSVG, Options as GetSVGOptions, SeatData } from "./implem.js";
 
-export { Party };
+export {
+    ClassSeatData,
+    StandaloneSeatData,
+    SeatData,
+    GetSVGOptions,
+    buildSVG,
+} from "./implem.js";
 
-interface Options extends GeometryOptions, SVGOptions {}
-export { Options as GetSVGFromAttributionOptions };
+export interface GetSVGFromAttributionOptions extends GeometryOptions, GetSVGOptions {
+}
 
 export function getSVGFromAttribution(
-    attribution: AnyAttribution<Party>,
-    options: Partial<Readonly<Options>> = {},
+    attribution: AnyAttribution<SeatData>,
+    options: Partial<Readonly<GetSVGFromAttributionOptions>> = {},
 ): SVGSVGElement {
-    return buildSVG(
+    return getSVG(
         getSeatCoordinatesPerArea(
             anyAttributionToNSeatsPerPartyPerArea(attribution),
             options),

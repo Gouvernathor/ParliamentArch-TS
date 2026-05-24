@@ -1,0 +1,45 @@
+import "./document-loader.js";
+
+export interface ClassSeatData {
+    /**
+     * CSS class or classes to apply to this group of seats.
+     */
+    readonly class?: string|readonly string[];
+}
+
+export interface StandaloneSeatData {
+    /**
+     * The id of this group of seats.
+     */
+    readonly id?: string|undefined;
+    /**
+     * Some human-readable data about this group of seats.
+     */
+    readonly data?: string|undefined;
+
+    /**
+     * Sets the fill color of the seats in this group.
+     * In CSS class mode, you can replace this with the "fill" property.
+     */
+    readonly color: string;
+
+    /**
+     * Sets the border size of the seats in this group, as a factor of the seat radius.
+     * In CSS class mode, you can replace this with the "stroke-width" property.
+     */
+    readonly borderSize?: number|undefined;
+    /**
+     * Sets the color of the border of the seats in this group.
+     * In CSS class mode, you can replace this with the "stroke" property.
+     */
+    readonly borderColor?: string|undefined;
+    /**
+     * Sets the rounding of the corners of the seats in this group.
+     * In CSS class mode, you can replace this with the "rx" and "ry" properties.
+     */
+    readonly roundingRadius?: number|undefined;
+}
+
+export type SeatData = ClassSeatData | StandaloneSeatData;
+
+const SVG_NS = "http://www.w3.org/2000/svg";
