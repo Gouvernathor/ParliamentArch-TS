@@ -14,9 +14,15 @@ export type Area = (typeof AREAS)[number];
  */
 export type CoordinatesPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<Party, readonly (readonly [number, number])[]> };
 
-export function newRecord<K extends string, V>(
+function newRecord<K extends string, V>(
     keys: readonly K[],
     valueGenerator: (key: K) => V,
 ) {
     return Object.fromEntries(keys.map(k => [k, valueGenerator(k)])) as { [k in K]: V; };
+}
+
+export function areaRecord<V>(
+    valueGenerator: (key: Area) => V,
+) {
+    return newRecord(AREAS, valueGenerator);
 }

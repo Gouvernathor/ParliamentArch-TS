@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
+import { Area, CoordinatesPerPartyPerArea, areaRecord } from "./common.js";
 
 /**
  * Number of seats for each party for each area.
@@ -166,7 +166,7 @@ export function getNumberOfRowsAndColsPerArea(
 }
 
 function makeRequestedHera(ares: NSeatsArrayPerArea): NSeatsPerArea {
-    return newRecord(AREAS, area => {
+    return areaRecord(area => {
         let nSeats = 0;
         for (const n of ares[area].values()) {
             nSeats += n;
