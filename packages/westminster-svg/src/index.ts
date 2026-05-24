@@ -1,5 +1,5 @@
-import { getSeatCoordinatesPerArea, Options as GeometryOptions } from "@parliamentarch/westminster-core/geometry";
-import { AnyAttribution, anyAttributionToNSeatsPerPartyPerArea } from "@parliamentarch/westminster-core/attributions";
+import { getSeatCoordinatesPerArea, GeometryOptions } from "@parliamentarch/westminster-core/geometry";
+import { AnyAttribution, anyAttributionToNSeatsPerPartyPerArea } from "@parliamentarch/westminster-core/utils";
 import { buildSVG, Options as SVGOptions, Party } from "./implem.js";
 
 export { Party };
