@@ -16,13 +16,14 @@ export function getCoordinates<Party>(
         speak: getSpeakCoordinates<Party>(apollo.speak),
         opposition: getWingCoordinates<Party>(
             apollo.opposition, demeter.opposition.nRows, packed,
-            (x, y) => [x, demeter.opposition.nRows-1-y]
+            (x, y) => [x, demeter.opposition.nRows-1 - y],
         ),
         government: getWingCoordinates<Party>(
             apollo.government, demeter.government.nRows, packed,
         ),
-        cross: getCrossbenchCoordinates<Party>(
+        cross: getWingCoordinates<Party>(
             apollo.cross, demeter.cross.nCols, packed,
+            (x, y) => [y, x],
         ),
     };
 }
@@ -63,30 +64,4 @@ function getWingCoordinates<Party>(
         }
     }
     return coordinates;
-}
-
-function getCrossbenchCoordinates<Party>(
-    apolloCross: ReadonlyMap<Party, number>,
-    nCols: number,
-    packed: boolean,
-): CoordinatesPerParty<Party> {
-    const cross = new Map<Party, [number, number][]>();
-    let crossX = 0, crossY = 0;
-    for (const [party, nSeats] of apolloCross) {
-        cross.set(party, Array.from({ length: nSeats }, () => {
-            try {
-                return [crossX++, crossY];
-            } finally {
-                if (crossX >= nCols) {
-                    crossX = 0;
-                    crossY++;
-                }
-            }
-        }));
-        if (!packed) {
-            crossX = 0;
-            crossY++;
-        }
-    }
-    return cross;
 }
