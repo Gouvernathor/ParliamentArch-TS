@@ -130,9 +130,9 @@ function howDoesItFit(
             return null;
         }
 
-        oppositionNecessaryCols = requestedHera.opposition / wingRows;
-        governmentNecessaryCols = requestedHera.government / wingRows;
-        crossNecessaryRows = requestedHera.cross / crossCols;
+        oppositionNecessaryCols = Math.ceil(requestedHera.opposition / wingRows);
+        governmentNecessaryCols = Math.ceil(requestedHera.government / wingRows);
+        crossNecessaryRows = Math.ceil(requestedHera.cross / crossCols);
     } else {
         oppositionNecessaryCols = reduceNotPacked(apollo.opposition.values(), wingRows);
         if (oppositionNecessaryCols > wingCols) {
