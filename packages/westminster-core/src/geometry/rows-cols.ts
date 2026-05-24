@@ -1,4 +1,4 @@
-import { Area, areaRecord } from "../common";
+import { Area, areaRecord, RowCols } from "../common";
 import { Options } from "./common";
 
 /**
@@ -22,10 +22,7 @@ type NSeatsPerArea = {
  * Number of rows and columns for each area.
  */
 export type NRowsAndColsPerArea = {
-    readonly [a in Area]: {
-        readonly nRows: number;
-        readonly nCols: number;
-    };
+    readonly [a in Area]: RowCols;
 };
 
 /**

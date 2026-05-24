@@ -14,7 +14,18 @@ export type CoordinatesPerParty<Party> = ReadonlyMap<Party, readonly (readonly [
  * The rank-file indices are relative to the top-left corner of the area.
  * The extremum values override the demeter parameters.
  */
-export type CoordinatesPerPartyPerArea<Party> = { readonly [a in Area]: CoordinatesPerParty<Party> };
+export type CoordinatesPerPartyPerArea<Party> = {
+    readonly [a in Area]: CoordinatesPerParty<Party>;
+};
+
+export interface RowCols {
+    readonly nRows: number;
+    readonly nCols: number;
+}
+
+export type AllocatedSeats<Party> = {
+    readonly [a in Area]: RowCols & CoordinatesPerParty<Party>;
+}
 
 function newRecord<K extends string, V>(
     keys: readonly K[],
