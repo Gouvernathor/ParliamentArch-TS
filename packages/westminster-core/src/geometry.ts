@@ -116,10 +116,23 @@ nCrossbenchers <= crossRows * crossCols
 crossRows <= wingRows * 2 + 2
 nSpeaker <= wingRows * 2 + 2
 */
-function getNumberOfRowsAndColsPerArea<Party>(
+
+/**
+ * @param apollo the number of seats for each party and for each area
+ * @returns How many rows and columns are required for each area,
+ * including any empty seats.
+ */
+export function getNumberOfRowsAndColsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, packed }: Readonly<Options>,
+    options: Partial<Readonly<Options>>,
 ): NRowsAndColsPerArea {
+    let {
+        wingNRows: requestedWingNRows,
+        crossNCols: requestedCrossNCols,
+        packed,
+        // fullWidth,
+    } = defaultOptions(options);
+
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
         requestedCrossNCols = 0;
