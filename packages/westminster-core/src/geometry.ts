@@ -1,4 +1,4 @@
-import { Area, CoordinatesPerPartyPerArea, areaRecord } from "./common.js";
+import { Area, CoordinatesPerParty, CoordinatesPerPartyPerArea, areaRecord } from "./common.js";
 
 /**
  * Number of seats for each party for each area.
@@ -261,15 +261,32 @@ function getCoordinates<Party>(
     demeter: NRowsAndColsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
 ): CoordinatesPerPartyPerArea<Party> {
+    return {
+        speak: getSpeakCoordinates<Party>(apollo),
+        opposition: getOppositionCoordinates<Party>(apollo, demeter, packed),
+        government: getGovernmentCoordinates<Party>(apollo, demeter, packed),
+        cross: getCrossbenchCoordinates<Party>(apollo, demeter, packed),
+    };
+}
+
+function getSpeakCoordinates<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+): CoordinatesPerParty<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
     for (const [party, nSeats] of apollo.speak) {
         speak.set(party, Array.from({ length: nSeats }, () => [0, speakY++]));
     }
+    return speak;
+}
 
+function getOppositionCoordinates<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+    demeter: NRowsAndColsPerArea,
+    packed: boolean,
+): CoordinatesPerParty<Party> {
     const opposition = new Map<Party, [number, number][]>();
-    let oppositionX = 0,
-        oppositionY = demeter.opposition.nRows - 1;
+    let oppositionX = 0, oppositionY = demeter.opposition.nRows - 1;
     for (const [party, nSeats] of apollo.opposition) {
         opposition.set(party, Array.from({ length: nSeats }, () => {
             try {
@@ -286,10 +303,16 @@ function getCoordinates<Party>(
             oppositionX++;
         }
     }
+    return opposition;
+}
 
+function getGovernmentCoordinates<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+    demeter: NRowsAndColsPerArea,
+    packed: boolean,
+): CoordinatesPerParty<Party> {
     const government = new Map<Party, [number, number][]>();
-    let governmentX = 0,
-        governmentY = 0;
+    let governmentX = 0, governmentY = 0;
     for (const [party, nSeats] of apollo.government) {
         government.set(party, Array.from({ length: nSeats }, () => {
             try {
@@ -306,10 +329,16 @@ function getCoordinates<Party>(
             governmentX++;
         }
     }
+    return government;
+}
 
+function getCrossbenchCoordinates<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+    demeter: NRowsAndColsPerArea,
+    packed: boolean,
+): CoordinatesPerParty<Party> {
     const cross = new Map<Party, [number, number][]>();
-    let crossX = 0,
-        crossY = 0;
+    let crossX = 0, crossY = 0;
     for (const [party, nSeats] of apollo.cross) {
         cross.set(party, Array.from({ length: nSeats }, () => {
             try {
@@ -326,6 +355,5 @@ function getCoordinates<Party>(
             crossY++;
         }
     }
-
-    return { speak, opposition, government, cross };
+    return cross;
 }
