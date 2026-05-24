@@ -6,6 +6,11 @@ import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js"
 export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<Party, number> };
 
 /**
+ * Number of seats for each party for each area, except the typing is a bit more lax.
+ */
+export type NSeatsArrayPerArea = { readonly [a in Area]: { values(): Iterable<number> } };
+
+/**
  * Number of occupied seats for each area.
  */
 type NSeatsPerArea = { readonly [a in Area]: number };
@@ -101,12 +106,12 @@ nSpeaker <= wingRows * 2 + 2
 */
 
 /**
- * @param apollo the number of seats for each party and for each area
+ * @param ares the number of seats for each party and for each area
  * @returns How many rows and columns are required for each area,
  * including any empty seats.
  */
-export function getNumberOfRowsAndColsPerArea<Party>(
-    apollo: NSeatsPerPartyPerArea<Party>,
+export function getNumberOfRowsAndColsPerArea(
+    ares: NSeatsArrayPerArea,
     options: Partial<Readonly<Options>>,
 ): NRowsAndColsPerArea {
     let {
@@ -116,7 +121,7 @@ export function getNumberOfRowsAndColsPerArea<Party>(
         // fullWidth,
     } = defaultOptions(options);
 
-    const requestedHera = makeRequestedHera(apollo);
+    const requestedHera = makeRequestedHera(ares);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
         requestedCrossNCols = 0;
     }
@@ -146,7 +151,7 @@ export function getNumberOfRowsAndColsPerArea<Party>(
             crossCols = 0;
         }
 
-        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, apollo, requestedHera, { packed })) {
+        if (doesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, ares, requestedHera, { packed })) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: wingCols },
@@ -159,23 +164,23 @@ export function getNumberOfRowsAndColsPerArea<Party>(
     throw new Error("Could not find a proper number of rows and columns");
 }
 
-function makeRequestedHera<Party>(apollo: NSeatsPerPartyPerArea<Party>): NSeatsPerArea {
+function makeRequestedHera(ares: NSeatsArrayPerArea): NSeatsPerArea {
     return newRecord(AREAS, area => {
         let nSeats = 0;
-        for (const n of apollo[area].values()) {
+        for (const n of ares[area].values()) {
             nSeats += n;
         }
         return nSeats;
     });
 }
 
-function doesItFit<Party>(
+function doesItFit(
     {
         wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number; widthInSquares: number;
     },
-    apollo: NSeatsPerPartyPerArea<Party>,
+    apollo: NSeatsArrayPerArea,
     requestedHera: NSeatsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
 ): boolean {
