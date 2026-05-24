@@ -86,6 +86,13 @@ function populateHeader(svg: SVGSVGElement) {
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     // TODO viewBox
 
+    // the left border is the number of speaker columns
+    // the top border is the max between half of the number of speaker rows/seats,
+    // and the number of opposition rows
+    // the width is the sum of the speaker columns,
+    // the crossbench columns + 1, if any, or 0,
+    // and the max of the number of columns of the two wings
+
     svg.appendChild(document.createComment("Created with ParliamentArch-Westminster (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
@@ -94,10 +101,37 @@ function addAreas(
     poseidon: AllocatedSeatsPerArea<SeatData>,
     options: Readonly<GetSVGOptions>,
 ) {
-    const areas = areaRecord(area =>
-        svg.appendChild(createArea(poseidon[area], options)));
+    // The origin is in front of the speaker, middle of the aisle
+    // the speaker goes in negative coordinates
+    // the wings are offset by 1 vertically (in opposite directions)
+    // the crossbenchers are offset horizontally by the max of the two wing columns
 
-    areas; // TODO place the areas
+    const offsets = {
+        speak: [
+            -1,
+            -(poseidon.speak.nRows/2),
+        ],
+
+        opposition: [
+            0,
+            -(poseidon.opposition.nRows+1),
+        ],
+
+        government: [
+            0,
+            poseidon.government.nRows-1,
+        ],
+
+        cross: [
+            Math.max(poseidon.government.nCols, poseidon.opposition.nCols)+1,
+            -(poseidon.cross.nRows/2),
+        ],
+    } as const;
+
+    areaRecord(area =>
+        poseidon[area].size &&
+        svg.appendChild(createArea(poseidon[area], options))
+            .setAttribute("transform", `translate(${offsets[area]})`));
 }
 
 function createArea(
