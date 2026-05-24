@@ -1,28 +1,13 @@
 import { Area, CoordinatesPerPartyPerArea, CoordinatesPerParty } from "../common";
-import { Options, defaultOptions } from "./common";
-import { getNumberOfRowsAndColsPerArea, NRowsAndColsPerArea } from "./rows-cols";
+import { Options } from "./common";
+import { NRowsAndColsPerArea } from "./rows-cols";
 
 /**
  * Number of seats for each party for each area.
  */
 export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<Party, number> };
 
-export function getSeatCoordinatesPerArea<Party>(
-    apollo: NSeatsPerPartyPerArea<Party>,
-    options: Partial<Readonly<Options>> = {},
-): CoordinatesPerPartyPerArea<Party> {
-    const {
-        wingNRows,
-        crossNCols,
-        packed,
-        // fullWidth,
-    } = defaultOptions(options);
-
-    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
-    return getCoordinates(apollo, demeter, { packed });
-}
-
-function getCoordinates<Party>(
+export function getCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: NRowsAndColsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,

@@ -1,8 +1,30 @@
-export { Options as GetSeatCoordinatesPerAreaOptions } from "./geometry/common.js";
-export { getNumberOfRowsAndColsPerArea } from "./geometry/rows-cols.js";
-export { getSeatCoordinatesPerArea, NSeatsPerPartyPerArea } from "./geometry/allocator.js";
+import { CoordinatesPerPartyPerArea } from "./common.js";
+import { NSeatsPerPartyPerArea, getCoordinates } from "./geometry/allocator.js";
+import { Options, defaultOptions } from "./geometry/common.js";
+import { getNumberOfRowsAndColsPerArea } from "./geometry/rows-cols.js";
+
+export {
+    Options as GetSeatCoordinatesPerAreaOptions,
+    getNumberOfRowsAndColsPerArea,
+    NSeatsPerPartyPerArea,
+};
 
 // TODO move/rename as geometry/index.ts and update package.json
+
+export function getSeatCoordinatesPerArea<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+    options: Partial<Readonly<Options>> = {},
+): CoordinatesPerPartyPerArea<Party> {
+    const {
+        wingNRows,
+        crossNCols,
+        packed,
+        // fullWidth,
+    } = defaultOptions(options);
+
+    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
+    return getCoordinates(apollo, demeter, { packed });
+}
 
 /*
 Disposition and rules:
