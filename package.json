@@ -1,95 +1,24 @@
 {
-  "name": "parliamentarch",
-  "version": "3.1.0",
-  "description": "Generating arch-styled SVG parliamentary diagrams",
+  "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
-    },
-    "./geometry": {
-      "import": {
-        "types": "./dist/geometry.d.ts",
-        "default": "./dist/geometry.js"
-      }
-    },
-    "./svg": {
-      "import": {
-        "types": "./dist/svg.d.ts",
-        "default": "./dist/svg.js"
-      }
-    },
-    "./component": {
-      "import": {
-        "types": "./dist/component.d.ts",
-        "default": "./dist/component.js"
-      }
-    },
-    "./westminster": {
-      "import": {
-        "types": "./dist/westminster/index.d.ts",
-        "default": "./dist/westminster/index.js"
-      }
-    },
-    "./westminster/geometry": {
-      "import": {
-        "types": "./dist/westminster/geometry.d.ts",
-        "default": "./dist/westminster/geometry.js"
-      }
-    },
-    "./westminster/svg": {
-      "import": {
-        "types": "./dist/westminster/svg.d.ts",
-        "default": "./dist/westminster/svg.js"
-      }
-    },
-    "./westminster/component": {
-      "import": {
-        "types": "./dist/westminster/component.d.ts",
-        "default": "./dist/westminster/component.js"
-      }
-    }
+  "workspaces": {
+    "packages": [
+      "packages/core",
+      "packages/svg",
+      "packages/web-component"
+    ]
   },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Root package for all the @parliamentarch packages",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+    "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git"
   },
-  "keywords": [
-    "parliament",
-    "svg",
-    "diagram"
-  ],
   "author": "Gouvernathor",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
-  },
-  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
-  "funding": "https://ko-fi.com/gouvernathor",
-  "devDependencies": {
-    "@tsconfig/strictest": "^2.0.5",
-    "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.10.2",
-    "typescript": "*"
-  },
-  "peerDependencies": {
-    "jsdom": "^25.0.1"
-  },
-  "peerDependenciesMeta": {
-    "jsdom": {
-      "optional": true
-    }
+  "scripts": {
+    "clean": "npm run clean --workspaces",
+    "build": "npm run build --workspaces",
+    "pub": "npm run pub --workspaces",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
