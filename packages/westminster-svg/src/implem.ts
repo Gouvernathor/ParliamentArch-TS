@@ -1,4 +1,4 @@
-import { CoordinatesPerPartyPerArea } from "@parliamentarch/westminster-core/utils";
+import { AllocatedSeatsPerArea, areaRecord } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
 
 export interface ClassSeatData {
@@ -61,7 +61,7 @@ export interface GetSVGOptions {
 }
 
 export function getSVG(
-    poseidon: CoordinatesPerPartyPerArea<SeatData>,
+    poseidon: AllocatedSeatsPerArea<SeatData>,
     {
         roundingRadius = 0,
         spacingFactor = .1,
@@ -70,6 +70,8 @@ export function getSVG(
     const svg = document.createElementNS(SVG_NS, "svg");
 
     populateHeader(svg);
+
+    addAreas(svg, poseidon, { roundingRadius, spacingFactor });
 
     return svg;
 }
@@ -80,4 +82,33 @@ function populateHeader(svg: SVGSVGElement) {
     // TODO viewBox
 
     svg.appendChild(document.createComment("Created with ParliamentArch-Westminster (https://github.com/Gouvernathor/ParliamentArch-TS)"));
+}
+
+function addAreas(
+    svg: SVGSVGElement,
+    poseidon: AllocatedSeatsPerArea<SeatData>,
+    options: Readonly<GetSVGOptions>,
+) {
+    const areas = areaRecord(area =>
+        svg.appendChild(createArea(poseidon[area], options)));
+
+    areas; // TODO place the areas
+}
+
+declare function createArea(...args: unknown[]): SVGGElement;
+
+declare function populatePartyGroup(): void;
+
+function rectWithCoordinates(
+    x: number, y: number,
+    { roundingRadius, spacingFactor }: Pick<GetSVGOptions, "roundingRadius"|"spacingFactor">,
+): SVGRectElement {
+    const rect = document.createElementNS(SVG_NS, "rect");
+    rect.setAttribute("x", (spacingFactor/2 + x).toString());
+    rect.setAttribute("y", (spacingFactor/2 + y).toString());
+    rect.setAttribute("width", (1 - spacingFactor).toString());
+    rect.setAttribute("height", (1 - spacingFactor).toString());
+    rect.setAttribute("rx", roundingRadius.toString());
+    rect.setAttribute("ry", roundingRadius.toString());
+    return rect;
 }
