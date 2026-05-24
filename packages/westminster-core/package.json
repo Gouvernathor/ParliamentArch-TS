@@ -1,0 +1,58 @@
+{
+  "name": "@parliamentarch/westminster-core",
+  "version": "1.0.0",
+  "description": "Tools to generate Westminster-styled parliamentary diagrams",
+  "type": "module",
+
+  "main": "./dist/geometry.js",
+  "types": "./dist/geometry.d.ts",
+  "exports": {
+    "./geometry": {
+      "import": {
+        "types": "./dist/geometry.d.ts",
+        "default": "./dist/geometry.js"
+      }
+    },
+    "./utils": {
+      "import": {
+        "types": "./dist/utils.d.ts",
+        "default": "./dist/utils.js"
+      }
+    }
+  },
+
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "node ../../scripts/clean.ts -d ./dist",
+    "compile": "tsc",
+    "build": "npm run clean & npm run compile",
+    "pub": "npm run build & npm publish --access public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.8",
+    "typescript": "^6.0.2"
+  },
+
+  "author": "Gouvernathor",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://codeberg.org/Gouvernathor/ParliamentArch-TS/src/packages/westminster-core#readme",
+  "bugs": {
+    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
+  },
+  "funding": "https://ko-fi.com/gouvernathor",
+  "keywords": [
+    "parliament",
+    "diagram",
+    "westminster",
+    "svg"
+  ]
+}
