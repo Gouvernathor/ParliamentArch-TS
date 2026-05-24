@@ -1,6 +1,11 @@
 import { AllocatedSeatsPerArea, Area, areaRecord } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
 
+const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
+const convertToArray: <T>(i: Iterable<T>) => readonly T[] = i => isReadonlyArray(i) ?
+    i :
+    [...i];
+
 export interface ClassSeatData {
     /**
      * CSS class or classes to apply to this group of seats.
@@ -106,7 +111,18 @@ function createArea(
     areaGroup.setAttribute("width", sSize);
     areaGroup.setAttribute("height", sSize);
 
-    for (const [party, nSeats] of partyData) {}
+    for (const [seatData, seats] of partyData) {
+        const partyGroup = areaGroup.appendChild(document.createElementNS(SVG_NS, "g"));
+        if ("class" in seatData) {
+            partyGroup.classList = isReadonlyArray(seatData.class) ?
+                seatData.class.join(" ") :
+                seatData.class;
+        }
+
+        if ("color" in seatData) {
+            populatePartyGroupStandalone(partyGroup, seatData, options);
+        }
+    }
 
     return areaGroup;
 }
