@@ -1,5 +1,5 @@
 import { Area, areaRecord } from "../common";
-import { defaultOptions, Options } from "./common";
+import { Options } from "./common";
 
 /**
  * Number of seats for each party for each area, except the typing is a bit more lax.
@@ -33,17 +33,15 @@ export type NRowsAndColsPerArea = {
  * @returns How many rows and columns are required for each area,
  * including any empty seats.
  */
-export function getNumberOfRowsAndColsPerArea(
+export function getRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,
-    options: Partial<Readonly<Options>>,
-): NRowsAndColsPerArea {
-    let {
+    {
         wingNRows: requestedWingNRows,
         crossNCols: requestedCrossNCols,
         packed,
         // fullWidth,
-    } = defaultOptions(options);
-
+    }: Readonly<Options>,
+): NRowsAndColsPerArea {
     const requestedHera = makeRequestedHera(ares);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
         requestedCrossNCols = 0;
