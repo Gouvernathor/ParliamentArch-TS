@@ -84,14 +84,16 @@ function populateHeader(
     svg.appendChild(document.createComment("Created with parliamentarch (https://github.com/Gouvernathor/ParliamentArch-TS)"));
 }
 
+const SEATS_Y = `${170/175 * 100}%`;
+
 function addNumberOfSeats(
     svg: SVGSVGElement,
     nSeats: number,
     fontSize: number,
 ): void {
     const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
-    text.setAttribute("x", `50%`);
-    text.setAttribute("y", `${170/175 *100}%`);
+    text.setAttribute("x", "50%");
+    text.setAttribute("y", SEATS_Y);
     text.setAttribute("style", `font-size: ${fontSize/16}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
 }
