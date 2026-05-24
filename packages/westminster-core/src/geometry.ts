@@ -9,7 +9,7 @@ export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<P
  * Number of seats for each party for each area, except the typing is a bit more lax.
  * Both arrays and maps fit the required type for storing the parties in each area.
  */
-export type NSeatsArrayPerArea = { readonly [a in Area]: { values(): Iterable<number> } };
+export type NSeatsIterablePerArea = { readonly [a in Area]: { values(): Iterable<number> } };
 
 /**
  * Number of occupied seats for each area.
@@ -112,7 +112,7 @@ nSpeaker <= wingRows * 2 + 2
  * including any empty seats.
  */
 export function getNumberOfRowsAndColsPerArea(
-    ares: NSeatsArrayPerArea,
+    ares: NSeatsIterablePerArea,
     options: Partial<Readonly<Options>>,
 ): NRowsAndColsPerArea {
     let {
@@ -165,7 +165,7 @@ export function getNumberOfRowsAndColsPerArea(
     throw new Error("Could not find a proper number of rows and columns");
 }
 
-function makeRequestedHera(ares: NSeatsArrayPerArea): NSeatsPerArea {
+function makeRequestedHera(ares: NSeatsIterablePerArea): NSeatsPerArea {
     return areaRecord(area => {
         let nSeats = 0;
         for (const n of ares[area].values()) {
@@ -181,7 +181,7 @@ function doesItFit(
     }: {
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number; widthInSquares: number;
     },
-    apollo: NSeatsArrayPerArea,
+    apollo: NSeatsIterablePerArea,
     requestedHera: NSeatsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
 ): boolean {
