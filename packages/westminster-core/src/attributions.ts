@@ -3,8 +3,8 @@
  * and export functions to help convert or generate those.
  */
 
-import { Area, areaRecord, AREAS } from "./common";
-import { NSeatsPerPartyPerArea } from "./geometry";
+import { Area, areaRecord, AREAS } from "./common.js";
+import { NSeatsPerPartyPerArea } from "./geometry/index.js";
 
 type WithArea<T> = T & {
     readonly area: Area;

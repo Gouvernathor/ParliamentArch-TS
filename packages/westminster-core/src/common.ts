@@ -1,5 +1,5 @@
 /**
- * This module exports the types you need for even the geometry phase.
+ * This module exports what's needed for even the geometry phase.
  */
 
 const WINGS = ["opposition", "government"] as const;

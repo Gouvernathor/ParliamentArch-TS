@@ -4,13 +4,13 @@
   "description": "Tools to generate Westminster-styled parliamentary diagrams",
   "type": "module",
 
-  "main": "./dist/geometry.js",
-  "types": "./dist/geometry.d.ts",
+  "main": "./dist/geometry/index.js",
+  "types": "./dist/geometry/index.d.ts",
   "exports": {
     "./geometry": {
       "import": {
-        "types": "./dist/geometry.d.ts",
-        "default": "./dist/geometry.js"
+        "types": "./dist/geometry/index.d.ts",
+        "default": "./dist/geometry/index.js"
       }
     },
     "./utils": {

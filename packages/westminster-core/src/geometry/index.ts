@@ -1,15 +1,13 @@
-import { CoordinatesPerPartyPerArea } from "./common.js";
-import { NSeatsPerPartyPerArea, getCoordinates } from "./geometry/allocator.js";
-import { Options, defaultOptions } from "./geometry/common.js";
-import { getRowsAndColsPerArea, NRowsAndColsPerArea, NSeatsIterablePerArea } from "./geometry/rows-cols.js";
+import { CoordinatesPerPartyPerArea } from "../common.js";
+import { NSeatsPerPartyPerArea, getCoordinates } from "./allocator.js";
+import { Options, defaultOptions } from "./common.js";
+import { getRowsAndColsPerArea, NRowsAndColsPerArea, NSeatsIterablePerArea } from "./rows-cols.js";
 
 export {
     Options as GeometryOptions,
     NSeatsIterablePerArea,
     NSeatsPerPartyPerArea,
 };
-
-// TODO move/rename as geometry/index.ts and update package.json
 
 export function getNumberOfRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,
