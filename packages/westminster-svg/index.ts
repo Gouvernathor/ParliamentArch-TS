@@ -1,5 +1,5 @@
-import { Area, AREAS, newRecord } from "../westminster-core/common.js";
-import { NSeatsPerPartyPerArea, getSeatCoordinatesPerArea, Options as GeometryOptions } from "../westminster-core/geometry.js";
+import { Area, AREAS, areaRecord } from "@parliamentarch/westminster-core/common.js";
+import { NSeatsPerPartyPerArea, getSeatCoordinatesPerArea, Options as GeometryOptions } from "@parliamentarch/westminster-core/geometry.js";
 import { buildSVG, Options as SVGOptions, Party } from "./svg.js";
 
 export { Party };
@@ -43,7 +43,7 @@ function localAttri2to0(attribution: LocalAttri2): LocalAttri0 {
 }
 
 function attri12ToNSeatsPerPartyPerArea(attribution: Attri12): NSeatsPerPartyPerArea<Party> {
-    return newRecord(AREAS, area => {
+    return areaRecord(area => {
         const entriesThisArea = attribution[area];
         if (!entriesThisArea) {
             return new Map();
@@ -65,12 +65,12 @@ function attri12ToNSeatsPerPartyPerArea(attribution: Attri12): NSeatsPerPartyPer
     });
 }
 function attri3ArrayToNSeatsPerPartyPerArea(attribution: Attri3Array): NSeatsPerPartyPerArea<Party> {
-    return newRecord(AREAS, area => {
+    return areaRecord(area => {
         return new Map((attribution.filter(([p,]) => p.area === area)));
     });
 }
 function attri4ToNSeatsPerPartyPerArea(attribution: Attri4): NSeatsPerPartyPerArea<Party> {
-    return newRecord(AREAS, area => {
+    return areaRecord(area => {
         return new Map(attribution.filter(p => p.area === area).map(extractSeats));
     });
 }
@@ -83,7 +83,7 @@ function anyAttributionToNSeatsPerPartyPerArea(attribution: AnyAttribution): NSe
     // 3 or 4
     const attributionArray = [...(attribution as Attri3|Attri4)] as Attri3Array|Attri4;
     if (attributionArray.length === 0) {
-        return newRecord(AREAS, () => new Map());
+        return areaRecord(() => new Map());
     }
     if (AREAS.some(area => area in attributionArray[0]!)) {
         // 4
@@ -94,11 +94,12 @@ function anyAttributionToNSeatsPerPartyPerArea(attribution: AnyAttribution): NSe
     }
 }
 
-export interface Options extends GeometryOptions, SVGOptions {}
+interface GetSVGFromAttributionOptions extends GeometryOptions, SVGOptions {}
+export { GetSVGFromAttributionOptions as Options };
 
 export function getSVGFromAttribution(
     attribution: AnyAttribution,
-    options: Partial<Options> = {},
+    options: Partial<GetSVGFromAttributionOptions> = {},
 ): SVGSVGElement {
     return buildSVG(getSeatCoordinatesPerArea(anyAttributionToNSeatsPerPartyPerArea(attribution), options), options);
 }
