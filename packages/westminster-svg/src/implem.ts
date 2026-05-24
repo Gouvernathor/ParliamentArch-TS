@@ -126,7 +126,7 @@ function addAreas(
 
         government: [
             0,
-            poseidon.government.nRows-1,
+            1,
         ],
 
         cross: [
