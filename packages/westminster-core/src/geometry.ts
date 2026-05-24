@@ -16,7 +16,7 @@ type NSeatsPerArea = { readonly [a in Area]: number };
 type NRowsAndColsPerArea = { readonly [a in Area]: { readonly nRows: number; readonly nCols: number } };
 
 
-export interface GetSeatCoordinatesPerAreaOptions {
+interface Options {
     /**
      * The number of rows for each of the two wings.
      * Ignored if 0, invalid if negative.
@@ -47,12 +47,13 @@ export interface GetSeatCoordinatesPerAreaOptions {
      */
     // fullWidth: boolean; // default false
 }
+export { Options as GetSeatCoordinatesPerAreaOptions };
 function defaultOptions({
     wingNRows = 0,
     crossNCols = 0,
     packed = true,
     // fullWidth = false,
-}: Partial<Readonly<GetSeatCoordinatesPerAreaOptions>> = {}): GetSeatCoordinatesPerAreaOptions {
+}: Partial<Readonly<Options>> = {}): Options {
     return {
         wingNRows,
         crossNCols,
@@ -82,7 +83,7 @@ The number of rows and columns of the various areas are optimized so that all th
 
 export function getSeatCoordinatesPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    options: Partial<Readonly<GetSeatCoordinatesPerAreaOptions>> = {},
+    options: Partial<Readonly<Options>> = {},
 ): CoordinatesPerPartyPerArea<Party> {
     const {
         wingNRows,
@@ -117,7 +118,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function getNumberOfRowsAndColsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, packed }: Readonly<GetSeatCoordinatesPerAreaOptions>,
+    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, packed }: Readonly<Options>,
 ): NRowsAndColsPerArea {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
@@ -180,7 +181,7 @@ function doesItFit<Party>(
     },
     apollo: NSeatsPerPartyPerArea<Party>,
     requestedHera: NSeatsPerArea,
-    { packed }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "packed">,
+    { packed }: Pick<Readonly<Options>, "packed">,
 ): boolean {
     if (heightInSquares < requestedHera.speak
      || heightInSquares < crossRows
@@ -233,7 +234,7 @@ function reduceNotCozy(
 function getCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: NRowsAndColsPerArea,
-    { packed }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "packed">,
+    { packed }: Pick<Readonly<Options>, "packed">,
 ): CoordinatesPerPartyPerArea<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
