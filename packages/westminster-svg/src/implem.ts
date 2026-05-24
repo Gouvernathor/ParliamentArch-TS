@@ -100,7 +100,6 @@ function addAreas(
     areas; // TODO place the areas
 }
 
-// TODO handle the class seat data version
 function createArea(
     partyData: AllocatedSeatsPerArea<SeatData>[Area],
     options: Readonly<GetSVGOptions>,
@@ -121,6 +120,10 @@ function createArea(
 
         if ("color" in seatData) {
             populatePartyGroupStandalone(partyGroup, seatData, options);
+        }
+
+        for (const [x, y] of seats) {
+            partyGroup.appendChild(rectWithCoordinates(x, y, options));
         }
     }
 
