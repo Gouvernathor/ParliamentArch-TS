@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "../westminster-core/common.js";
+import { Area, areaRecord, CoordinatesPerPartyPerArea } from "@parliamentarch/westminster-core/common";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
@@ -91,9 +91,9 @@ function addGroupedSeats(
     poseidon: CoordinatesPerPartyPerArea<Party>,
     options: Pick<Options, "roundingRadius"|"spacingFactor">,
 ): [number, number] {
-    const extremums = newRecord(AREAS, () => ({ x: extremum(), y: extremum() }));
+    const extremums = areaRecord(() => ({ x: extremum(), y: extremum() }));
 
-    const areaContainers = newRecord(AREAS, (area) => {
+    const areaContainers = areaRecord((area) => {
         const areaContainer = createArea(poseidon[area], extremums[area], options);
         areaContainer.setAttribute("id", `area-${area}`);
         return container.appendChild(areaContainer);
