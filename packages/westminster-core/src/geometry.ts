@@ -7,6 +7,7 @@ export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<P
 
 /**
  * Number of seats for each party for each area, except the typing is a bit more lax.
+ * Both arrays and maps fit the required type for storing the parties in each area.
  */
 export type NSeatsArrayPerArea = { readonly [a in Area]: { values(): Iterable<number> } };
 
