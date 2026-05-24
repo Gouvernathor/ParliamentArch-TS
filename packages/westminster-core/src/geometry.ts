@@ -62,7 +62,6 @@ function defaultOptions({
     };
 }
 
-
 /*
 Disposition and rules:
 The opposition is at the top of the diagram, the government at the bottom.
@@ -79,22 +78,6 @@ They have equal horizontal rows in priority.
 The speakers are in a single column.
 The number of rows and columns of the various areas are optimized so that all the squares fit in a 2:1 rectangle.
 */
-
-
-export function getSeatCoordinatesPerArea<Party>(
-    apollo: NSeatsPerPartyPerArea<Party>,
-    options: Partial<Readonly<Options>> = {},
-): CoordinatesPerPartyPerArea<Party> {
-    const {
-        wingNRows,
-        crossNCols,
-        packed,
-        // fullWidth,
-    } = defaultOptions(options);
-
-    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
-    return getCoordinates(apollo, demeter, { packed });
-}
 
 /*
 inputs:
@@ -250,6 +233,21 @@ function reduceNotPacked(
     return Array.from(nSeatss,
         nSeats => Math.ceil(nSeats / otherDimension)
     ).reduce((a, b) => a + b, 0);
+}
+
+export function getSeatCoordinatesPerArea<Party>(
+    apollo: NSeatsPerPartyPerArea<Party>,
+    options: Partial<Readonly<Options>> = {},
+): CoordinatesPerPartyPerArea<Party> {
+    const {
+        wingNRows,
+        crossNCols,
+        packed,
+        // fullWidth,
+    } = defaultOptions(options);
+
+    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, packed, /*fullWidth*/ });
+    return getCoordinates(apollo, demeter, { packed });
 }
 
 function getCoordinates<Party>(
