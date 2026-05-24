@@ -1,5 +1,5 @@
-import { Area, AREAS, newRecord } from "./common.js";
-import { NSeatsPerPartyPerArea, getSeatCoordinatesPerArea, Options as GeometryOptions } from "./geometry.js";
+import { Area, AREAS, newRecord } from "../westminster-core/common.js";
+import { NSeatsPerPartyPerArea, getSeatCoordinatesPerArea, Options as GeometryOptions } from "../westminster-core/geometry.js";
 import { buildSVG, Options as SVGOptions, Party } from "./svg.js";
 
 export { Party };

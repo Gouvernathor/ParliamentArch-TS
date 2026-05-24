@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
+import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "../../packages/westminster-core/common.js";
 
 /**
  * Number of seats for each party for each area.

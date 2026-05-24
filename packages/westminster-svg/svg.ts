@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
+import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "../westminster-core/common.js";
 
 /**
  * Makes the document constant available, whether in a browser or in Node.js,
