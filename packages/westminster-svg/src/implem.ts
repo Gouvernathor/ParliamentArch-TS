@@ -1,5 +1,6 @@
 import { AllocatedSeatsPerArea, Area, areaRecord } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
+import { NRowsAndColsPerArea } from "../../westminster-core/dist/geometry/rows-cols.js";
 
 const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
 const convertToArray: <T>(i: Iterable<T>) => readonly T[] = i => isReadonlyArray(i) ?
@@ -83,22 +84,22 @@ export function getSVG(
 
 function populateHeader(
     svg: SVGSVGElement,
-    poseidon: AllocatedSeatsPerArea<SeatData>,
+    { speak, opposition, government, cross }: NRowsAndColsPerArea,
 ) {
     svg.setAttribute("xmlns", SVG_NS);
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
     svg.setAttribute("viewBox", `${
-        -poseidon.speak.nCols
+        -speak.nCols
     } ${
-        Math.max(poseidon.speak.nRows/2, poseidon.opposition.nRows)
+        Math.max(speak.nRows/2, opposition.nRows)
     } ${
-        poseidon.speak.nCols + (poseidon.cross.nCols && poseidon.cross.nCols+1) + Math.max(poseidon.government.nCols, poseidon.opposition.nCols)
+        speak.nCols + (cross.nCols && cross.nCols+1) + Math.max(government.nCols, opposition.nCols)
     } ${
         Math.max(
-            poseidon.speak.nRows/2, poseidon.opposition.nRows+1, poseidon.cross.nCols/2,
+            speak.nRows/2, opposition.nRows+1, cross.nCols/2,
         ) + Math.max(
-            poseidon.speak.nRows/2, poseidon.government.nRows+1, poseidon.cross.nCols/2,
+            speak.nRows/2, government.nRows+1, cross.nCols/2,
         )
     }`);
 
