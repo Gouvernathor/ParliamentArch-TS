@@ -8,12 +8,12 @@ export type NSeatsPerPartyPerArea<Party> = { readonly [a in Area]: ReadonlyMap<P
 /**
  * Number of occupied seats for each area.
  */
-type Hera = { readonly [a in Area]: number };
+type NSeatsPerArea = { readonly [a in Area]: number };
 
 /**
  * Number of rows and columns for each area.
  */
-type Demeter = { readonly [a in Area]: { readonly nRows: number; readonly nCols: number } };
+type NRowsAndColsPerArea = { readonly [a in Area]: { readonly nRows: number; readonly nCols: number } };
 
 
 export interface GetSeatCoordinatesPerAreaOptions {
@@ -89,18 +89,8 @@ export function getSeatCoordinatesPerArea<Party>(
         // fullWidth,
     } = defaultOptions(options);
 
-    const demeter = makeDemeter(apollo, { wingNRows, crossNCols, cozy, /*fullWidth*/ });
-    return makePoseidon(apollo, demeter, { cozy });
-}
-
-function makeRequestedHera<Party>(apollo: NSeatsPerPartyPerArea<Party>): Hera {
-    return newRecord(AREAS, area => {
-        let nSeats = 0;
-        for (const n of apollo[area].values()) {
-            nSeats += n;
-        }
-        return nSeats;
-    });
+    const demeter = getNumberOfRowsAndColsPerArea(apollo, { wingNRows, crossNCols, cozy, /*fullWidth*/ });
+    return getCoordinates(apollo, demeter, { cozy });
 }
 
 /*
@@ -123,10 +113,10 @@ nCrossbenchers <= crossRows * crossCols
 crossRows <= wingRows * 2 + 2
 nSpeaker <= wingRows * 2 + 2
 */
-function makeDemeter<Party>(
+function getNumberOfRowsAndColsPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Readonly<GetSeatCoordinatesPerAreaOptions>,
-): Demeter {
+): NRowsAndColsPerArea {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
         requestedCrossNCols = 0;
@@ -170,6 +160,16 @@ function makeDemeter<Party>(
     throw new Error("An error occurred");
 }
 
+function makeRequestedHera<Party>(apollo: NSeatsPerPartyPerArea<Party>): NSeatsPerArea {
+    return newRecord(AREAS, area => {
+        let nSeats = 0;
+        for (const n of apollo[area].values()) {
+            nSeats += n;
+        }
+        return nSeats;
+    });
+}
+
 function doesItFit<Party>(
     {
         wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares
@@ -177,7 +177,7 @@ function doesItFit<Party>(
         wingRows: number; wingCols: number; crossRows: number; crossCols: number; heightInSquares: number; widthInSquares: number;
     },
     apollo: NSeatsPerPartyPerArea<Party>,
-    requestedHera: Hera,
+    requestedHera: NSeatsPerArea,
     { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
 ): boolean {
     if (heightInSquares < requestedHera.speak
@@ -228,9 +228,9 @@ function reduceNotCozy(
     ).reduce((a, b) => a + b, 0);
 }
 
-function makePoseidon<Party>(
+function getCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    demeter: Demeter,
+    demeter: NRowsAndColsPerArea,
     { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
 ): CoordinatesPerPartyPerArea<Party> {
     const speak = new Map<Party, [number, number][]>();
