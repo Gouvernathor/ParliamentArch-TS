@@ -1,3 +1,4 @@
+import { CoordinatesPerPartyPerArea } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
 
 export interface ClassSeatData {
@@ -43,3 +44,27 @@ export interface StandaloneSeatData {
 export type SeatData = ClassSeatData | StandaloneSeatData;
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+
+export interface GetSVGOptions {
+    /**
+     * The default value for the rounding radius of the corners of the squares,
+     * unless overridden for a specific party.
+     */
+    roundingRadius: number;
+
+    /**
+     * The relative spacing between neighboring squares of the same area.
+     * This is to be multiplied by the side of a square
+     * to get the actual spacing between two neighboring squares.
+     */
+    spacingFactor: number;
+}
+
+export function getSVG(
+    poseidon: CoordinatesPerPartyPerArea<SeatData>,
+    {
+        roundingRadius = 0,
+        spacingFactor = .1,
+    }: Partial<Readonly<GetSVGOptions>> = {},
+): SVGSVGElement {
+}
