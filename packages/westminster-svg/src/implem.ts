@@ -104,11 +104,11 @@ function rectWithCoordinates(
     { roundingRadius, spacingFactor }: Pick<GetSVGOptions, "roundingRadius"|"spacingFactor">,
 ): SVGRectElement {
     const rect = document.createElementNS(SVG_NS, "rect");
-    rect.setAttribute("x", (spacingFactor/2 + x).toString());
-    rect.setAttribute("y", (spacingFactor/2 + y).toString());
-    rect.setAttribute("width", (1 - spacingFactor).toString());
-    rect.setAttribute("height", (1 - spacingFactor).toString());
-    rect.setAttribute("rx", roundingRadius.toString());
-    rect.setAttribute("ry", roundingRadius.toString());
+    rect.setAttribute("x", `${spacingFactor/2 + x}`);
+    rect.setAttribute("y", `${spacingFactor/2 + y}`);
+    rect.setAttribute("width", `${1 - spacingFactor}`);
+    rect.setAttribute("height", `${1 - spacingFactor}`);
+    rect.setAttribute("rx", `${roundingRadius}`);
+    rect.setAttribute("ry", `${roundingRadius}`);
     return rect;
 }
