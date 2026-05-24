@@ -1,4 +1,4 @@
-import { AllocatedSeatsPerArea, areaRecord } from "@parliamentarch/westminster-core/utils";
+import { AllocatedSeatsPerArea, Area, areaRecord } from "@parliamentarch/westminster-core/utils";
 import "./document-loader.js";
 
 export interface ClassSeatData {
@@ -95,20 +95,53 @@ function addAreas(
     areas; // TODO place the areas
 }
 
-declare function createArea(...args: unknown[]): SVGGElement;
+// TODO handle the class seat data version
+function createArea(
+    partyData: AllocatedSeatsPerArea<SeatData>[Area],
+    options: Readonly<GetSVGOptions>,
+): SVGGElement {
+    const areaGroup = document.createElementNS(SVG_NS, "g");
 
-declare function populatePartyGroup(): void;
+    for (const [party, nSeats] of partyData) {}
+
+    return areaGroup;
+}
+
+function populatePartyGroupStandalone(
+    partyGroup: SVGGElement,
+    seatData: StandaloneSeatData,
+    { roundingRadius }: Pick<Readonly<GetSVGOptions>, "roundingRadius">,
+): void {
+    if (seatData.id !== undefined) {
+        partyGroup.setAttribute("id", seatData.id);
+    }
+    if (seatData.data !== undefined) {
+        partyGroup.appendChild(document.createElementNS(SVG_NS, "title"))
+            .textContent = seatData.data;
+    }
+
+    partyGroup.setAttribute("fill", seatData.color);
+    if (seatData.borderSize !== undefined) {
+        partyGroup.setAttribute("stroke-width", `${seatData.borderSize}`);
+        partyGroup.setAttribute("stroke", seatData.borderColor ?? "black");
+    }
+
+    const sRoundingRadius = `${seatData.roundingRadius ?? roundingRadius}`;
+    partyGroup.setAttribute("rx", sRoundingRadius);
+    partyGroup.setAttribute("ry", sRoundingRadius);
+}
 
 function rectWithCoordinates(
     x: number, y: number,
-    { roundingRadius, spacingFactor }: Pick<GetSVGOptions, "roundingRadius"|"spacingFactor">,
+    { spacingFactor }: Pick<GetSVGOptions, "spacingFactor">,
 ): SVGRectElement {
     const rect = document.createElementNS(SVG_NS, "rect");
     rect.setAttribute("x", `${spacingFactor/2 + x}`);
     rect.setAttribute("y", `${spacingFactor/2 + y}`);
+
+    // TODO move those up at least to the <g>
     rect.setAttribute("width", `${1 - spacingFactor}`);
     rect.setAttribute("height", `${1 - spacingFactor}`);
-    rect.setAttribute("rx", `${roundingRadius}`);
-    rect.setAttribute("ry", `${roundingRadius}`);
+
     return rect;
 }
