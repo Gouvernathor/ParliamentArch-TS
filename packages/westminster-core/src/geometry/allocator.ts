@@ -14,8 +14,8 @@ export function getCoordinates<Party>(
 ): CoordinatesPerPartyPerArea<Party> {
     return {
         speak: getSpeakCoordinates<Party>(apollo.speak),
-        opposition: getOppositionCoordinates<Party>(apollo.opposition, demeter.opposition.nRows, packed),
-        government: getGovernmentCoordinates<Party>(apollo.government, demeter.government.nRows, packed),
+        opposition: getWingCoordinates<Party>(apollo.opposition, demeter.opposition.nRows, packed, (x, y) => [x, demeter.opposition.nRows-1-y]),
+        government: getWingCoordinates<Party>(apollo.government, demeter.government.nRows, packed),
         cross: getCrossbenchCoordinates<Party>(apollo.cross, demeter.cross.nCols, packed),
     };
 }
@@ -31,56 +31,31 @@ function getSpeakCoordinates<Party>(
     return speak;
 }
 
-function getOppositionCoordinates<Party>(
-    apolloOpposition: ReadonlyMap<Party, number>,
+function getWingCoordinates<Party>(
+    attribution: ReadonlyMap<Party, number>,
     nRows: number,
     packed: boolean,
+    map = (a: number, b: number) => [a, b] as const,
 ): CoordinatesPerParty<Party> {
-    const opposition = new Map<Party, [number, number][]>();
-    let oppositionX = 0, oppositionY = nRows - 1;
-    for (const [party, nSeats] of apolloOpposition) {
-        opposition.set(party, Array.from({ length: nSeats }, () => {
+    const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
+    let x = 0, y = 0;
+    for (const [party, nSeats] of attribution) {
+        coordinates.set(party, Array.from({ length: nSeats }, () => {
             try {
-                return [oppositionX, oppositionY--];
+                return map(x, y++);
             } finally {
-                if (oppositionY < 0) {
-                    oppositionY = nRows - 1;
-                    oppositionX++;
+                if (y >= nRows) {
+                    y = 0;
+                    x++;
                 }
             }
         }));
         if (!packed) {
-            oppositionY = nRows - 1;
-            oppositionX++;
+            y = 0;
+            x++;
         }
     }
-    return opposition;
-}
-
-function getGovernmentCoordinates<Party>(
-    apolloGovernment: ReadonlyMap<Party, number>,
-    nRows: number,
-    packed: boolean,
-): CoordinatesPerParty<Party> {
-    const government = new Map<Party, [number, number][]>();
-    let governmentX = 0, governmentY = 0;
-    for (const [party, nSeats] of apolloGovernment) {
-        government.set(party, Array.from({ length: nSeats }, () => {
-            try {
-                return [governmentX, governmentY++];
-            } finally {
-                if (governmentY >= nRows) {
-                    governmentY = 0;
-                    governmentX++;
-                }
-            }
-        }));
-        if (!packed) {
-            governmentY = 0;
-            governmentX++;
-        }
-    }
-    return government;
+    return coordinates;
 }
 
 function getCrossbenchCoordinates<Party>(
