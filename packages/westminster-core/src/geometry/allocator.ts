@@ -14,9 +14,9 @@ export function getCoordinates<Party>(
 ): CoordinatesPerPartyPerArea<Party> {
     return {
         speak: getSpeakCoordinates<Party>(apollo),
-        opposition: getOppositionCoordinates<Party>(apollo, demeter, packed),
-        government: getGovernmentCoordinates<Party>(apollo, demeter, packed),
-        cross: getCrossbenchCoordinates<Party>(apollo, demeter, packed),
+        opposition: getOppositionCoordinates<Party>(apollo, demeter.opposition.nRows, packed),
+        government: getGovernmentCoordinates<Party>(apollo, demeter.government.nRows, packed),
+        cross: getCrossbenchCoordinates<Party>(apollo, demeter.cross.nCols, packed),
     };
 }
 
@@ -33,24 +33,24 @@ function getSpeakCoordinates<Party>(
 
 function getOppositionCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    demeter: NRowsAndColsPerArea,
+    nRows: number,
     packed: boolean,
 ): CoordinatesPerParty<Party> {
     const opposition = new Map<Party, [number, number][]>();
-    let oppositionX = 0, oppositionY = demeter.opposition.nRows - 1;
+    let oppositionX = 0, oppositionY = nRows - 1;
     for (const [party, nSeats] of apollo.opposition) {
         opposition.set(party, Array.from({ length: nSeats }, () => {
             try {
                 return [oppositionX, oppositionY--];
             } finally {
                 if (oppositionY < 0) {
-                    oppositionY = demeter.opposition.nRows - 1;
+                    oppositionY = nRows - 1;
                     oppositionX++;
                 }
             }
         }));
         if (!packed) {
-            oppositionY = demeter.opposition.nRows - 1;
+            oppositionY = nRows - 1;
             oppositionX++;
         }
     }
@@ -59,7 +59,7 @@ function getOppositionCoordinates<Party>(
 
 function getGovernmentCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    demeter: NRowsAndColsPerArea,
+    nRows: number,
     packed: boolean,
 ): CoordinatesPerParty<Party> {
     const government = new Map<Party, [number, number][]>();
@@ -69,7 +69,7 @@ function getGovernmentCoordinates<Party>(
             try {
                 return [governmentX, governmentY++];
             } finally {
-                if (governmentY >= demeter.government.nRows) {
+                if (governmentY >= nRows) {
                     governmentY = 0;
                     governmentX++;
                 }
@@ -85,7 +85,7 @@ function getGovernmentCoordinates<Party>(
 
 function getCrossbenchCoordinates<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    demeter: NRowsAndColsPerArea,
+    nCols: number,
     packed: boolean,
 ): CoordinatesPerParty<Party> {
     const cross = new Map<Party, [number, number][]>();
@@ -95,7 +95,7 @@ function getCrossbenchCoordinates<Party>(
             try {
                 return [crossX++, crossY];
             } finally {
-                if (crossX >= demeter.cross.nCols) {
+                if (crossX >= nCols) {
                     crossX = 0;
                     crossY++;
                 }
