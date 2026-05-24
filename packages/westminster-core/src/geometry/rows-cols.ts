@@ -1,5 +1,5 @@
-import { Area, areaRecord, RowCols } from "../common";
-import { Options } from "./common";
+import { Area, areaRecord, RowCols } from "../common.js";
+import { Options } from "./common.js";
 
 /**
  * Number of seats for each party for each area, except the typing is a bit more lax.
