@@ -147,10 +147,6 @@ function createArea(
 ): SVGGElement {
     const areaGroup = document.createElementNS(SVG_NS, "g");
 
-    const sSize = `${1 - options.spacingFactor}`;
-    areaGroup.setAttribute("width", sSize);
-    areaGroup.setAttribute("height", sSize);
-
     for (const [seatData, seats] of partyData) {
         const partyGroup = areaGroup.appendChild(document.createElementNS(SVG_NS, "g"));
         if ("class" in seatData) {
@@ -202,5 +198,10 @@ function rectWithCoordinates(
     const rect = document.createElementNS(SVG_NS, "rect");
     rect.setAttribute("x", `${spacingFactor/2 + x}`);
     rect.setAttribute("y", `${spacingFactor/2 + y}`);
+
+    const sSize = `${1 - spacingFactor}`;
+    rect.setAttribute("width", sSize);
+    rect.setAttribute("height", sSize);
+
     return rect;
 }
