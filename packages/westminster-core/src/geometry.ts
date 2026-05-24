@@ -160,7 +160,7 @@ function getNumberOfRowsAndColsPerArea<Party>(
         }
     }
 
-    throw new Error("An error occurred");
+    throw new Error("Could not find a proper number of rows and columns");
 }
 
 function makeRequestedHera<Party>(apollo: NSeatsPerPartyPerArea<Party>): NSeatsPerArea {
@@ -203,17 +203,17 @@ function doesItFit<Party>(
             return false;
         }
     } else {
-        const oppositionNecessaryCols = reduceNotCozy(apollo.opposition.values(), wingRows);
+        const oppositionNecessaryCols = reduceNotPacked(apollo.opposition.values(), wingRows);
         if (oppositionNecessaryCols > wingCols) {
             return false;
         }
 
-        const governmentNecessaryCols = reduceNotCozy(apollo.government.values(), wingRows);
+        const governmentNecessaryCols = reduceNotPacked(apollo.government.values(), wingRows);
         if (governmentNecessaryCols > wingCols) {
             return false;
         }
 
-        const crossNecessaryRows = reduceNotCozy(apollo.cross.values(), crossCols);
+        const crossNecessaryRows = reduceNotPacked(apollo.cross.values(), crossCols);
         if (crossNecessaryRows > crossRows) {
             return false;
         }
@@ -222,7 +222,7 @@ function doesItFit<Party>(
     return true;
 }
 
-function reduceNotCozy(
+function reduceNotPacked(
     nSeatss: Iterable<number>,
     otherDimension: number,
 ): number {
