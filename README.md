@@ -68,9 +68,7 @@ As hinted above, some parameters can be set to customize the layout of the diagr
 - The seat radius factor can be set between 0 and 1, with the seats touching their neighbors when the factor is 1.
 - As long as the number of seats is not the maximum number of seats for the given number of rows, different strategies can be chosen to distribute the seats.
 
-## API Reference
-
-### Main module contents
+## Main module contents
 
 These are found in the `parliamentarch` module.
 
@@ -86,7 +84,7 @@ This function creates the diagram as an SVG element which can then be integrated
 - `options.seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
 - `options`: the rest of the options are those passed through to the similar options parameters of the getSeatsCenters and groupedSVGOptions functions.
 
-### Geometry submodule contents
+## Geometry submodule contents
 
 These are found in the `parliamentarch/geometry` module.
 
@@ -122,7 +120,7 @@ The function returns a map representing the ensemble of seats. The keys are `[x,
 
 The values are the angle, in radians, calculated from the right-outermost point of the annulus arc, through the center of the annulus, to the center of the seat. Sorting the keys by decreasing value returns the seats arranged from left to right. The order of the entries in the Map is meaningless.
 
-### SVG submodule contents
+## SVG submodule contents
 
 These are found in the `parliamentarch/svg` module.
 
@@ -154,7 +152,7 @@ The options are as follows:
 - `writeNumberOfSeats?: boolean`: Whether to write the number of seats at the bottom center of the diagram - in the well of the house. Defaults to true.
 - `fontSizeFactor?: number`: A factor you should tweak to change the font size of the number of seats. The default value is around .2. Keeping this value constant will keep the font size in scale when changing the canvas size.
 
-### Component submodule contents
+## Component submodule contents
 
 These are found in the `parliamentarch/component` module.
 
@@ -170,35 +168,3 @@ You can use it in four ways:
 In the last case, the attributes taken by the `<parliament-arch>` element are the same as the options parameters of the `getSVGFromAttribution` function, but in kebab-case instead of camelCase, and prefixed with `data-`. For example, `seatRadiusFactor` becomes `data-seat-radius-factor`.
 The contents of the `<parliament-arch>` element provide the attribution. Each `<party>`, `<group>` or `<seat-data>` child element represents a group of seats. Each such element takes attributes corresponding to the properties of the `SeatData` interface, but again in kebab-case instead of camelCase and prefixed with `data-`. For example, `borderSize` becomes `data-border-size`, and `data` becomes `data-data`. The number of seats in the group is given either by the `data-n-seats` attribute, or by the text content of the element which should be an integer.
 As with the `SeatDataWithNumber` interface, the `color` property (`data-color` attribute) is mandatory, while all other properties/attributes are optional.
-
-## Westminster-style diagrams
-
-The `parliamentarch/westminster` module generates Westminster-style parliament diagrams, which look very different, using a very similar API.
-
-In this system, every party or group has an assigned area in which its seats are drawn. It can be "speak" for the speaker, "government", "opposition", or "cross" for the crossbenchers. Each area is a rectangle.
-
-### Main module contents
-
-These are found in the `parliamentarch/westminster` module.
-
-`Party`
-
-An interface for data about a party or group of seats. It contains:
-
-- `color: string`: The color with which to fill the seat square, as a CSS color.
-- `id?: string`: An optional id for the group of seats.
-- `data?: string`: An optional text to display when hovering over the seat.
-- `borderSize?: number`: The size of the border around the seat square, defaults to 0.
-- `borderColor?: string`: The color of the border, defaults to black.
-- `roundingRadius?: number`: The rounding radius of the square representing each seat, from 0 (square) to 1 (circle).
-
-`getSVGFromAttribution(attribution, options?): SVGSVGElement`
-
-This function creates the diagram as an SVG element which can then be integrated in the DOM. The parameters are as follows:
-
-- `attribution`: this accepts a wide range of input formats, which you can inspect using TypeScript typing. The easiest format is an array of objects containing, for each party, "nSeats" a number of seats, "area" the name of an area as described above, and the other fields of `Party` objects. The ordering of the elements of the same area matters, and the groups as provided will be drawn from left to right in the diagram.
-- `options.wingNRows`: the number of rows for each of the two wings (government and opposition). Ignored if 0, invalid if negative. If 0 (or not passed), the number of rows is calculated automatically.
-- `options.crossNCols`: the number of columns for the crossbenchers area. Invalid if negative. If 0 (or not passed), or if inferior to the total number of crossbenchers, the number of columns is calculated automatically.
-- `options.cozy`: Whether parties of the same area are allowed to share the same column - or the same row for the crossbenchers. Defaults to true.
-- `options.roundingRadius`: the default value for the rounding radius of the squares representing the seats, unless overridden by the `roundingRadius` property of a group object. From 0 (squares) to 1 (circles). Defaults to 0.
-- `options.spacingFactor`: the relative spacing between neighboring seats of the same area. This is multiplied by the size of a square to get the actual spacing between two neighboring seats. Defaults to 0.1.
