@@ -1,4 +1,4 @@
-import "./document-loader.js";
+import "./src/document-loader.js";
 import { Area, areaRecord, CoordinatesPerPartyPerArea } from "@parliamentarch/westminster-core/utils";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
