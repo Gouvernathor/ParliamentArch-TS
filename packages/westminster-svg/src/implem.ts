@@ -89,14 +89,14 @@ function populateHeader(
     svg.setAttribute("viewBox", `${
         -speak.nCols
     } ${
-        -Math.max(speak.nRows/2, opposition.nRows)
+        -Math.max(speak.nRows/2, opposition.nRows && opposition.nRows+1)
     } ${
         speak.nCols + (cross.nCols && cross.nCols+1) + Math.max(government.nCols, opposition.nCols)
     } ${
         Math.max(
-            speak.nRows/2, opposition.nRows+1, cross.nCols/2,
+            speak.nRows/2, opposition.nRows && opposition.nRows+1, cross.nCols/2,
         ) + Math.max(
-            speak.nRows/2, government.nRows+1, cross.nCols/2,
+            speak.nRows/2, government.nRows && government.nRows+1, cross.nCols/2,
         )
     }`);
 
