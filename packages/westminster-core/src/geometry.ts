@@ -222,6 +222,14 @@ function doesItFit<Party>(
     return true;
 }
 
+/**
+ * Given an area, and a number of rows, returns the number of columns that are required
+ * to fit every party, under the rule where no column is shared by several parties.
+ * (For the crossbenchers, cols and rows are of course reversed.)
+ * @param nSeatss the number of seats for each party in the given area
+ * @param otherDimension the number of seats in the other dimension (usually the number of rows)
+ * @returns the number of seats in that direction (usually columns) necessary to fit everyone
+ */
 function reduceNotPacked(
     nSeatss: Iterable<number>,
     otherDimension: number,
