@@ -1,3 +1,7 @@
+/**
+ * This module exports the types you need for even the geometry phase.
+ */
+
 export const WINGS = ["opposition", "government"] as const;
 export type Wing = (typeof WINGS)[number];
 export const AREAS = ["speak", ...WINGS, "cross"] as const;

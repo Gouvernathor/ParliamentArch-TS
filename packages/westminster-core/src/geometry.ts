@@ -1,4 +1,4 @@
-import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "../../packages/westminster-core/common.js";
+import { Area, AREAS, newRecord, CoordinatesPerPartyPerArea } from "./common.js";
 
 /**
  * Number of seats for each party for each area.
@@ -16,13 +16,13 @@ type Hera = { readonly [a in Area]: number };
 type Demeter = { readonly [a in Area]: { readonly nRows: number; readonly nCols: number } };
 
 
-export interface Options {
+export interface GetSeatCoordinatesPerAreaOptions {
     /**
      * The number of rows for each of the two wings.
      * Ignored if 0, invalid if negative.
      * If ignored, the actual number of rows is computed automatically.
      */
-    readonly wingNRows: number; // default 0
+    wingNRows: number; // default 0
 
     /**
      * The number of columns for the crossbenchers.
@@ -31,26 +31,26 @@ export interface Options {
      * Previously called centerCols.
      * If ignored, the actual number of columns is computed automatically.
      */
-    readonly crossNCols: number; // default 0
+    crossNCols: number; // default 0
 
     /**
      * Whether parties of the same wing are allowed to share the same column,
      * or the same row for crossbenchers.
      */
-    readonly cozy: boolean; // default true
+    cozy: boolean; // default true
 
     /**
      * Whether to prioritize having equal columns between the two wings,
      * over having equal rows.
      */
-    // readonly fullWidth: boolean; // default false
+    // fullWidth: boolean; // default false
 }
 function defaultOptions({
     wingNRows = 0,
     crossNCols = 0,
     cozy = true,
     // fullWidth = false,
-}: Partial<Options> = {}): Options {
+}: Partial<Readonly<GetSeatCoordinatesPerAreaOptions>> = {}): GetSeatCoordinatesPerAreaOptions {
     return {
         wingNRows,
         crossNCols,
@@ -80,7 +80,7 @@ The number of rows and columns of the various areas are optimized so that all th
 
 export function getSeatCoordinatesPerArea<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    options: Partial<Options> = {},
+    options: Partial<Readonly<GetSeatCoordinatesPerAreaOptions>> = {},
 ): CoordinatesPerPartyPerArea<Party> {
     const {
         wingNRows,
@@ -125,7 +125,7 @@ nSpeaker <= wingRows * 2 + 2
 */
 function makeDemeter<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
-    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Options,
+    { wingNRows: requestedWingNRows, crossNCols: requestedCrossNCols, cozy }: Readonly<GetSeatCoordinatesPerAreaOptions>,
 ): Demeter {
     const requestedHera = makeRequestedHera(apollo);
     if (requestedHera.cross === 0 || requestedCrossNCols < requestedHera.cross) {
@@ -178,7 +178,7 @@ function doesItFit<Party>(
     },
     apollo: NSeatsPerPartyPerArea<Party>,
     requestedHera: Hera,
-    { cozy }: Pick<Options, "cozy">,
+    { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
 ): boolean {
     if (heightInSquares < requestedHera.speak
      || heightInSquares < crossRows
@@ -231,7 +231,7 @@ function reduceNotCozy(
 function makePoseidon<Party>(
     apollo: NSeatsPerPartyPerArea<Party>,
     demeter: Demeter,
-    { cozy }: Pick<Options, "cozy">,
+    { cozy }: Pick<Readonly<GetSeatCoordinatesPerAreaOptions>, "cozy">,
 ): CoordinatesPerPartyPerArea<Party> {
     const speak = new Map<Party, [number, number][]>();
     let speakY = 0;
