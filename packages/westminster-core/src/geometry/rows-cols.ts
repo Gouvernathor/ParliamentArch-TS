@@ -62,7 +62,7 @@ export function getRowsAndColsPerArea(
         // accounts for packing, but not for cross
         const minWingCols = getMinWingCols(ares, requestedHera, maxWingRows, packed);
 
-        // if it's too much, even without cross and with packing, then bail
+        // if it's too much, even without cross, then bail
         if (widthInSquares < minWingCols+1) continue;
 
         let proposedCrossRowCols: RowCols;
