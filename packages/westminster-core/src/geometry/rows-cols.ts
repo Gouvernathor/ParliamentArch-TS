@@ -53,29 +53,29 @@ export function getRowsAndColsPerArea(
          widthInSquares < 8*sanityCheck;
          widthInSquares++) {
         const heightInSquares = Math.trunc(widthInSquares / 2);
-        let crossRows: number,
-            crossCols: number,
-            wingRows: number,
-            wingCols: number;
+        let maxCrossRows: number,
+            minCrossCols: number,
+            maxWingRows: number,
+            maxWingCols: number;
 
-        wingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
-        wingCols = widthInSquares - 1; // 1 for the speaker
+        maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
         if (requestedHera.cross > 0) {
-            crossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
-            crossRows = Math.ceil(requestedHera.cross / crossCols);
-            wingCols -= crossCols + 1; // 1 for the gap between wings and crossbenchers
+            minCrossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
+            maxCrossRows = Math.ceil(requestedHera.cross / minCrossCols);
+            maxWingCols = widthInSquares - 1 - minCrossCols - 1; // 1 for the gap between wings and crossbenchers
         } else {
-            crossRows = 0;
-            crossCols = 0;
+            maxCrossRows = 0;
+            minCrossCols = 0;
+            maxWingCols = widthInSquares - 1; // 1 for the speaker
         }
 
-        const fit = howDoesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, ares, requestedHera, { packed });
+        const fit = howDoesItFit({ wingRows: maxWingRows, wingCols: maxWingCols, crossRows: maxCrossRows, crossCols: minCrossCols, heightInSquares, widthInSquares }, ares, requestedHera, { packed });
         if (fit) {
             const cross = arrangeCross(fit, requestedHera.cross, requestedCrossNCols, widthInSquares);
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
-                opposition: { nRows: wingRows, nCols: fit.oppositionNecessaryCols },
-                government: { nRows: wingRows, nCols: fit.governmentNecessaryCols },
+                opposition: { nRows: maxWingRows, nCols: fit.oppositionNecessaryCols },
+                government: { nRows: maxWingRows, nCols: fit.governmentNecessaryCols },
                 cross,
             };
         }
