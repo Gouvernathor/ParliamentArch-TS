@@ -56,7 +56,7 @@ export function getGroupedSVG(
     seatActualRadius: number,
     {
         seatNumberFontSizeFactor = 1,
-    }: Partial<GetGroupedSVGOptions> = {},
+    }: Partial<Readonly<GetGroupedSVGOptions>> = {},
 ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, "svg");
 
