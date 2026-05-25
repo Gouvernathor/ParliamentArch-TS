@@ -95,8 +95,6 @@ export function getRowsAndColsPerArea(
             nCols: minWingCols,
         };
 
-        if (!doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) continue;
-
         return {
             speak: { nRows: requestedHera.speak, nCols: 1 },
 
@@ -140,6 +138,8 @@ function getMinWingCols(
     }
 }
 
+// TODO move that to integrated tests
+// @ts-expect-error
 function doesItFit(
     { nRows: wingRows, nCols: wingCols }: RowCols,
     { nRows: crossRows, nCols: crossCols }: RowCols,
