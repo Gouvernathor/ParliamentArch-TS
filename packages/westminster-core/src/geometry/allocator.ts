@@ -111,7 +111,7 @@ function getPackedCrossCoordinates<Party>(
     const totalNSeats = Array.from(attribution.values()).reduce((s, n) => s+n, 0);
     const floatNCols = totalNSeats / rowCols.nRows;
     /** The seats having this index as the column must get the offset (works if no seat should be offset) */
-    const incompleteColumnIdx = Math.ceil(floatNCols + .5);
+    const incompleteColumnIdx = Math.ceil(floatNCols + .5) -1/*because it starts at 0*/;
 
     let x = 0, y = 0;
     const seats = Array.from({ length: totalNSeats }, () => {
