@@ -162,7 +162,7 @@ function doesItFit(
     { nRows: crossRows, nCols: crossCols }: RowCols,
     apollo: NSeatsIterablePerArea,
     requestedHera: NSeatsPerArea,
-    { packed }: Pick<Readonly<Options>, "packed">,
+    packed: boolean,
 ): boolean {
     if (packed) {
         if (requestedHera.opposition > wingRows * wingCols) {
