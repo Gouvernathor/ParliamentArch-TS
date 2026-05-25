@@ -72,6 +72,7 @@ export function getRowsAndColsPerArea(
             // x fitness check already made
         } else {
             const crossCols = requestedCrossNCols || (widthInSquares -minWingCols -1/* speaker */ -1/* gap between wings and cross */);
+            if (crossCols < 1) continue;
             if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
 
             const crossRows = packed ?
