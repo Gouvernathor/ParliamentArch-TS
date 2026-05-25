@@ -73,7 +73,9 @@ export function getRowsAndColsPerArea(
             const crossCols = requestedCrossNCols || widthInSquares -minWingCols -1/* speaker */;
             if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
 
-            const crossRows = Math.ceil(requestedHera.cross / crossCols);
+            const crossRows = packed ?
+                Math.ceil(requestedHera.cross / crossCols) :
+                reduceNotPacked(ares.cross.values(), crossCols);
             if (heightInSquares < crossRows) continue;
 
             proposedCrossRowCols = {
