@@ -29,6 +29,7 @@ export type NRowsAndColsPerArea = {
  * @param ares the number of seats for each party and for each area
  * @returns How many rows and columns are required for each area,
  * including any empty seats.
+ * Caveat : both wings will be declared as having the size of the bigger of the two.
  */
 export function getRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,
