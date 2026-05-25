@@ -26,9 +26,8 @@ export function getAllocatedSeatsPerArea<Party>(
             apollo.government, demeter.government.nRows, packed,
         ), demeter.government),
 
-        cross: Object.assign(getWingCoordinates<Party>(
-            apollo.cross, demeter.cross.nCols, packed,
-            (x, y) => [y, x],
+        cross: Object.assign(getCrossCoordinates<Party>(
+            apollo.cross, demeter.cross, packed,
         ), demeter.cross),
     };
 }
@@ -71,35 +70,6 @@ function getWingCoordinates<Party>(
     return coordinates;
 }
 
-// How it works vanilla, with the variables and parameters renamed
-// @ts-expect-error
-function getCrossCoordinatesVanilla<Party>(
-    attribution: ReadonlyMap<Party, number>,
-    nCols: number,
-    packed: boolean,
-): CoordinatesPerParty<Party> {
-    const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
-    let x = 0, y = 0;
-    for (const [party, nSeats] of attribution) {
-        coordinates.set(party, Array.from({ length: nSeats }, () => {
-            try {
-                return [x++, y];
-            } finally {
-                if (x >= nCols) {
-                    x = 0;
-                    y++;
-                }
-            }
-        }));
-        if (!packed) {
-            x = 0;
-            y++;
-        }
-    }
-    return coordinates;
-}
-
-// @ts-expect-error
 function getCrossCoordinates<Party>(
     attribution: ReadonlyMap<Party, number>,
     rowCols: RowCols,
