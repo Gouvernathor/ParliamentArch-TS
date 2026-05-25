@@ -69,7 +69,7 @@ export function getRowsAndColsPerArea(
             maxWingCols = widthInSquares - 1; // 1 for the speaker
         }
 
-        const fit = howDoesItFit({ wingRows: maxWingRows, wingCols: maxWingCols, crossRows: maxCrossRows, crossCols: minCrossCols }, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
+        const fit = howDoesItFit({ nRows: maxWingRows, nCols: maxWingCols }, { nRows: maxCrossRows, nCols: minCrossCols }, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
         if (fit) {
             const cross = arrangeCross(fit, requestedHera.cross, requestedCrossNCols, widthInSquares);
             return {
@@ -100,11 +100,8 @@ interface Fitness {
     crossNecessaryRows: number;
 }
 function howDoesItFit(
-    {
-        wingRows, wingCols, crossRows, crossCols,
-    }: {
-        wingRows: number; wingCols: number; crossRows: number; crossCols: number;
-    },
+    { nRows: wingRows, nCols: wingCols }: RowCols,
+    { nRows: crossRows, nCols: crossCols }: RowCols,
     {
         heightInSquares, widthInSquares,
     }: {
