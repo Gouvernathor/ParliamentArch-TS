@@ -30,6 +30,23 @@ export type NRowsAndColsPerArea = {
  * @returns How many rows and columns are required for each area,
  * including any empty seats.
  * Caveat : both wings will be declared as having the size of the bigger of the two.
+ *
+ * The process is as follows.
+ * Iterate a number of squares in height, from a reasonable minimum to a reasonable maximum,
+ * until finding the smallest size that fits the provided seats.
+ * First, try to lodge all speaker seats vertically, if it doesn't fit, skip.
+ * Same for the requested/imposed number of rows per wing, if passed.
+ * Then, calculate how many rows on each wing can fit for the provided height (if not imposed).
+ * Then, given the provided seats and the instruction to pack or not,
+ * calculate how many columns are necessary (the maximum between opposition and government).
+ * If that number of columns is too wide to fit in 2:1, skip.
+ * If there are no crossbenchers, that is enough.
+ * Otherwise, if the imposed number of crossbench columns would make it too wide, skip.
+ * Otherwise, take the remaining room to be the number of crossbench columns,
+ * but if there is no more room, skip.
+ * Given the provided seats, the instruction to pack or not, and the just calculated number of crossbench columns,
+ * calculate how many crossbench rows are necessary.
+ * If that is too tall, skip.
  */
 export function getRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,
