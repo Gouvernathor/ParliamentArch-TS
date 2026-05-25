@@ -71,11 +71,13 @@ export function getRowsAndColsPerArea(
             // x fitness check already made
         } else {
             const crossCols = requestedCrossNCols || widthInSquares -minWingCols -1/* speaker */;
-
             if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
 
+            const crossRows = Math.ceil(requestedHera.cross / crossCols);
+            if (heightInSquares < crossRows) continue;
+
             proposedCrossRowCols = {
-                nRows: Math.ceil(requestedHera.cross/crossCols),
+                nRows: crossRows,
                 nCols: crossCols,
             };
         }
@@ -84,7 +86,7 @@ export function getRowsAndColsPerArea(
             nCols: minWingCols,
         };
 
-        const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
+        const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed });
         if (fit) {
             const cross = arrangeCross(fit, requestedHera.cross, requestedCrossNCols, widthInSquares);
             return {
@@ -136,22 +138,10 @@ interface Fitness {
 function howDoesItFit(
     { nRows: wingRows, nCols: wingCols }: RowCols,
     { nRows: crossRows, nCols: crossCols }: RowCols,
-    {
-        heightInSquares, widthInSquares,
-    }: {
-        heightInSquares: number; widthInSquares: number;
-    },
     apollo: NSeatsIterablePerArea,
     requestedHera: NSeatsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
 ): null | Fitness {
-    if (heightInSquares < crossRows) {
-        return null;
-    }
-    if (widthInSquares < 1 + wingCols + (crossCols > 0 ? crossCols + 1 : 0)) {
-        return null;
-    }
-
     let oppositionNecessaryCols, governmentNecessaryCols, crossNecessaryRows;
     if (packed) {
         if (requestedHera.opposition > wingRows * wingCols) {
