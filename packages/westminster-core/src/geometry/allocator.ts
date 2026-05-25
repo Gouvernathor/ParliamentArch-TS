@@ -102,6 +102,35 @@ function getCrossCoordinates<Party>(
 // @ts-expect-error
 function getPackedCrossCoordinates<Party>(
     attribution: ReadonlyMap<Party, number>,
+    { nRows, nCols }: RowCols,
+): CoordinatesPerParty<Party> {
+    // if there are n empty seats, then the n last columns must be offset,
+    // and the offset is always .5
+
+    const totalNSeats = Array.from(attribution.values()).reduce((s, n) => s+n, 0);
+    const nMissingSeats = nRows*nCols - totalNSeats;
+    /** Inclusive 0-based index */
+    const firstIncompleteColumn = nCols - nMissingSeats;
+
+    let x = 0, y = 0;
+    const seats = Array.from({ length: totalNSeats }, () => {
+        try {
+            return [x, x >= firstIncompleteColumn ? y+.5 : y] as const;
+        } finally {
+            x++;
+            if (x >= nCols) {
+                x = 0;
+                y++;
+            }
+        }
+    }).sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
+
+    return allocateToSeats(attribution, seats);
+}
+
+// @ts-expect-error
+function getPackedCrossCoordinatesV1<Party>(
+    attribution: ReadonlyMap<Party, number>,
     rowCols: RowCols,
 ): CoordinatesPerParty<Party> {
     const seatsInLastColumn = rowCols.nRows % rowCols.nCols; // 0 is a special case, but ignored
@@ -125,6 +154,13 @@ function getPackedCrossCoordinates<Party>(
         }
     }).sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
 
+    return allocateToSeats<Party>(attribution, seats);
+}
+
+function allocateToSeats<Party>(
+    attribution: ReadonlyMap<Party, number>,
+    seats: (readonly [number, number])[],
+) {
     const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
     for (const [party, nSeats] of attribution) {
         coordinates.set(party, seats.splice(0, nSeats));
