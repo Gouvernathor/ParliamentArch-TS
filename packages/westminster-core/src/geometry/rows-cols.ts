@@ -71,7 +71,7 @@ export function getRowsAndColsPerArea(
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
             // x fitness check already made
         } else {
-            const crossCols = requestedCrossNCols || widthInSquares -minWingCols -1/* speaker */;
+            const crossCols = requestedCrossNCols || (widthInSquares -minWingCols -1/* speaker */ -1/* gap between wings and cross */);
             if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
 
             const crossRows = packed ?
@@ -89,7 +89,7 @@ export function getRowsAndColsPerArea(
             nCols: minWingCols,
         };
 
-        if (doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) continue;
+        if (!doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) continue;
 
         return {
             speak: { nRows: requestedHera.speak, nCols: 1 },
