@@ -71,9 +71,9 @@ export function getRowsAndColsPerArea(
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
             proposedWingRowCols = {
                 nRows: maxWingRows,
-                nCols: widthInSquares - 1, /* 1 for the speaker */
+                nCols: minWingCols,
             };
-            // TODO check x fitness here
+            // x fitness check already made
         } else {
             if (requestedCrossNCols > 0) {
                 proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/requestedCrossNCols), nCols: requestedCrossNCols };
