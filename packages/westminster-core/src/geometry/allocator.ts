@@ -1,4 +1,4 @@
-import { Area, AllocatedSeatsPerArea, CoordinatesPerParty } from "../common";
+import { Area, AllocatedSeatsPerArea, CoordinatesPerParty, RowCols } from "../common";
 import { Options } from "./common";
 import { NRowsAndColsPerArea } from "./rows-cols";
 
@@ -70,3 +70,83 @@ function getWingCoordinates<Party>(
     }
     return coordinates;
 }
+
+// How it works vanilla, with the variables and parameters renamed
+// @ts-expect-error
+function getCrossCoordinates<Party>(
+    attribution: ReadonlyMap<Party, number>,
+    nCols: number,
+    packed: boolean,
+): CoordinatesPerParty<Party> {
+    const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
+    let x = 0, y = 0;
+    for (const [party, nSeats] of attribution) {
+        coordinates.set(party, Array.from({ length: nSeats }, () => {
+            try {
+                return [x++, y];
+            } finally {
+                if (x >= nCols) {
+                    x = 0;
+                    y++;
+                }
+            }
+        }));
+        if (!packed) {
+            x = 0;
+            y++;
+        }
+    }
+    return coordinates;
+}
+
+// @ts-expect-error
+function getPackedCrossCoordinates<Party>(
+    attribution: ReadonlyMap<Party, number>,
+    rowCols: RowCols,
+): CoordinatesPerParty<Party> {
+    const seatsInLastColumn = rowCols.nRows % rowCols.nCols; // 0 is a special case, but ignored
+    const seatsMissingInLastColumn = rowCols.nRows - seatsInLastColumn;
+    const incompleteColumnYOffset = seatsMissingInLastColumn/2;
+
+    const totalNSeats = Array.from(attribution.values()).reduce((s, n) => s+n, 0);
+    const floatNCols = totalNSeats / rowCols.nRows;
+    /** The seats having this index as the column must get the offset (works if no seat should be offset) */
+    const incompleteColumnIdx = Math.ceil(floatNCols + .5);
+
+    let x = 0, y = 0;
+    const seats = Array.from({ length: totalNSeats }, () => {
+        try {
+            return [x++, y === incompleteColumnIdx ? y+incompleteColumnYOffset : y] as const;
+        } finally {
+            if (x >= rowCols.nCols) {
+                x = 0;
+                y++;
+            }
+        }
+    }).sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
+
+    const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
+    for (const [party, nSeats] of attribution) {
+        coordinates.set(party, seats.splice(0, nSeats));
+    }
+    return coordinates;
+}
+
+/*
+packed-only version
+
+generate the seats fist, the right amount
+offset/center the last column vertically
+then allocate the seats to the parties,
+ordering the seats by top to bottom (with offsets applied), then left to right
+
+
+
+
+
+version that's `packed` compliant
+
+the number of seats with a given room stays the same (in packed and non-packed modes)
+
+each party gets
+*/
