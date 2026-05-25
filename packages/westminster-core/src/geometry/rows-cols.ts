@@ -88,17 +88,17 @@ export function getRowsAndColsPerArea(
             nCols: minWingCols,
         };
 
-        if (doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) {
-            return {
-                speak: { nRows: requestedHera.speak, nCols: 1 },
+        if (doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) continue;
 
-                // known limitation : the shorter wing will be declared at the size of the larger wing
-                opposition: proposedWingRowCols,
-                government: proposedWingRowCols,
+        return {
+            speak: { nRows: requestedHera.speak, nCols: 1 },
 
-                cross: proposedCrossRowCols,
-            };
-        }
+            // known limitation : the shorter wing will be declared at the size of the larger wing
+            opposition: proposedWingRowCols,
+            government: proposedWingRowCols,
+
+            cross: proposedCrossRowCols,
+        };
     }
 
     throw new Error("Could not find a proper number of rows and columns");
