@@ -65,14 +65,9 @@ export function getRowsAndColsPerArea(
         // if it's too much, even without cross and with packing, then bail
         if (widthInSquares < minWingCols+1) continue;
 
-        let proposedWingRowCols: RowCols;
         let proposedCrossRowCols: RowCols;
         if (requestedHera.cross === 0) {
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
-            proposedWingRowCols = {
-                nRows: maxWingRows,
-                nCols: minWingCols,
-            };
             // x fitness check already made
         } else {
             if (requestedCrossNCols > 0) {
@@ -81,12 +76,12 @@ export function getRowsAndColsPerArea(
                 const maxCrossCols = widthInSquares -minWingCols -1/* speaker */;
                 proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/maxCrossCols), nCols: maxCrossCols };
             }
-            // TODO check x fitness here
-            proposedWingRowCols = {
-                nRows: maxWingRows,
-                nCols: widthInSquares -1/* speaker */ -1 /* gap between wings and cross */ -proposedCrossRowCols.nCols,
-            };
+            if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +proposedCrossRowCols.nCols) continue;
         }
+        const proposedWingRowCols = {
+            nRows: maxWingRows,
+            nCols: minWingCols,
+        };
 
         const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
         if (fit) {
