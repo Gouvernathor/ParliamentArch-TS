@@ -73,7 +73,7 @@ function getWingCoordinates<Party>(
 
 // How it works vanilla, with the variables and parameters renamed
 // @ts-expect-error
-function getCrossCoordinates<Party>(
+function getCrossCoordinatesVanilla<Party>(
     attribution: ReadonlyMap<Party, number>,
     nCols: number,
     packed: boolean,
@@ -100,6 +100,18 @@ function getCrossCoordinates<Party>(
 }
 
 // @ts-expect-error
+function getCrossCoordinates<Party>(
+    attribution: ReadonlyMap<Party, number>,
+    rowCols: RowCols,
+    packed: boolean,
+): CoordinatesPerParty<Party> {
+    if (packed) {
+        return getPackedCrossCoordinates(attribution, rowCols);
+    } else {
+        return getNonPackedCrossCoordinates(attribution, rowCols.nCols);
+    }
+}
+
 function getPackedCrossCoordinates<Party>(
     attribution: ReadonlyMap<Party, number>,
     { nRows, nCols }: RowCols,
@@ -139,21 +151,43 @@ function allocateToSeats<Party>(
     return coordinates;
 }
 
-/*
-packed-only version
+function getNonPackedCrossCoordinates<Party>(
+    attribution: ReadonlyMap<Party, number>,
+    nCols: number,
+): CoordinatesPerParty<Party> {
+    const coordinates = new Map<Party, readonly (readonly [number, number])[]>();
+    let consumedRows = 0; // eaten by the previous parties
+    for (const [party, nSeats] of attribution) {
+        // given the number of cols (common), get its required number of rows
+        const partyNRows = Math.ceil(nSeats/nCols);
 
-generate the seats fist, the right amount
-offset/center the last column vertically
-then allocate the seats to the parties,
-ordering the seats by top to bottom (with offsets applied), then left to right
+        let firstIncompleteColumn;
+        if (partyNRows <= 1) {
+            // if the number of seats is less than the number of columns,
+            // then no offset must be made
+            firstIncompleteColumn = nCols+1; // never
+        } else {
+            // get the number of offset columns
+            const nMissingSeats = partyNRows*nCols - nSeats;
+            /** Inclusive 0-based index */
+            firstIncompleteColumn = nCols - nMissingSeats;
+        }
 
+        let x = 0, y = consumedRows;
+        const seats = Array.from({ length: nSeats }, () => {
+            try {
+                return [x, x >= firstIncompleteColumn ? y+.5 : y] as const;
+            } finally {
+                x++;
+                if (x >= nCols) {
+                    x = 0;
+                    y++;
+                }
+            }
+        });
+        coordinates.set(party, seats);
+        consumedRows += partyNRows;
+    }
 
-
-
-
-version that's `packed` compliant
-
-the number of seats with a given room stays the same (in packed and non-packed modes)
-
-each party gets
-*/
+    return coordinates;
+}
