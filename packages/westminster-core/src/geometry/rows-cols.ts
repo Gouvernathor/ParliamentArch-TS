@@ -54,12 +54,15 @@ export function getRowsAndColsPerArea(
          widthInSquares++) {
         const heightInSquares = Math.trunc(widthInSquares / 2);
 
+        const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
+
+        const minCrossCols = requestedHera.cross === 0 ? 0 :
+            requestedCrossNCols > 0 ? requestedCrossNCols :
+            Math.ceil(requestedHera.cross / heightInSquares);
+
         let proposedWingRowCols: RowCols,
             proposedCrossRowCols: RowCols;
-
-        const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
         if (requestedHera.cross > 0) {
-            const minCrossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
             const maxCrossRows = Math.ceil(requestedHera.cross / minCrossCols);
             proposedWingRowCols = {
                 nRows: maxWingRows,
