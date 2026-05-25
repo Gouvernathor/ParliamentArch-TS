@@ -70,13 +70,12 @@ export function getRowsAndColsPerArea(
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
             // x fitness check already made
         } else {
-            if (requestedCrossNCols > 0) {
-                proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/requestedCrossNCols), nCols: requestedCrossNCols };
-            } else {
-                const maxCrossCols = widthInSquares -minWingCols -1/* speaker */;
-                proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/maxCrossCols), nCols: maxCrossCols };
-            }
-            if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +proposedCrossRowCols.nCols) continue;
+            const crossCols = requestedCrossNCols || widthInSquares -minWingCols -1/* speaker */;
+            if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
+            proposedCrossRowCols = {
+                nRows: Math.ceil(requestedHera.cross/crossCols),
+                nCols: crossCols,
+            };
         }
         const proposedWingRowCols = {
             nRows: maxWingRows,
