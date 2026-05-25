@@ -53,23 +53,31 @@ export function getRowsAndColsPerArea(
          widthInSquares < 8*sanityCheck;
          widthInSquares++) {
         const heightInSquares = Math.trunc(widthInSquares / 2);
-        let maxCrossRows: number,
-            minCrossCols: number,
-            maxWingRows: number,
-            maxWingCols: number;
 
-        maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
+        let proposedWingRowCols: RowCols,
+            proposedCrossRowCols: RowCols;
+
+        const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
         if (requestedHera.cross > 0) {
-            minCrossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
-            maxCrossRows = Math.ceil(requestedHera.cross / minCrossCols);
-            maxWingCols = widthInSquares - 1 - minCrossCols - 1; // 1 for the gap between wings and crossbenchers
+            const minCrossCols = requestedCrossNCols || Math.ceil(requestedHera.cross / heightInSquares);
+            const maxCrossRows = Math.ceil(requestedHera.cross / minCrossCols);
+            proposedWingRowCols = {
+                nRows: maxWingRows,
+                nCols: widthInSquares - 1 - minCrossCols - 1, /* 1 for the gap between wings and crossbenchers */
+            };
+            proposedCrossRowCols = {
+                nRows: maxCrossRows,
+                nCols: minCrossCols,
+            };
         } else {
-            maxCrossRows = 0;
-            minCrossCols = 0;
-            maxWingCols = widthInSquares - 1; // 1 for the speaker
+            proposedWingRowCols = {
+                nRows: maxWingRows,
+                nCols: widthInSquares - 1, /* 1 for the speaker */
+            };
+            proposedCrossRowCols = { nRows: 0, nCols: 0 };
         }
 
-        const fit = howDoesItFit({ nRows: maxWingRows, nCols: maxWingCols }, { nRows: maxCrossRows, nCols: minCrossCols }, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
+        const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
         if (fit) {
             const cross = arrangeCross(fit, requestedHera.cross, requestedCrossNCols, widthInSquares);
             return {
