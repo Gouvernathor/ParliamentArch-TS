@@ -59,6 +59,11 @@ export function getRowsAndColsPerArea(
 
         const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
 
+        const minWingCols = Math.ceil(Math.max(requestedHera.opposition, requestedHera.government) / maxWingRows);
+
+        // if it's too much, even without cross and with packing, then bail
+        if (widthInSquares < minWingCols+1) continue;
+
         const minCrossCols = requestedHera.cross === 0 ? 0 :
             requestedCrossNCols > 0 ? requestedCrossNCols :
             Math.ceil(requestedHera.cross / heightInSquares);
