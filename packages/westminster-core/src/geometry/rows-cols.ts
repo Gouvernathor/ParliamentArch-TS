@@ -86,8 +86,7 @@ export function getRowsAndColsPerArea(
             nCols: minWingCols,
         };
 
-        const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed });
-        if (fit) {
+        if (doesItFit(proposedWingRowCols, proposedCrossRowCols, ares, requestedHera, { packed })) {
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
 
@@ -132,55 +131,41 @@ function getMinWingCols(
     }
 }
 
-interface Fitness {
-    oppositionNecessaryCols: number;
-    governmentNecessaryCols: number;
-    crossNecessaryRows: number;
-}
-function howDoesItFit(
+function doesItFit(
     { nRows: wingRows, nCols: wingCols }: RowCols,
     { nRows: crossRows, nCols: crossCols }: RowCols,
     apollo: NSeatsIterablePerArea,
     requestedHera: NSeatsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
-): null | Fitness {
-    let oppositionNecessaryCols, governmentNecessaryCols, crossNecessaryRows;
+): boolean {
     if (packed) {
         if (requestedHera.opposition > wingRows * wingCols) {
-            return null;
+            return false;
         }
         if (requestedHera.government > wingRows * wingCols) {
-            return null;
+            return false;
         }
         if (requestedHera.cross > crossRows * crossCols) {
-            return null;
+            return false;
         }
-
-        oppositionNecessaryCols = Math.ceil(requestedHera.opposition / wingRows);
-        governmentNecessaryCols = Math.ceil(requestedHera.government / wingRows);
-        crossNecessaryRows = Math.ceil(requestedHera.cross / crossCols);
     } else {
-        oppositionNecessaryCols = reduceNotPacked(apollo.opposition.values(), wingRows);
+        const oppositionNecessaryCols = reduceNotPacked(apollo.opposition.values(), wingRows);
         if (oppositionNecessaryCols > wingCols) {
-            return null;
+            return false;
         }
 
-        governmentNecessaryCols = reduceNotPacked(apollo.government.values(), wingRows);
+        const governmentNecessaryCols = reduceNotPacked(apollo.government.values(), wingRows);
         if (governmentNecessaryCols > wingCols) {
-            return null;
+            return false;
         }
 
-        crossNecessaryRows = reduceNotPacked(apollo.cross.values(), crossCols);
+        const crossNecessaryRows = reduceNotPacked(apollo.cross.values(), crossCols);
         if (crossNecessaryRows > crossRows) {
-            return null;
+            return false;
         }
     }
 
-    return {
-        oppositionNecessaryCols,
-        governmentNecessaryCols,
-        crossNecessaryRows,
-    };
+    return true;
 }
 
 /**
