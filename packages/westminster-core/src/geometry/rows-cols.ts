@@ -71,12 +71,12 @@ export function getRowsAndColsPerArea(
 
         const fit = howDoesItFit({ wingRows, wingCols, crossRows, crossCols, heightInSquares, widthInSquares }, ares, requestedHera, { packed });
         if (fit) {
-            console.log(fit);
+            const cross = arrangeCross(fit, requestedHera.cross, requestedCrossNCols, widthInSquares);
             return {
                 speak: { nRows: requestedHera.speak, nCols: 1 },
                 opposition: { nRows: wingRows, nCols: fit.oppositionNecessaryCols },
                 government: { nRows: wingRows, nCols: fit.governmentNecessaryCols },
-                cross: { nRows: fit.crossNecessaryRows, nCols: crossCols },
+                cross,
             };
         }
     }
@@ -172,4 +172,20 @@ function reduceNotPacked(
     return Array.from(nSeatss,
         nSeats => Math.ceil(nSeats / otherDimension)
     ).reduce((a, b) => a + b, 0);
+}
+
+function arrangeCross(
+    fit: Fitness,
+    crossTotal: number,
+    requestedCrossNCols: number,
+    widthInSquares: number,
+): RowCols {
+    if (crossTotal === 0)
+        return { nRows: 0, nCols: 0 };
+    if (requestedCrossNCols > 0)
+        return { nRows: fit.crossNecessaryRows, nCols: requestedCrossNCols };
+
+    // take all the available room
+    const nCols = widthInSquares - Math.max(fit.oppositionNecessaryCols, fit.governmentNecessaryCols) - 2 /* speaker and gap between wings and cross */;
+    return { nRows: Math.ceil(crossTotal/nCols), nCols };
 }
