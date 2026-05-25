@@ -71,9 +71,14 @@ export function getRowsAndColsPerArea(
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
             // x fitness check already made
         } else {
-            const crossCols = requestedCrossNCols || (widthInSquares -minWingCols -1/* speaker */ -1/* gap between wings and cross */);
-            if (crossCols < 1) continue;
-            if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +crossCols) continue;
+            let crossCols;
+            if (requestedCrossNCols > 0) {
+                if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +requestedCrossNCols) continue;
+                crossCols = requestedCrossNCols;
+            } else {
+                crossCols = widthInSquares -1/* speaker */ -minWingCols -1/* gap between wings and cross */;
+                if (crossCols < 1) continue;
+            }
 
             const crossRows = packed ?
                 Math.ceil(requestedHera.cross / crossCols) :
