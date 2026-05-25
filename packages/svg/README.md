@@ -74,7 +74,7 @@ This function creates an SVG element containing the diagram. The parameters are 
 
 This function creates the diagram as an SVG element directly from an attribution. The parameters are as follows:
 
-- `attribution: ReadonlyMap<SeatData, number> | readonly SeatDataWithNumber[]`: a mapping from a SeatData object to a number of seats in the diagram. Alternatively, an array of SeatDataWithNumber objects. Typically, each SeatData or SeatDataWithNumber object represents a group or party. The ordering of the elements matter, and the groups as provided will be drawn from left to right in the diagram.
+- `attribution: ReadonlyMap<SeatData, number> | readonly SeatDataWithNumber[]`: a mapping from a SeatData object to a number of seats in the diagram. Alternatively, an array of SeatDataWithNumber objects. Typically, each SeatData or SeatDataWithNumber object represents a group or party. The ordering of the elements matters, and the groups as provided will be drawn from left to right in the diagram.
 - `options.seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
 - `options`: the rest of the options are those taken by the `precomputeFromAttribution` function from the `core/utils` module, and by the `getGroupedSVG` function.
 
