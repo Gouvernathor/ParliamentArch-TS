@@ -59,8 +59,8 @@ export function getRowsAndColsPerArea(
 
         const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
 
-        // TODO this doesn't account for packing ; it should, given the calculations for cross
-        const minWingCols = Math.ceil(Math.max(requestedHera.opposition, requestedHera.government) / maxWingRows);
+        // accounts for packing, but not for cross
+        const minWingCols = getMinWingCols(ares, requestedHera, maxWingRows, packed);
 
         // if it's too much, even without cross and with packing, then bail
         if (widthInSquares < minWingCols+1) continue;
@@ -111,6 +111,25 @@ function makeRequestedHera(ares: NSeatsIterablePerArea): NSeatsPerArea {
         }
         return nSeats;
     });
+}
+
+/**
+ * Takes packing into account but not crossbenchers
+ */
+function getMinWingCols(
+    ares: NSeatsIterablePerArea,
+    requestedHera: NSeatsPerArea,
+    maxWingRows: number,
+    packed: boolean,
+): number {
+    if (packed) {
+        return Math.ceil(Math.max(requestedHera.opposition, requestedHera.government) / maxWingRows);
+    } else {
+        return Math.max(
+            reduceNotPacked(ares.government.values(), maxWingRows),
+            reduceNotPacked(ares.opposition.values(), maxWingRows),
+        );
+    }
 }
 
 interface Fitness {
