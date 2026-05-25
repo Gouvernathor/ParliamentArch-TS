@@ -128,35 +128,6 @@ function getPackedCrossCoordinates<Party>(
     return allocateToSeats(attribution, seats);
 }
 
-// @ts-expect-error
-function getPackedCrossCoordinatesV1<Party>(
-    attribution: ReadonlyMap<Party, number>,
-    rowCols: RowCols,
-): CoordinatesPerParty<Party> {
-    const seatsInLastColumn = rowCols.nRows % rowCols.nCols; // 0 is a special case, but ignored
-    const seatsMissingInLastColumn = rowCols.nRows - seatsInLastColumn;
-    const incompleteColumnYOffset = seatsMissingInLastColumn/2;
-
-    const totalNSeats = Array.from(attribution.values()).reduce((s, n) => s+n, 0);
-    const floatNCols = totalNSeats / rowCols.nRows;
-    /** The seats having this index as the column must get the offset (works if no seat should be offset) */
-    const incompleteColumnIdx = Math.ceil(floatNCols + .5) -1/*because it starts at 0*/;
-
-    let x = 0, y = 0;
-    const seats = Array.from({ length: totalNSeats }, () => {
-        try {
-            return [x++, y === incompleteColumnIdx ? y+incompleteColumnYOffset : y] as const;
-        } finally {
-            if (x >= rowCols.nCols) {
-                x = 0;
-                y++;
-            }
-        }
-    }).sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
-
-    return allocateToSeats<Party>(attribution, seats);
-}
-
 function allocateToSeats<Party>(
     attribution: ReadonlyMap<Party, number>,
     seats: (readonly [number, number])[],
