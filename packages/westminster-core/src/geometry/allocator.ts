@@ -94,18 +94,8 @@ function getPackedCrossCoordinates<Party>(
     /** Inclusive 0-based index */
     const firstIncompleteColumn = nCols - nMissingSeats;
 
-    let x = 0, y = 0;
-    const seats = Array.from({ length: totalNSeats }, () => {
-        try {
-            return [x, x >= firstIncompleteColumn ? y+.5 : y] as const;
-        } finally {
-            x++;
-            if (x >= nCols) {
-                x = 0;
-                y++;
-            }
-        }
-    }).sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
+    const seats = makeCrossSeats(totalNSeats, nCols, 0, 0, firstIncompleteColumn)
+        .sort(([x1, y1], [x2, y2]) => y1-y2 || x1-x2);
 
     return allocateToSeats(attribution, seats);
 }
@@ -143,21 +133,29 @@ function getNonPackedCrossCoordinates<Party>(
             firstIncompleteColumn = nCols - nMissingSeats;
         }
 
-        let x = 0, y = consumedRows;
-        const seats = Array.from({ length: nSeats }, () => {
-            try {
-                return [x, x >= firstIncompleteColumn ? y+.5 : y] as const;
-            } finally {
-                x++;
-                if (x >= nCols) {
-                    x = 0;
-                    y++;
-                }
-            }
-        });
+        const seats = makeCrossSeats(nSeats, nCols, 0, consumedRows, firstIncompleteColumn);
         coordinates.set(party, seats);
         consumedRows += partyNRows;
     }
 
     return coordinates;
+}
+
+function makeCrossSeats(
+    nSeats: number,
+    nCols: number,
+    x: number, y: number,
+    firstIncompleteColumn: number,
+): (readonly [number, number])[] {
+    return Array.from({ length: nSeats }, () => {
+        try {
+            return [x, x >= firstIncompleteColumn ? y+.5 : y] as const;
+        } finally {
+            x++;
+            if (x >= nCols) {
+                x = 0;
+                y++;
+            }
+        }
+    });
 }
