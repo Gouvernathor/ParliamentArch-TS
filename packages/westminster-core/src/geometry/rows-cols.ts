@@ -54,6 +54,8 @@ export function getRowsAndColsPerArea(
          widthInSquares++) {
         const heightInSquares = Math.trunc(widthInSquares / 2);
 
+        if (heightInSquares < requestedHera.speak) continue;
+
         const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
 
         const minCrossCols = requestedHera.cross === 0 ? 0 :
@@ -122,8 +124,7 @@ function howDoesItFit(
     requestedHera: NSeatsPerArea,
     { packed }: Pick<Readonly<Options>, "packed">,
 ): null | Fitness {
-    if (heightInSquares < requestedHera.speak
-     || heightInSquares < crossRows
+    if (heightInSquares < crossRows
      || heightInSquares < 2*wingRows + 2) {
         return null;
     }
