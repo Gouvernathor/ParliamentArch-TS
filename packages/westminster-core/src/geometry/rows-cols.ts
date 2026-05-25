@@ -59,33 +59,33 @@ export function getRowsAndColsPerArea(
 
         const maxWingRows = requestedWingNRows || Math.trunc(heightInSquares/2 - 1);
 
+        // TODO this doesn't account for packing ; it should, given the calculations for cross
         const minWingCols = Math.ceil(Math.max(requestedHera.opposition, requestedHera.government) / maxWingRows);
 
         // if it's too much, even without cross and with packing, then bail
         if (widthInSquares < minWingCols+1) continue;
 
-        const minCrossCols = requestedHera.cross === 0 ? 0 :
-            requestedCrossNCols > 0 ? requestedCrossNCols :
-            Math.ceil(requestedHera.cross / heightInSquares);
-
-        let proposedWingRowCols: RowCols,
-            proposedCrossRowCols: RowCols;
-        if (requestedHera.cross > 0) {
-            const maxCrossRows = Math.ceil(requestedHera.cross / minCrossCols);
-            proposedWingRowCols = {
-                nRows: maxWingRows,
-                nCols: widthInSquares - 1 - minCrossCols - 1, /* 1 for the gap between wings and crossbenchers */
-            };
-            proposedCrossRowCols = {
-                nRows: maxCrossRows,
-                nCols: minCrossCols,
-            };
-        } else {
+        let proposedWingRowCols: RowCols;
+        let proposedCrossRowCols: RowCols;
+        if (requestedHera.cross === 0) {
+            proposedCrossRowCols = { nRows: 0, nCols: 0 };
             proposedWingRowCols = {
                 nRows: maxWingRows,
                 nCols: widthInSquares - 1, /* 1 for the speaker */
             };
-            proposedCrossRowCols = { nRows: 0, nCols: 0 };
+            // TODO check x fitness here
+        } else {
+            if (requestedCrossNCols > 0) {
+                proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/requestedCrossNCols), nCols: requestedCrossNCols };
+            } else {
+                const maxCrossCols = widthInSquares -minWingCols -1/* speaker */;
+                proposedCrossRowCols = { nRows: Math.ceil(requestedHera.cross/maxCrossCols), nCols: maxCrossCols };
+            }
+            // TODO check x fitness here
+            proposedWingRowCols = {
+                nRows: maxWingRows,
+                nCols: widthInSquares -1/* speaker */ -1 /* gap between wings and cross */ -proposedCrossRowCols.nCols,
+            };
         }
 
         const fit = howDoesItFit(proposedWingRowCols, proposedCrossRowCols, { heightInSquares, widthInSquares }, ares, requestedHera, { packed });
