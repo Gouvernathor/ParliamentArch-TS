@@ -1,6 +1,6 @@
 import { AllocatedSeatsPerArea } from "../common.js";
 import { NSeatsPerPartyPerArea, getAllocatedSeatsPerArea as getAllocatedSeatsInternal } from "./allocator.js";
-import { Options, defaultOptions } from "./common.js";
+import { Options } from "./common.js";
 import { getRowsAndColsPerArea, NRowsAndColsPerArea, NSeatsIterablePerArea } from "./rows-cols.js";
 
 export {
@@ -9,6 +9,18 @@ export {
     NSeatsPerPartyPerArea,
     AllocatedSeatsPerArea,
 };
+
+function defaultOptions({
+    wingNRows = 0, crossNCols = 0, packed = true,
+    // fullWidth = false,
+}: Partial<Readonly<Options>> = {}): Options {
+    return {
+        wingNRows,
+        crossNCols,
+        packed,
+        // fullWidth,
+    };
+}
 
 export function getNumberOfRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,

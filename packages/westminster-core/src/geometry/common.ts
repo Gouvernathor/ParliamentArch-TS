@@ -29,17 +29,3 @@ export interface Options {
      */
     // fullWidth: boolean; // default false
 }
-
-export function defaultOptions({
-    wingNRows = 0,
-    crossNCols = 0,
-    packed = true,
-    // fullWidth = false,
-}: Partial<Readonly<Options>> = {}): Options {
-    return {
-        wingNRows,
-        crossNCols,
-        packed,
-        // fullWidth,
-    };
-}
