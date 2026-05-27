@@ -92,17 +92,17 @@ export function getRowsAndColsPerArea(
             proposedCrossRowCols = { nRows: 0, nCols: 0 };
             // x fitness check already made
         } else {
-            let crossCols;
+            let crossCols, crossRows;
             if (requestedCrossNCols > 0) {
                 if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +requestedCrossNCols) continue;
                 crossCols = requestedCrossNCols;
+                crossRows = getCrossRows(crossCols);
             } else {
                 const maxCrossCols = widthInSquares -1/* speaker */ -minWingCols -1/* gap between wings and cross */;
                 if (maxCrossCols < 1) continue;
-                crossCols = findMinCrossCols(maxCrossCols, heightInSquares, getCrossRows);
+                [crossCols, crossRows] = findMinCrossCols(maxCrossCols, heightInSquares, getCrossRows);
             }
 
-            const crossRows = getCrossRows(crossCols);
             if (heightInSquares < crossRows) continue;
 
             proposedCrossRowCols = {
@@ -162,12 +162,15 @@ function findMinCrossCols(
     maxCrossCols: number,
     heightInSquares: number,
     getCrossRows: (crossCols: number) => number,
-): number {
+): [number, number] {
     let crossCols = maxCrossCols;
-    while (crossCols > 1 && getCrossRows(crossCols-1) <= heightInSquares) {
+    let itCrossRows;
+    let lastCrossRows = getCrossRows(crossCols);
+    while (crossCols > 1 && (itCrossRows = getCrossRows(crossCols-1)) <= heightInSquares) {
         crossCols--;
+        lastCrossRows = itCrossRows;
     }
-    return crossCols;
+    return [crossCols, lastCrossRows];
 }
 
 // TODO move that to integrated tests
