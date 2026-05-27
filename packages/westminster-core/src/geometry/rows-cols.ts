@@ -62,6 +62,9 @@ export function getRowsAndColsPerArea(
         requestedCrossNCols = 0;
     }
 
+    /** boolean represented as a number for the presence of speakers, also their number of columns */
+    const bnSpeak = Number(Boolean(requestedHera.speak));
+
     const sanityCheck = requestedHera.speak + requestedHera.opposition + requestedHera.government + requestedHera.cross;
     if (!Number.isSafeInteger(sanityCheck)) {
         throw new Error("Invalid number(s) of seats");
@@ -94,11 +97,11 @@ export function getRowsAndColsPerArea(
         } else {
             let crossCols, crossRows;
             if (requestedCrossNCols > 0) {
-                if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +requestedCrossNCols) continue;
+                if (widthInSquares < bnSpeak +minWingCols +1/* gap between wings and cross */ +requestedCrossNCols) continue;
                 crossCols = requestedCrossNCols;
                 crossRows = getCrossRows(crossCols);
             } else {
-                const maxCrossCols = widthInSquares -1/* speaker */ -minWingCols -1/* gap between wings and cross */;
+                const maxCrossCols = widthInSquares -bnSpeak -minWingCols -1/* gap between wings and cross */;
                 if (maxCrossCols < 1) continue;
                 [crossCols, crossRows] = findMinCrossCols(maxCrossCols, heightInSquares, getCrossRows);
             }
@@ -116,7 +119,7 @@ export function getRowsAndColsPerArea(
         };
 
         return {
-            speak: { nRows: requestedHera.speak, nCols: 1 },
+            speak: { nRows: requestedHera.speak, nCols: bnSpeak },
 
             // known limitation : the shorter wing will be declared at the size of the larger wing
             opposition: proposedWingRowCols,
