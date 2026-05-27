@@ -67,6 +67,10 @@ export function getRowsAndColsPerArea(
         throw new Error("Invalid number(s) of seats");
     }
 
+    const getCrossRows: (crossCols: number) => number = packed ?
+        crossCols => Math.ceil(requestedHera.cross / crossCols) :
+        crossCols => reduceNotPacked(ares.cross.values(), crossCols);
+
     for (let widthInSquares = 2*Math.max(4, requestedHera.speak, Math.min(requestedCrossNCols, requestedHera.cross));
          widthInSquares < 8*sanityCheck;
          widthInSquares++) {
@@ -93,13 +97,12 @@ export function getRowsAndColsPerArea(
                 if (widthInSquares < 1/* speaker */ +minWingCols +1/* gap between wings and cross */ +requestedCrossNCols) continue;
                 crossCols = requestedCrossNCols;
             } else {
-                crossCols = widthInSquares -1/* speaker */ -minWingCols -1/* gap between wings and cross */;
-                if (crossCols < 1) continue;
+                const maxCrossCols = widthInSquares -1/* speaker */ -minWingCols -1/* gap between wings and cross */;
+                if (maxCrossCols < 1) continue;
+                crossCols = findMinCrossCols(maxCrossCols, heightInSquares, getCrossRows);
             }
 
-            const crossRows = packed ?
-                Math.ceil(requestedHera.cross / crossCols) :
-                reduceNotPacked(ares.cross.values(), crossCols);
+            const crossRows = getCrossRows(crossCols);
             if (heightInSquares < crossRows) continue;
 
             proposedCrossRowCols = {
@@ -153,6 +156,18 @@ function getMinWingCols(
             reduceNotPacked(ares.opposition.values(), maxWingRows),
         );
     }
+}
+
+function findMinCrossCols(
+    maxCrossCols: number,
+    heightInSquares: number,
+    getCrossRows: (crossCols: number) => number,
+): number {
+    let crossCols = maxCrossCols;
+    while (crossCols > 1 && getCrossRows(crossCols-1) <= heightInSquares) {
+        crossCols--;
+    }
+    return crossCols;
 }
 
 // TODO move that to integrated tests
