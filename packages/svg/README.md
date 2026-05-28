@@ -13,7 +13,7 @@ It requires the `document` global constant in order to generate DOM nodes, eithe
 import { JSDOM } from 'jsdom';
 globalThis.document = new JSDOM().window.document;
 
-import * as parliamentarch from 'parliamentarch';
+import * as parliamentarch from '@parliamentarch/svg';
 import * as fs from 'fs';
 
 const attribution = new Map([
