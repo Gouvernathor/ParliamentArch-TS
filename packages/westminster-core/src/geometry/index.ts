@@ -24,7 +24,7 @@ function defaultOptions({
 
 export function getNumberOfRowsAndColsPerArea(
     ares: NSeatsIterablePerArea,
-    options: Partial<Readonly<Options>>,
+    options: Partial<Readonly<Options>> = {},
 ): NRowsAndColsPerArea {
     return getRowsAndColsPerArea(ares, defaultOptions(options));
 }
