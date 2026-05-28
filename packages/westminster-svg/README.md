@@ -1,3 +1,31 @@
+# Parliamentarch-TS : Westminster SVG
+
+Tools to generate Westminster-styled SVG parliamentary diagrams.
+
+![Example diagram](https://codeberg.org/Gouvernathor/ParliamentArch-TS/raw/westSample.svg)
+<!-- absolute link for NPM support -->
+
+This package generates SVG DOM nodes (SVGSVGElement objects), which can be serialized into SVG image files.
+
+It requires the `document` global constant in order to generate DOM nodes, either by being executed in a browser, or using stand-ins like `jsdom` in Node.js.
+
+```js
+import { getSVGFromAttribution } from "@parliamentarch/westminster-svg";
+import * as fs from "fs";
+
+const attribution = {
+    speak: [{nSeats:2}],
+    opposition: [{color:"red",nSeats:51},{color:"orange",nSeats:49}],
+    government: [{color:"blue", nSeats:61},{color:"rebeccapurple",nSeats:59}],
+    cross: [{color:"green",nSeats:10}, {color:"limegreen",nSeats:8}, {color:"yellow",nSeats:3}],
+};
+const outerHTML = getSVGFromAttribution(attribution, { packed:false }).outerHTML;
+fs.writeFileSync("./westSample.svg", outerHTML);
+```
+
+
+
+
 ```js
 const attrib = {speak: [{nSeats:2}], opposition: [{color:"red",nSeats:51},{color:"orange",nSeats:49}], government: [{color:"blue", nSeats:61},{color:"rebeccapurple",nSeats:59}], cross: [{color:"green",nSeats:10}, {color:"limegreen",nSeats:8}, {color:"yellow",nSeats:3}]};
 const fs = await import("fs");
