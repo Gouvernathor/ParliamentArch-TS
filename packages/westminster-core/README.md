@@ -30,7 +30,7 @@ The program will first determine the size of each area, and then based on those 
 
 ## Geometry module contents
 
-These are found in the `@parliamentarch/westminster-core` module.
+These are found in the `@parliamentarch/westminster-core/geometry` module.
 
 `NSeatsIterablePerArea`
 
@@ -54,6 +54,8 @@ Returns the size of each area. In the returned object, each area name is mapped 
 Returns, for each area, an object having the `nRows` and `nCols` properties mentioned in the previous function, and being a Map from each party to an array of x/y coordinate pairs, one pair for each seat of the party. The options are the same as the previous function.
 
 ## Utils module contents
+
+These are found in the `@parliamentarch/westminster-core/utils` module.
 
 `anyAttributionToNSeatsPerPartyPerArea<Party>(attribution): NSeatsPerPartyPerArea<Party>`
 
