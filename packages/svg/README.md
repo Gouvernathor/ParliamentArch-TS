@@ -53,7 +53,7 @@ So, the `SeatData` type is an alternative (a union) between these two modes of o
 `StandaloneSeatData`
 
 - `id?: string`: An optional id to apply to the ``<g>`` element containing all seats of this group.
-- `data?: string`: An optional text to display when hovering over the seat.
+- `data?: string`: Some human-readable data about this group of seats.
 - `color: string`: The color with which to fill the seat circle, as a CSS color.
 - `borderSize?: number`: The size of the border around the seat circle, defaults to 0.
 - `borderColor?: string`: The color of the border, defaults to black.
