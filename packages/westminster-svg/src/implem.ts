@@ -156,7 +156,14 @@ function createArea(
         }
 
         if ("color" in seatData) {
-            populatePartyGroupStandalone(partyGroup, seatData, options);
+            populatePartyGroupStandalone(partyGroup, seatData);
+        }
+
+        const roundingFactor = (<StandaloneSeatData>seatData).roundingRadius ?? options.roundingRadius;
+        if (roundingFactor) {
+            const sRoundingRadius = `${roundingFactor}`;
+            partyGroup.setAttribute("rx", sRoundingRadius);
+            partyGroup.setAttribute("ry", sRoundingRadius);
         }
 
         for (const [x, y] of seats) {
@@ -170,7 +177,6 @@ function createArea(
 function populatePartyGroupStandalone(
     partyGroup: SVGGElement,
     seatData: StandaloneSeatData,
-    { roundingRadius }: Pick<Readonly<GetSVGOptions>, "roundingRadius">,
 ): void {
     if (seatData.id !== undefined) {
         partyGroup.setAttribute("id", seatData.id);
@@ -185,10 +191,6 @@ function populatePartyGroupStandalone(
         partyGroup.setAttribute("stroke-width", `${seatData.borderSize}`);
         partyGroup.setAttribute("stroke", seatData.borderColor ?? "black");
     }
-
-    const sRoundingRadius = `${seatData.roundingRadius ?? roundingRadius}`;
-    partyGroup.setAttribute("rx", sRoundingRadius);
-    partyGroup.setAttribute("ry", sRoundingRadius);
 }
 
 function rectWithCoordinates(
