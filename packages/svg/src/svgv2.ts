@@ -1,7 +1,11 @@
 import { SeatCenter } from "../../core/src/geometryv2";
 
-export interface Seat extends SeatCenter {
+export interface TaggedSeat extends SeatCenter {
     party: string
+}
+
+export interface SeatData {
+    readonly colour: string;
 }
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -22,8 +26,8 @@ function documentElementCreator(
 }
 
 export default function generateSVG(
-    parties: { readonly [partyname: string]: { readonly fill: string } },
-    points: readonly Seat[],
+    parties: { readonly [partyname: string]: SeatData },
+    points: readonly TaggedSeat[],
     outerRowRadius: number,
     seatDistance: number,
     {
@@ -40,9 +44,9 @@ export default function generateSVG(
     const seatRadius = seatRadiusFactor * seatDistance;
 
     const groups = Object.fromEntries(Object.keys(parties).map(partyname => {
-        const party = parties[partyname];
+        const { colour } = parties[partyname];
         const gStyle = [
-            `fill: ${party.fill};`,
+            `fill: ${colour};`,
         ].join(' ');
         const group = elementCreator('g', { id: partyname, style: gStyle }) as SVGGElement;
         return [partyname, group];
