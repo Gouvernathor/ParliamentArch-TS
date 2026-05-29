@@ -1,11 +1,19 @@
+import { SeatData } from "@parliamentarch/svg";
 import { getNRows, getSeatCentersWithAngle, getSeatDistanceFactor, SeatCenter } from "../../core/src/geometryv2";
-import generateSVG, { TaggedSeat, SeatData } from "./svgv2";
+import generateSVG, { TaggedSeat, SeatData as SeatDataV2 } from "./svgv2";
 
 export type Parliament = {
-    [partyname: string]: SeatData & {
+    [partyname: string]: SeatDataV2 & {
         seats: number;
     };
 };
+
+function parliamentToAttribution(
+    parliament: Parliament,
+) {
+    return new Map(Array.from(Object.entries(parliament), ([name, { seats, colour }]) =>
+        [{ color: colour, data: name } as SeatData, seats] as const));
+}
 
 function tagSeatCenters(
     parliament: Parliament,
