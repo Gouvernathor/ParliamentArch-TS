@@ -5,7 +5,9 @@
     "packages": [
       "packages/core",
       "packages/svg",
-      "packages/web-component"
+      "packages/web-component",
+      "packages/westminster-core",
+      "packages/westminster-svg"
     ]
   },
   "description": "Root package for all the @parliamentarch packages",
