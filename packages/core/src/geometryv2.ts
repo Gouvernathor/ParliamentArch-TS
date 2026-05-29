@@ -1,6 +1,4 @@
-export type Parliament = { [partyname: string]: { seats: number, colour: string } };
-type SeatCenter = { x: number, y: number };
-export type Seat = SeatCenter & { party: string };
+export type SeatCenter = { x: number, y: number };
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
@@ -12,7 +10,7 @@ export type Seat = SeatCenter & { party: string };
  * Or why pi, after being multiplied by a number of rows squared,
  * can be summed with that difference.
  */
-function getSeatDistanceFactor(seatCount: number, nRows: number) {
+export function getSeatDistanceFactor(seatCount: number, nRows: number) {
     return (Math.PI * nRows) / // perimeter of the outermost row
         (seatCount - nRows + (Math.PI * (nRows - 1) * nRows/2));
 }
@@ -33,7 +31,7 @@ function score(seatCount: number, nRows: number) {
 /**
  * Gradient descent following the score function.
  */
-function getNRows(seatCount: number) {
+export function getNRows(seatCount: number) {
     let n = Math.floor(Math.log2(seatCount)) || 1;
     let distance = score(seatCount, n);
 
@@ -87,7 +85,7 @@ function polarToCartesian(rowRadius: number, angle: number) {
     }
 }
 
-function getSeatCentersWithAngle(
+export function getSeatCentersWithAngle(
     nRows: number,
     outerRowRadius: number,
     seatCount: number,
@@ -116,39 +114,4 @@ function getSeatCentersWithAngle(
         }
     }
     return rv;
-}
-
-function tagSeatCenters(
-    parliament: Parliament,
-    xyWithAngle: Map<SeatCenter, number>,
-): Seat[] {
-    const sortedXY = [...xyWithAngle]
-        .sort((a, b) => a[1] - b[1])
-        .map(([xy, ]) => xy);
-    const rv = [] as Seat[];
-    let seatIdx = 0;
-    for (const partyname in parliament) {
-        const pSeats = parliament[partyname].seats;
-        for (let pSeatIdx = 0; pSeatIdx < pSeats; pSeatIdx++, seatIdx++) {
-            rv.push(Object.assign({ party: partyname }, sortedXY[seatIdx]));
-        }
-    }
-    return rv;
-}
-
-export default function generatePoints(
-    parliament: Parliament,
-    outerRowRadius: number,
-): Seat[] & { seatDistance: number } {
-    const seatCount = Object.values(parliament)
-        .map(v => v.seats)
-        .reduce((a, b) => a + b, 0);
-    const nRows = getNRows(seatCount);
-    const seatDistance = getSeatDistanceFactor(seatCount, nRows) * outerRowRadius;
-
-    const seatCentersWithAngle = getSeatCentersWithAngle(nRows, outerRowRadius, seatCount, seatDistance);
-
-    const seats = tagSeatCenters(parliament, seatCentersWithAngle);
-
-    return Object.assign(seats, { seatDistance });
 }
