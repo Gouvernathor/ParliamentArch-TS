@@ -57,7 +57,7 @@ function getNRows(seatCount: number) {
  * toned down to a simpler and faster version
  */
 function distributeSeatsToRows(
-    rowWeights: ReadonlyArray<number>,
+    rowWeights: readonly number[],
     total: number,
 ): number[] {
     const sumWeights = rowWeights.reduce((a, b) => a + b, 0);
@@ -67,11 +67,12 @@ function distributeSeatsToRows(
     let remainingWeight = sumWeights;
 
     for (let i = 0; i < nRows-1; i++) {
+        const rowei = rowWeights[i]!;
         // every row is best rounded except the last that cumulates all rounding errors
         // acc += rv[i] = Math.round(partyscores[i] * total / sumScores);
         // more precise rounding : avoid rounding errors to accumulate too much
-        acc += rv[i] = Math.round((total-acc) * rowWeights[i] / remainingWeight);
-        remainingWeight -= rowWeights[i];
+        acc += rv[i] = Math.round((total-acc) * rowei / remainingWeight);
+        remainingWeight -= rowei;
     }
 
     // the last row gets the rounding errors anyway, since it's the largest
@@ -101,11 +102,11 @@ function getSeatCentersWithAngle(
 
     const rv = new Map<SeatCenter, number>();
     for (let rowIdx = 0; rowIdx < rowRadii.length; rowIdx++) {
-        const nSeatsThisRow = nSeatsPerRow[rowIdx];
+        const nSeatsThisRow = nSeatsPerRow[rowIdx]!;
         if (nSeatsThisRow === 0) {
             continue;
         }
-        const rowRadius = rowRadii[rowIdx];
+        const rowRadius = rowRadii[rowIdx]!;
         // angle increment between seats of this row
         const angleStep = Math.PI / (nSeatsThisRow - 1);
 
