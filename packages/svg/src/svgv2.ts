@@ -1,6 +1,8 @@
 import { SeatCenter } from "../../core/src/geometryv2";
 
-export type Seat = SeatCenter & { party: string };
+export interface Seat extends SeatCenter {
+    party: string
+}
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 

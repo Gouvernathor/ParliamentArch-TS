@@ -1,11 +1,16 @@
 import { getNRows, getSeatCentersWithAngle, getSeatDistanceFactor, SeatCenter } from "../../core/src/geometryv2";
 import generateSVG, { Seat } from "./svgv2";
 
-export type Parliament = { [partyname: string]: { seats: number, colour: string } };
+export type Parliament = {
+    [partyname: string]: {
+        seats: number;
+        colour: string;
+    };
+};
 
 function tagSeatCenters(
     parliament: Parliament,
-    xyWithAngle: Map<SeatCenter, number>,
+    xyWithAngle: ReadonlyMap<Readonly<SeatCenter>, number>,
 ): Seat[] {
     const sortedXY = [...xyWithAngle]
         .sort((a, b) => a[1] - b[1])
@@ -40,7 +45,7 @@ function generatePoints(
 
 export function psvg(
     parliament: Parliament,
-    {seatCount = true, elementCreator = undefined, seatRadiusFactor = .4} = {},
+    { seatCount = true, elementCreator = undefined, seatRadiusFactor = .4 } = {},
 ): SVGSVGElement {
     const outerRowRadius = 20;
     const points = generatePoints(parliament, outerRowRadius);

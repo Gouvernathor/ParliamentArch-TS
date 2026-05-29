@@ -1,4 +1,7 @@
-export type SeatCenter = { x: number, y: number };
+export interface SeatCenter {
+    x: number;
+    y: number;
+}
 
 /**
  * Returns a number such that, when multiplied by the radius of the outermost row,
@@ -98,7 +101,7 @@ export function getSeatCentersWithAngle(
     // calculate number of seats per row
     const nSeatsPerRow = distributeSeatsToRows(rowRadii, seatCount);
 
-    const rv = new Map<SeatCenter, number>();
+    const rv = new Map<Readonly<SeatCenter>, number>();
     for (let rowIdx = 0; rowIdx < rowRadii.length; rowIdx++) {
         const nSeatsThisRow = nSeatsPerRow[rowIdx]!;
         if (nSeatsThisRow === 0) {
