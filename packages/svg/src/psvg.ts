@@ -1,5 +1,5 @@
-import generatePoints, { Parliament } from "./psvg/geometry";
-import generateSVG from "./psvg/svg";
+import generatePoints, { Parliament } from "../../core/src/geometryv2";
+import generateSVG from "./svgv2";
 
 export function psvg(
     parliament: Parliament,
