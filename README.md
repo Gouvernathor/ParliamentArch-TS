@@ -12,6 +12,8 @@ This is a collection of TypeScript/JavaScript packages, evolved as a spin-off fr
 - [`@parliamentarch/svg`](./packages/svg) uses `core` in order to generate SVG files or DOM nodes. However, it only works if either being used in a browser, or having an emulator of the DOM functions (such as [jsdom](https://www.npmjs.com/package/jsdom)) in Node.js.
 - [`@parliamentarch/web-component`](./packages/web-component) provides a Web Component to generate the same diagrams, relying on the other packages. That package will receive less support and updates than the others.
 
+- [`@parliamentarch/westminster-core`](./packages/westminster-core) and [`@parliamentarch/westminster-svg`](./packages/westminster-svg) are equivalent packages to generate squary Westminster-style parliament diagrams. (The notion of "arch" kind of loses its meaning there.)
+
 - `@parliamentarch/angular`, not yet available, will provide an Angular component (or a suite of components) to display the same arches, depending on `core` but free from `svg`'s reliance on a DOM emulator - though it is, obviously, depending on Angular.
 
-- `@parliamentarch/westminster-core`, `@parliamentarch/westminster-svg`, and possibly `@parliamentarch/westminster-web-component` or `@parliamentarch/westminster-angular`, not yet available, will be the equivalent the above packages but to generate squary Westminster-style parliamentary diagrams. (The notion of "arch" kind of loses its meaning there).
+- `@parliamentarch/westminster-web-component` and `@parliamentarch/westminster-angular` may happen some day.
