@@ -28,6 +28,15 @@ The speaker seats are displayed on a single column, vertically centered and on t
 
 The program will first determine the size of each area, and then based on those values, allocate the seats within each area.
 
+### Differences with the legacy ParliamentDiagram generator
+
+The rules here have been rewritten from the ground up and rethought anew, with some differences. The code has then be rewritten as well, taking very different implementation directions than the original.
+
+One difference is the placement of additional speaker seats (2+). The former version made it advance in the middle of the aisle separating the two wings, whereas this version aligns them vertically.
+
+Other differences impact the crossbenchers area. The former version always "packed" the crossbench seats: the opt-out only applied to the wings. This version respects the packing option even for crossbenchers.
+The sizing of that area is also different between the two versions : this version tries to spread the crossbenchers area vertically as much as possible without overflowing the size set by the rows of the two wings or breaking the packing setting.
+
 ## Geometry module contents
 
 These are found in the `@parliamentarch/westminster-core/geometry` module.
