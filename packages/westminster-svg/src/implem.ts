@@ -159,15 +159,11 @@ function createArea(
             populatePartyGroupStandalone(partyGroup, seatData);
         }
 
-        const roundingFactor = (<StandaloneSeatData>seatData).roundingRadius ?? options.roundingRadius;
-        if (roundingFactor) {
-            const sRoundingRadius = `${roundingFactor}`;
-            partyGroup.setAttribute("rx", sRoundingRadius);
-            partyGroup.setAttribute("ry", sRoundingRadius);
-        }
+        const roundingRadius = (<StandaloneSeatData>seatData).roundingRadius ?? options.roundingRadius;
+        const seatOptions = { ...options, roundingRadius };
 
         for (const [x, y] of seats) {
-            partyGroup.appendChild(rectWithCoordinates(x, y, options));
+            partyGroup.appendChild(rectWithCoordinates(x, y, seatOptions));
         }
     }
 
@@ -195,7 +191,7 @@ function populatePartyGroupStandalone(
 
 function rectWithCoordinates(
     x: number, y: number,
-    { spacingFactor }: Pick<GetSVGOptions, "spacingFactor">,
+    { spacingFactor, roundingRadius }: Pick<GetSVGOptions, "spacingFactor"|"roundingRadius">,
 ): SVGRectElement {
     const rect = document.createElementNS(SVG_NS, "rect");
     rect.setAttribute("x", `${spacingFactor/2 + x}`);
@@ -204,6 +200,10 @@ function rectWithCoordinates(
     const sSize = `${1 - spacingFactor}`;
     rect.setAttribute("width", sSize);
     rect.setAttribute("height", sSize);
+
+    const sRoundingRadius = `${roundingRadius}`;
+    rect.setAttribute("rx", sRoundingRadius);
+    rect.setAttribute("ry", sRoundingRadius);
 
     return rect;
 }
