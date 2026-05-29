@@ -1,4 +1,5 @@
 import { SeatData } from "./implem.js";
+// @ts-ignore
 import { getNRows, getSeatCentersWithAngle, getSeatDistanceFactor, SeatCenter } from "../../core/src/geometryv2.js";
 import generateSVG, { TaggedSeat, SeatData as SeatDataV2 } from "./svgv2.js";
 
