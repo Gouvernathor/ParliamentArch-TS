@@ -11,7 +11,7 @@ export type Parliament = {
 export function parliamentToAttribution(
     parliament: Parliament,
 ) {
-    return new Map(Array.from(Object.entries(parliament), ([name, { seats, colour }]) =>
+    return new Map(Object.entries(parliament).map(([name, { seats, colour }]) =>
         [{ color: colour, data: name } as SeatData, seats] as const));
 }
 
