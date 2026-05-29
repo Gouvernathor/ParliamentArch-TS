@@ -1,72 +1,26 @@
 {
-  "name": "parliamentarch",
-  "version": "1.0.6",
-  "description": "Generating arch-styled SVG parliamentary diagrams",
+  "private": true,
   "type": "module",
-  "main": "./dist/parliamentarch.js",
-  "types": "./dist/parliamentarch.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/parliamentarch.d.ts",
-        "default": "./dist/parliamentarch.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch.d.cts",
-        "default": "./dist/parliamentarch.cjs"
-      }
-    },
-    "./geometry": {
-      "import": {
-        "types": "./dist/parliamentarch/geometry.d.ts",
-        "default": "./dist/parliamentarch/geometry.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch/geometry.d.cts",
-        "default": "./dist/parliamentarch/geometry.cjs"
-      }
-    },
-    "./svg": {
-      "import": {
-        "types": "./dist/parliamentarch/svg.d.ts",
-        "default": "./dist/parliamentarch/svg.js"
-      },
-      "require": {
-        "types": "./dist/parliamentarch/svg.d.cts",
-        "default": "./dist/parliamentarch/svg.cjs"
-      }
-    }
+  "workspaces": {
+    "packages": [
+      "packages/core",
+      "packages/svg",
+      "packages/web-component",
+      "packages/westminster-core",
+      "packages/westminster-svg"
+    ]
   },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Root package for all the @parliamentarch packages",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Gouvernathor/ParliamentArch-TS.git"
+    "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git"
   },
-  "keywords": [
-    "parliament",
-    "svg",
-    "diagram"
-  ],
   "author": "Gouvernathor",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/Gouvernathor/ParliamentArch-TS/issues"
-  },
-  "homepage": "https://github.com/Gouvernathor/ParliamentArch-TS#readme",
-  "funding": "https://ko-fi.com/gouvernathor",
-  "devDependencies": {
-    "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.10.2",
-    "tsup": "^8.3.5",
-    "typescript": "*"
-  },
-  "dependencies": {
-    "jsdom": "^25.0.1"
+  "scripts": {
+    "clean": "npm run clean --workspaces",
+    "build": "npm run build --workspaces",
+    "pub": "npm run pub --workspaces",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

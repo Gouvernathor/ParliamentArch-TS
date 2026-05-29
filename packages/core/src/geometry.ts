@@ -18,9 +18,9 @@ export function getRowThickness(nRows: number): number {
 
 /**
  * This indicates the maximal number of seats for each row for a given number of rows.
+ * @param spanAngle if provided, it is the angle in degrees that the hemicycle, as an annulus arc, covers.
  * @returns an array of number of seats per row, from inner to outer.
- * The length of the array nRows.
- * spanAngle, if provided, is the angle in degrees that the hemicycle, as an annulus arc, covers.
+ * The length of the array is nRows.
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
     const rad = getRowThickness(nRows);
@@ -32,7 +32,7 @@ export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE):
 }
 
 /**
- * Returns the minial number of rows necessary to contain nSeats seats.
+ * Returns the minimal number of rows necessary to contain nSeats seats.
  */
 export function getNRowsFromNSeats(nSeats: number, spanAngle = DEFAULT_SPAN_ANGLE): number {
     let nRows = 1;
@@ -61,6 +61,12 @@ export enum FillingStrategy {
     OUTER_PRIORITY = "outer_priority",
 }
 
+export interface GetSeatCentersOptions {
+    minNRows: number;
+    fillingStrategy: FillingStrategy;
+    spanAngle: number;
+}
+
 /**
  * Computes the coordinates of the centers of the seats, with (as a bonus) the angle of each seat in the hemicycle.
  * The canvas is assumed to be 2 in width and 1 in height, with the x axis pointing right and the y axis pointing up.
@@ -77,13 +83,13 @@ export enum FillingStrategy {
  * Values above 180 are not supported.
  * @returns a map whose keys are the seat centers as [x, y] coordinates, with the angle of the seat as values.
  */
-export function getSeatsCenters(
+export function getSeatCenters(
     nSeats: number,
     {
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: { minNRows?: number, fillingStrategy?: FillingStrategy, spanAngle?: number } = {},
+    }: Partial<GetSeatCentersOptions> = {},
 ): Map<[number, number], number> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
@@ -144,11 +150,11 @@ export function getSeatsCenters(
             if (r === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
             } else {
-                nSeatsThisRow = maxedRows[r];
+                nSeatsThisRow = maxedRows[r]!;
             }
         } else {
             // fullness of the diagram times the maximal number of seats in this row
-            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]);
+            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
             // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }

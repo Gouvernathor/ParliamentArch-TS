@@ -1,0 +1,47 @@
+<html>
+    <!-- To test : run `npx http-server` in the root of the repo -->
+    <head>
+        <meta charset="UTF-8">
+        <title>ParliamentArch-TS Demo</title>
+        <script type="importmap">
+            {
+                "imports": {
+                    "@parliamentarch/core/": "../packages/core/dist/",
+                    "@parliamentarch/core/geometry": "../packages/core/dist/geometry.js",
+                    "@parliamentarch/core/utils": "../packages/core/dist/utils.js",
+                    "@parliamentarch/svg/": "../packages/svg/dist/",
+                    "@parliamentarch/svg": "../packages/svg/dist/index.js"
+                }
+            }
+        </script>
+        <script type="module" src="../packages/web-component/dist/component.js"></script>
+    </head>
+    <body>
+        <parliament-arch id="parliament1" data-span-angle="120">
+            <seat-group data-data="Party A" data-color="#ff0000" data-n-seats="50"></seat-group>
+            <seat-group data-data="Party B" data-color="#0000ff">30</seat-group>
+            <seat-group data-data="Party C" data-color="#00ff00" data-border-size=".2" data-border-color="#00ffff">20</seat-group>
+        </parliament-arch>
+
+        <parliament-arch id="parliament2"></parliament-arch>
+
+        <script type="module">
+            import { ParliamentArch } from "../packages/web-component/dist/component.js";
+
+            const attribution = [
+                { data: "Party A", color: "#ff0000", nSeats: 50 },
+                { data: "Party B", color: "#0000ff", nSeats: 30 },
+                { data: "Party C", color: "#00ff00", borderSize: .2, borderColor: "#00ffff", nSeats: 20 },
+            ];
+            const options = { spanAngle: 120 };
+
+            const parliament2 = document.getElementById("parliament2");
+            parliament2.setAttributionAndOptions(attribution, options);
+            parliament2.render();
+
+            const parliament3 = new ParliamentArch(attribution, options);
+            parliament3.setAttribute("id", "parliament3");
+            document.body.appendChild(parliament3);
+        </script>
+    </body>
+</html>
