@@ -1,4 +1,4 @@
-import { SeatCenter } from "../../core/src/geometryv2";
+import { SeatCenter } from "../../core/src/geometryv2.js";
 
 export interface TaggedSeat extends SeatCenter {
     party: string
@@ -44,7 +44,7 @@ export default function generateSVG(
     const seatRadius = seatRadiusFactor * seatDistance;
 
     const groups = Object.fromEntries(Object.keys(parties).map(partyname => {
-        const { colour } = parties[partyname];
+        const { colour } = parties[partyname]!;
         const gStyle = [
             `fill: ${colour};`,
         ].join(' ');

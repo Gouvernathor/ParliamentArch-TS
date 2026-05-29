@@ -1,6 +1,6 @@
-import { SeatData } from "@parliamentarch/svg";
-import { getNRows, getSeatCentersWithAngle, getSeatDistanceFactor, SeatCenter } from "../../core/src/geometryv2";
-import generateSVG, { TaggedSeat, SeatData as SeatDataV2 } from "./svgv2";
+import { SeatData } from "./implem.js";
+import { getNRows, getSeatCentersWithAngle, getSeatDistanceFactor, SeatCenter } from "../../core/src/geometryv2.js";
+import generateSVG, { TaggedSeat, SeatData as SeatDataV2 } from "./svgv2.js";
 
 export type Parliament = {
     [partyname: string]: SeatDataV2 & {
@@ -8,7 +8,7 @@ export type Parliament = {
     };
 };
 
-function parliamentToAttribution(
+export function parliamentToAttribution(
     parliament: Parliament,
 ) {
     return new Map(Array.from(Object.entries(parliament), ([name, { seats, colour }]) =>
@@ -25,7 +25,7 @@ function tagSeatCenters(
     const rv = [] as TaggedSeat[];
     let seatIdx = 0;
     for (const partyname in parliament) {
-        const pSeats = parliament[partyname].seats;
+        const pSeats = parliament[partyname]!.seats;
         for (let pSeatIdx = 0; pSeatIdx < pSeats; pSeatIdx++, seatIdx++) {
             rv.push(Object.assign({ party: partyname }, sortedXY[seatIdx]));
         }
