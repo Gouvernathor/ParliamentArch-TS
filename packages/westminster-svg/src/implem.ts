@@ -199,6 +199,7 @@ function rectWithCoordinates(
     { spacingFactor, roundingRadius }: Pick<GetSVGOptions, "spacingFactor"|"roundingRadius">,
 ): SVGRectElement {
     const rect = document.createElementNS(SVG_NS, "rect");
+
     rect.setAttribute("x", `${spacingFactor/2 + x}`);
     rect.setAttribute("y", `${spacingFactor/2 + y}`);
 
@@ -206,9 +207,11 @@ function rectWithCoordinates(
     rect.setAttribute("width", sSize);
     rect.setAttribute("height", sSize);
 
-    const sRoundingRadius = `${roundingRadius}`;
-    rect.setAttribute("rx", sRoundingRadius);
-    rect.setAttribute("ry", sRoundingRadius);
+    if (roundingRadius != 0) {
+        const sRoundingRadius = `${roundingRadius}`;
+        rect.setAttribute("rx", sRoundingRadius);
+        rect.setAttribute("ry", sRoundingRadius);
+    }
 
     return rect;
 }
