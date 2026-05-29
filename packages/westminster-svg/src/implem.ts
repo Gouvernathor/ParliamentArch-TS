@@ -159,8 +159,13 @@ function createArea(
             populatePartyGroupStandalone(partyGroup, seatData);
         }
 
-        const roundingRadius = (<StandaloneSeatData>seatData).roundingRadius ?? options.roundingRadius;
-        const seatOptions = { ...options, roundingRadius };
+        let seatOptions = options;
+        if ("roundingRadius" in seatData && seatData.roundingRadius != undefined) {
+            seatOptions = {
+                spacingFactor: options.spacingFactor,
+                roundingRadius: seatData.roundingRadius,
+            };
+        }
 
         for (const [x, y] of seats) {
             partyGroup.appendChild(rectWithCoordinates(x, y, seatOptions));
