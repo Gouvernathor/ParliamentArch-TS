@@ -17,3 +17,8 @@ This is a collection of TypeScript/JavaScript packages, evolved as a spin-off fr
 - `@parliamentarch/angular`, not yet available, will provide an Angular component (or a suite of components) to display the same arches, depending on `core` but free from `svg`'s reliance on a DOM emulator - though it is, obviously, depending on Angular.
 
 - `@parliamentarch/westminster-web-component` and `@parliamentarch/westminster-angular` may happen some day.
+
+## Licensing
+
+This code is available under the BSD-3-clause public license.
+It is also available under the Creative Commons Attribution 4.0 International (CC-BY v4) license, for platforms or contexts that require it (such as Wikipedia).
