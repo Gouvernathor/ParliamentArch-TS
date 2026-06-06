@@ -87,7 +87,7 @@ export function anyAttributionToNSeatsPerPartyPerArea<Party>(attribution: AnyAtt
     if (attributionArray.length === 0) {
         return areaRecord(() => new Map());
     }
-    if (AREAS.some(area => area in attributionArray[0]!)) {
+    if ("area" in attributionArray[0]!) {
         // 4
         return attri4ToNSeatsPerPartyPerArea(attributionArray as Attri4<Party>);
     } else {
