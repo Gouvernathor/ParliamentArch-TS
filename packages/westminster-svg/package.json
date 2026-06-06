@@ -1,6 +1,6 @@
 {
   "name": "@parliamentarch/westminster-svg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tools to generate SVG files of Westminster-styled parliamentary diagrams",
   "type": "module",
 
@@ -31,7 +31,7 @@
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
-    "@parliamentarch/westminster-core": "1.0.0",
+    "@parliamentarch/westminster-core": "1.0.1",
     "jsdom": "*"
   },
   "peerDependenciesMeta": {
