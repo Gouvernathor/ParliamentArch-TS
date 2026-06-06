@@ -41,7 +41,7 @@
   },
 
   "author": "Gouvernathor",
-  "license": "BSD-3-Clause",
+  "license": "(BSD-3-Clause OR CC-BY-4.0)",
   "repository": {
     "type": "git",
     "url": "https://codeberg.org/Gouvernathor/ParliamentArch-TS.git",
