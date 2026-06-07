@@ -2,7 +2,24 @@ import { getRowArcRadius, getRowThickness, getSeatCenters } from "./geometry";
 
 type Point = [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
+type Rounder = (n: number) => number;
 
+export interface GetLineCheckPointsOptions {
+    /**
+     * Used to round the sharing of the assembly.
+     * Rounding up means more seats to the left.
+     * Defaults to Math.ceil,
+     * which rounds to the higher closest integer.
+     */
+    round: Rounder;
+
+    /**
+     * A value between 0 and 1
+     * representing the share of the seats that will be on the left.
+     * Defaults to .5.
+     */
+    // ratio: number; // not yet implemented
+}
 export interface LineCheckPoints {
     startPoint: Point;
     checkpoints: Point[];
@@ -10,8 +27,10 @@ export interface LineCheckPoints {
     rowThickness: number;
 }
 
-export function getLineCheckPoints(seatCenters: SeatCenters): LineCheckPoints {
-    const isInFirstHalf = getIsFirstHalf(seatCenters, /* TODO allow other rounding method */);
+export function getLineCheckPoints(seatCenters: SeatCenters, {
+    round = Math.ceil,
+}: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
+    const isInFirstHalf = getIsFirstHalf(seatCenters, round);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
@@ -24,10 +43,10 @@ export function getLineCheckPoints(seatCenters: SeatCenters): LineCheckPoints {
     };
 }
 
-function getIsFirstHalf(seatCenters: SeatCenters, round = Math.round) {
+function getIsFirstHalf(seatCenters: SeatCenters, round: Rounder) {
     const firstHalf = new Set([...seatCenters.keys()]
         .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
-        .slice(0, round(seatCenters.size / 2)));
+        .slice(0, seatCenters.size - round(seatCenters.size / 2)));
     return firstHalf.has.bind(firstHalf);
 }
 
