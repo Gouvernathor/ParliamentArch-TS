@@ -32,6 +32,16 @@ export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE):
 }
 
 /**
+ * @param rowIdx the index of the row, starting from 0 from the inner out,
+ * and counting the rows that may be empty due to the filling strategy
+ * @param rowThickness as returned by getRowThickness
+ * @returns the radius of the circle crossing the center of each seat in the row
+ */
+export function getRowArcRadius(rowIdx: number, rowThickness: number) {
+    return .5 + 2 * rowIdx * rowThickness;
+}
+
+/**
  * Returns the minimal number of rows necessary to contain nSeats seats.
  */
 export function getNRowsFromNSeats(nSeats: number, spanAngle = DEFAULT_SPAN_ANGLE): number {
@@ -159,8 +169,7 @@ export function getSeatCenters(
             // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }
 
-        // row radius : the radius of the circle crossing the center of each seat in the row
-        const rowArcRadius = .5 + 2 * r * rowThicc;
+        const rowArcRadius = getRowArcRadius(r, rowThicc);
 
         if (nSeatsThisRow === 1) {
             positions.set([1, rowArcRadius], Math.PI / 2);
