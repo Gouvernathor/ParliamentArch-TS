@@ -61,8 +61,9 @@ export function getLineCheckPoints(seatCenters: SeatCenters, {
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
 
-    if (ratio != .5) throw "not implemented";
-    const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart);
+    const checkpoints = (ratio === .5) ?
+        getCheckpointsForHalf(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart) :
+        getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart, ratio);
 
     return {
         startPoint: [1, .5 - maxSeatRadius],
@@ -87,7 +88,7 @@ function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[]
     return rv;
 }
 
-function getCheckpoints(
+function getCheckpointsForHalf(
     seatsPerRow: readonly (readonly Point[])[],
     rowThicc: number,
     maxSeatRadius: number,
@@ -112,13 +113,6 @@ function getRowSide(row: readonly Point[], isInRightPart: (p: Point) => boolean)
     return sign((row.length/2) - nSeatsRightPartInRow);
 }
 
-
-
-
-
-
-
-
 /*
 multi-point placement with non-half ratio
 
@@ -136,3 +130,14 @@ in case (1) the control point is offset by a vector colinear to the straight lin
 in case (2) the control point is a polar point from the center of the diagram,
 whose angle is the same as the point and whose distance is the point's minus (or plus) the offset value
 */
+function getCheckpoints(
+    seatsPerRow: readonly (readonly Point[])[],
+    rowThicc: number,
+    maxSeatRadius: number,
+    isInRightPart: (value: Point) => boolean,
+    ratio: number,
+): Point[] {
+    const checkpoints: Point[] = [];
+    // TODO
+    return checkpoints;
+}
