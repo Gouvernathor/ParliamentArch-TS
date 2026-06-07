@@ -103,7 +103,7 @@ export function getSeatCenters(
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: Partial<GetSeatCentersOptions> = {},
+    }: Partial<Readonly<GetSeatCentersOptions>> = {},
 ): Map<[number, number], SeatInfo> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
