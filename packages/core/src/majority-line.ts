@@ -23,10 +23,32 @@ export interface GetLineCheckPointsOptions {
      */
     ratio: number;
 }
+/**
+ * Represents all the base points necessary to draw a line (ideally a bezier curve)
+ * zigzagging between the seats to represent a majority.
+ * The base points are provided, as well as values to help create control points.
+ */
 export interface LineCheckPoints {
+    /** The starting point, on the inner side of the arch. */
     startPoint: Point;
+
+    /**
+     * A list of points, one for each row
+     * (though not necessarily placed exactly on the row's half-circle),
+     * from inner to outer.
+     */
     checkpoints: Point[];
+
+    /** The end point, on the outer side of the arch. */
     endPoint: Point;
+
+    /**
+     * The row thickness.
+     * Can help place the control points from each base point,
+     * offset by some factor times that value,
+     * for instance towards the center of the diagram,
+     * or parallel to the direction set by the ratio.
+     */
     rowThickness: number;
 }
 
@@ -86,3 +108,25 @@ function getRowSide(row: readonly Point[], isInRightPart: (p: Point) => boolean)
     const nSeatsRightPartInRow = row.reduce((a, p) => isInRightPart(p) ? a+1 : a, 0);
     return sign((row.length/2) - nSeatsRightPartInRow);
 }
+
+
+
+
+
+
+
+
+/*
+multi-point placement with non-half ratio
+
+for each row
+Test whether the straight line would be within maxSeatRadius (=rowThickness/2) of the closest seat.
+If not, take the straight point. (maybe also check if the two nearest seats are indeed of different parts ?)
+If so, then put the line on the side of the seat depending on which part it's in,
+and either (1) the point at a maxSeatRadius distance of the seat and on a perpendicular to the straight line passing through the seat,
+or (2) the point at a maxSeatRadius distance of the seat and on the row's base semicircle.
+
+in case (1) the control point is offset by a vector colinear to the straight line and whose norm is the offset value
+in case (2) the control point is a polar point from the center of the diagram,
+whose angle is the same as the point and whose distance is the point's minus (or plus) the offset value
+*/
