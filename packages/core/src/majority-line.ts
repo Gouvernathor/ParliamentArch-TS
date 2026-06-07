@@ -17,8 +17,9 @@ export interface GetLineCheckPointsOptions {
      * A value between 0 and 1
      * representing the share of the seats that will be on the left.
      * Defaults to .5.
+     * Not yet implemented.
      */
-    // ratio: number; // not yet implemented
+    ratio: number;
 }
 export interface LineCheckPoints {
     startPoint: Point;
@@ -29,6 +30,7 @@ export interface LineCheckPoints {
 
 export function getLineCheckPoints(seatCenters: SeatCenters, {
     round = Math.ceil,
+    // ratio = .5, // TODO
 }: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
     const isInFirstHalf = getIsFirstHalf(seatCenters, round);
     const seatsPerRow = getSeatsPerRow(seatCenters);
