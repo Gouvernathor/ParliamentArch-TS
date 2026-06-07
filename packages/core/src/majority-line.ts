@@ -137,7 +137,21 @@ function getCheckpoints(
     isInRightPart: (value: Point) => boolean,
     ratio: number,
 ): Point[] {
+    const ratioAngle = ratio * Math.PI/2;
+
     const checkpoints: Point[] = [];
-    // TODO
+    for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
+        const row = seatsPerRow[rowIdx]!;
+        const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart, ratioAngle);
+        //
+    }
     return checkpoints;
+}
+
+function getBoundarySeats(
+    row: readonly Point[],
+    isInRightPart: (value: Point) => boolean,
+    ratioAngle: number,
+): [Point|null, Point|null] {
+    throw 0;
 }
