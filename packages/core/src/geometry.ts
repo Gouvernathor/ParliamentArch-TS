@@ -76,6 +76,10 @@ export interface GetSeatCentersOptions {
     fillingStrategy: FillingStrategy;
     spanAngle: number;
 }
+export interface SeatInfo {
+    angle: number;
+    rowIdx: number;
+}
 
 /**
  * Computes the coordinates of the centers of the seats, with (as a bonus) the angle of each seat in the hemicycle.
@@ -100,7 +104,7 @@ export function getSeatCenters(
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
     }: Partial<GetSeatCentersOptions> = {},
-): Map<[number, number], number> {
+): Map<[number, number], SeatInfo> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
     const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
@@ -150,29 +154,29 @@ export function getSeatCenters(
             throw new Error(`Invalid filling strategy: ${fillingStrategy}`);
     }
 
-    const positions = new Map<[number, number], number>();
-    for (let r = startingRow; r < nRows; r++) {
+    const positions = new Map<[number, number], SeatInfo>();
+    for (let rowIdx = startingRow; rowIdx < nRows; rowIdx++) {
         let nSeatsThisRow: number;
-        if (r === nRows - 1) { // if it's the last, outermost row
+        if (rowIdx === nRows - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - positions.size;
         } else if (fillingStrategy === FillingStrategy.OUTER_PRIORITY) {
-            if (r === startingRow) {
+            if (rowIdx === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
             } else {
-                nSeatsThisRow = maxedRows[r]!;
+                nSeatsThisRow = maxedRows[rowIdx]!;
             }
         } else {
             // fullness of the diagram times the maximal number of seats in this row
-            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]!);
+            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[rowIdx]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
             // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }
 
-        const rowArcRadius = getRowArcRadius(r, rowThicc);
+        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
 
         if (nSeatsThisRow === 1) {
-            positions.set([1, rowArcRadius], Math.PI / 2);
+            positions.set([1, rowArcRadius], { rowIdx: rowIdx, angle: Math.PI / 2 });
         } else {
             // the angle necessary in this row to put the first (and last) seats fully on the canvas
             const angleMargin = Math.asin(rowThicc / rowArcRadius)
@@ -189,7 +193,7 @@ export function getSeatCenters(
             for (let s = 0; s < nSeatsThisRow; s++) {
                 const angle = angleMargin + s * angleStep;
                 // an oriented angle, so it goes trig positive (counterclockwise)
-                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], angle);
+                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], { rowIdx: rowIdx, angle });
             }
         }
     }
