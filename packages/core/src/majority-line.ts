@@ -1,5 +1,7 @@
 import { getRowArcRadius, getRowThickness, SeatInfo } from "./geometry";
 
+const sign = Math.sign as (n: number) => -1|0|1;
+
 type Point = [number, number];
 type SeatCenters = ReadonlyMap<Point, SeatInfo>;
 type Rounder = (n: number) => number;
@@ -32,24 +34,24 @@ export function getLineCheckPoints(seatCenters: SeatCenters, {
     round = Math.ceil,
     // ratio = .5, // TODO
 }: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
-    const isInFirstHalf = getIsFirstHalf(seatCenters, round);
+    const isInRightHalf = getIsInRightHalf(seatCenters, round);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
 
     return {
         startPoint: [1, .5 - maxSeatRadius],
-        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf),
+        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightHalf),
         endPoint: [1, 1],
         rowThickness: rowThicc,
     };
 }
 
-function getIsFirstHalf(seatCenters: SeatCenters, round: Rounder) {
-    const firstHalf = new Set([...seatCenters.keys()]
+function getIsInRightHalf(seatCenters: SeatCenters, round: Rounder) {
+    const rightHalf = new Set([...seatCenters.keys()]
         .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
         .slice(0, seatCenters.size - round(seatCenters.size / 2)));
-    return firstHalf.has.bind(firstHalf);
+    return rightHalf.has.bind(rightHalf);
 }
 
 function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[] {
@@ -64,23 +66,23 @@ function getCheckpoints(
     seatsPerRow: readonly (readonly Point[])[],
     rowThicc: number,
     maxSeatRadius: number,
-    isInFirstHalf: (p: Point) => boolean,
+    isInRightHalf: (p: Point) => boolean,
 ): Point[] {
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
-        const rowSide = getRowSide(row, isInFirstHalf);
+        const rowSide = getRowSide(row, isInRightHalf);
 
         checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
     }
     return checkpoints;
 }
 
-function getRowSide(row: readonly Point[], isInFirstHalf: (p: Point) => boolean): 0|-1|1 {
+function getRowSide(row: readonly Point[], isInRightHalf: (p: Point) => boolean): 0|-1|1 {
     if ((row.length%2) === 0) {
         return 0;
     }
-    const nSeatsFirstHalfInRow = row.reduce((a, p) => isInFirstHalf(p) ? a+1 : a, 0);
-    return Math.sign((row.length/2) - nSeatsFirstHalfInRow) as -1|1;
+    const nSeatsRightHalfInRow = row.reduce((a, p) => isInRightHalf(p) ? a+1 : a, 0);
+    return sign((row.length/2) - nSeatsRightHalfInRow);
 }
