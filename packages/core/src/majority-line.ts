@@ -3,17 +3,25 @@ import { getRowArcRadius, getRowThickness, getSeatCenters } from "./geometry";
 type Point = [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
 
-export function getLineCheckPoints(seatCenters: SeatCenters) {
+export interface LineCheckPoints {
+    startPoint: Point;
+    checkpoints: Point[];
+    endPoint: Point;
+    rowThickness: number;
+}
+
+export function getLineCheckPoints(seatCenters: SeatCenters): LineCheckPoints {
     const isInFirstHalf = getIsFirstHalf(seatCenters, /* TODO allow other rounding method */);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
 
-    const startPoint: Point = [1, .5 - maxSeatRadius];
-    const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf);
-    const endPoint: Point = [1, 1];
-
-    return { startPoint, checkpoints, endPoint, rowThickness: rowThicc };
+    return {
+        startPoint: [1, .5 - maxSeatRadius],
+        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf),
+        endPoint: [1, 1],
+        rowThickness: rowThicc,
+    };
 }
 
 function getIsFirstHalf(seatCenters: SeatCenters, round = Math.round) {
