@@ -1,11 +1,10 @@
 import { getRowArcRadius, getRowThickness, getSeatCenters } from "./geometry";
 
-type Point = readonly [number, number];
+type Point = [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
 
 export function getLineCheckPoints(seatCenters: SeatCenters) {
-    const firstHalf = getFirstHalf(seatCenters, /* TODO allow other rounding method */);
-    const isInFirstHalf = (p: Point) => firstHalf.includes(p);
+    const isInFirstHalf = getIsFirstHalf(seatCenters, /* TODO allow other rounding method */);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
@@ -17,9 +16,11 @@ export function getLineCheckPoints(seatCenters: SeatCenters) {
     return { startPoint, checkpoints, endPoint, rowThickness: rowThicc };
 }
 
-function getFirstHalf(seatCenters: SeatCenters, round = Math.round): readonly Point[] {
-    const sorted = [...seatCenters.keys()].sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle);
-    return sorted.slice(0, round(seatCenters.size / 2));
+function getIsFirstHalf(seatCenters: SeatCenters, round = Math.round) {
+    const firstHalf = new Set([...seatCenters.keys()]
+        .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
+        .slice(0, round(seatCenters.size / 2)));
+    return firstHalf.has.bind(firstHalf);
 }
 
 function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[] {
