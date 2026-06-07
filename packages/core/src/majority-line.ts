@@ -1,7 +1,7 @@
-import { getRowArcRadius, getRowThickness, getSeatCenters } from "./geometry";
+import { getRowArcRadius, getRowThickness, SeatInfo } from "./geometry";
 
 type Point = [number, number];
-type SeatCenters = ReturnType<typeof getSeatCenters>;
+type SeatCenters = ReadonlyMap<Point, SeatInfo>;
 type Rounder = (n: number) => number;
 
 export interface GetLineCheckPointsOptions {
