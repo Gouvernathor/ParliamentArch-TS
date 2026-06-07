@@ -142,7 +142,7 @@ function getCheckpoints(
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
-        const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart, ratioAngle);
+        const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart);
         //
     }
     return checkpoints;
@@ -151,7 +151,16 @@ function getCheckpoints(
 function getBoundarySeats(
     row: readonly Point[],
     isInRightPart: (value: Point) => boolean,
-    ratioAngle: number,
 ): [Point|null, Point|null] {
-    throw 0;
+    let lastSeatRightSide = null,
+        firstSeatLeftSide = null;
+    for (const seat of row) {
+        if (isInRightPart(seat)) {
+            lastSeatRightSide = seat;
+        } else {
+            firstSeatLeftSide = seat;
+            break;
+        }
+    }
+    return [firstSeatLeftSide, lastSeatRightSide];
 }
