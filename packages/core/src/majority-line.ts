@@ -13,17 +13,17 @@ export function getLineCheckPointsSimple(seatCenters: SeatCenters, { spanAngle }
 
     const seatsPerRow = getSeatsPerRow(seatCenters);
 
-    const checkpoints: Point[] = [];
-    for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
-        const row = seatsPerRow[rowIdx]!;
-        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
-        const rowSide = getRowSide(row, isInFirstHalf);
-
-        checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
-    }
-
     const startPoint: Point = [1, .5 - maxSeatRadius];
+    const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf);
     const endPoint: Point = [1, 1];
+
+    // absolute cubic curve
+    /*
+    so, we need to start (M) from the startPoint
+    then do an S, so a sequence of control point then point
+    for each checkpoint, the control point is the same but offset vertically down by a factor times the rowThicc (or maxSeatRadius)
+    then one additional where both the control point and the point are the endPoint
+    */
 }
 
 function getFirstHalf(seatCenters: SeatCenters, round = Math.round): readonly Point[] {
@@ -37,6 +37,23 @@ function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[]
         (rv[seatInfo.rowIdx] ??= []).push(seatCenter);
     }
     return rv;
+}
+
+function getCheckpoints(
+    seatsPerRow: readonly (readonly Point[])[],
+    rowThicc: number,
+    maxSeatRadius: number,
+    isInFirstHalf: (p: Point) => boolean,
+): Point[] {
+    const checkpoints: Point[] = [];
+    for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
+        const row = seatsPerRow[rowIdx]!;
+        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
+        const rowSide = getRowSide(row, isInFirstHalf);
+
+        checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
+    }
+    return checkpoints;
 }
 
 function getRowSide(row: readonly Point[], isInFirstHalf: (p: Point) => boolean): 0|-1|1 {
