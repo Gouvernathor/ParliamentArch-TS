@@ -3,7 +3,7 @@ import { getNRowsFromNSeats, getRowArcRadius, getRowThickness, getSeatCenters, G
 type Point = readonly [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
 
-export function getLineCheckPointsSimple(seatCenters: SeatCenters, { spanAngle }: Partial<Readonly<GetSeatCentersOptions>>) {
+export function getLineCheckPoints(seatCenters: SeatCenters, { spanAngle }: Partial<Readonly<GetSeatCentersOptions>>) {
     const nSeats = seatCenters.size;
     const nRows = getNRowsFromNSeats(nSeats, spanAngle);
     const rowThicc = getRowThickness(nRows);
@@ -17,13 +17,7 @@ export function getLineCheckPointsSimple(seatCenters: SeatCenters, { spanAngle }
     const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf);
     const endPoint: Point = [1, 1];
 
-    // absolute cubic curve
-    /*
-    so, we need to start (M) from the startPoint
-    then do an S, so a sequence of control point then point
-    for each checkpoint, the control point is the same but offset vertically down by a factor times the rowThicc (or maxSeatRadius)
-    then one additional where both the control point and the point are the endPoint
-    */
+    return { startPoint, checkpoints, endPoint, rowThickness: rowThicc };
 }
 
 function getFirstHalf(seatCenters: SeatCenters, round = Math.round): readonly Point[] {
