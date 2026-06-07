@@ -54,25 +54,28 @@ export interface LineCheckPoints {
 
 export function getLineCheckPoints(seatCenters: SeatCenters, {
     round = Math.ceil,
-    // ratio = .5, // TODO
+    ratio = .5,
 }: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
-    const isInRightPart = getIsInRightPart(seatCenters, round);
+    const isInRightPart = getIsInRightPart(seatCenters, round, ratio);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
 
+    if (ratio != .5) throw "not implemented";
+    const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart);
+
     return {
         startPoint: [1, .5 - maxSeatRadius],
-        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart),
+        checkpoints,
         endPoint: [1, 1],
         rowThickness: rowThicc,
     };
 }
 
-function getIsInRightPart(seatCenters: SeatCenters, round: Rounder) {
+function getIsInRightPart(seatCenters: SeatCenters, round: Rounder, ratio: number) {
     const rightPart = new Set([...seatCenters.keys()]
         .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
-        .slice(0, seatCenters.size - round(seatCenters.size / 2)));
+        .slice(0, seatCenters.size - round(seatCenters.size * ratio)));
     return rightPart.has.bind(rightPart);
 }
 
