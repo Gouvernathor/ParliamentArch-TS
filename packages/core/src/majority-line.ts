@@ -4,11 +4,11 @@ type Point = readonly [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
 
 export function getLineCheckPoints(seatCenters: SeatCenters) {
+    const firstHalf = getFirstHalf(seatCenters, /* TODO allow other rounding method */);
+    const isInFirstHalf = (p: Point) => firstHalf.includes(p);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
-    const firstHalf = getFirstHalf(seatCenters, /* TODO allow other rounding method */);
-    const isInFirstHalf = (p: Point) => firstHalf.includes(p);
 
     const startPoint: Point = [1, .5 - maxSeatRadius];
     const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf);
