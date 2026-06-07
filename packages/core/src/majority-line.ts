@@ -1,17 +1,14 @@
-import { getNRowsFromNSeats, getRowArcRadius, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry";
+import { getRowArcRadius, getRowThickness, getSeatCenters } from "./geometry";
 
 type Point = readonly [number, number];
 type SeatCenters = ReturnType<typeof getSeatCenters>;
 
-export function getLineCheckPoints(seatCenters: SeatCenters, { spanAngle }: Partial<Readonly<GetSeatCentersOptions>>) {
-    const nSeats = seatCenters.size;
-    const nRows = getNRowsFromNSeats(nSeats, spanAngle);
-    const rowThicc = getRowThickness(nRows);
+export function getLineCheckPoints(seatCenters: SeatCenters) {
+    const seatsPerRow = getSeatsPerRow(seatCenters);
+    const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
     const firstHalf = getFirstHalf(seatCenters, /* TODO allow other rounding method */);
     const isInFirstHalf = (p: Point) => firstHalf.includes(p);
-
-    const seatsPerRow = getSeatsPerRow(seatCenters);
 
     const startPoint: Point = [1, .5 - maxSeatRadius];
     const checkpoints = getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInFirstHalf);
