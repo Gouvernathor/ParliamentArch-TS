@@ -63,7 +63,7 @@ export function getLineCheckPoints(seatCenters: SeatCenters, {
 
     const checkpoints = (ratio === .5) ?
         getCheckpointsForHalf(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart) :
-        getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart, ratio);
+        getCheckpoints(seatCenters, seatsPerRow, rowThicc, maxSeatRadius, isInRightPart, ratio);
 
     return {
         startPoint: [1, .5 - maxSeatRadius],
@@ -131,6 +131,7 @@ in case (2) the control point is a polar point from the center of the diagram,
 whose angle is the same as the point and whose distance is the point's minus (or plus) the offset value
 */
 function getCheckpoints(
+    seatCenters: SeatCenters,
     seatsPerRow: readonly (readonly Point[])[],
     rowThicc: number,
     maxSeatRadius: number,
@@ -142,8 +143,30 @@ function getCheckpoints(
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
+
+        const straightLinePoint = polarToCartesian(getRowArcRadius(rowIdx, rowThicc), ratioAngle);
+
         const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart);
-        //
+        let seat;
+        if (leftSeat === null) {
+            if (rightSeat === null) {
+                checkpoints.push(straightLinePoint);
+                continue;
+            } else {
+                seat = rightSeat;
+            }
+        } else {
+            if (rightSeat === null) {
+                seat = leftSeat;
+            } else {
+                // between two seats
+                if (Math.abs(seatCenters.get(leftSeat)!.angle - ratioAngle) < Math.abs(seatCenters.get(rightSeat)!.angle - ratioAngle)) {
+                    seat = leftSeat;
+                } else {
+                    seat = rightSeat;
+                }
+            }
+        }
     }
     return checkpoints;
 }
@@ -163,4 +186,8 @@ function getBoundarySeats(
         }
     }
     return [firstSeatLeftSide, lastSeatRightSide];
+}
+
+function polarToCartesian(norm: number, angle: number): Point {
+    return [1 + norm * Math.cos(angle), norm * Math.sin(angle)];
 }
