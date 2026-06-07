@@ -120,8 +120,11 @@ function getRowSide(row: readonly Point[], isInRightPart: (p: Point) => boolean)
 multi-point placement with non-half ratio
 
 for each row
-Test whether the straight line would be within maxSeatRadius (=rowThickness/2) of the closest seat.
-If not, take the straight point. (maybe also check if the two nearest seats are indeed of different parts ?)
+Find the two boundary seats
+If there is none, use the straight point line (on the row semi-circle and whose angle is the ratio) and move on to the next row.
+If there is two, comparing by angle, keep the seat nearest to the ratio angle.
+Test whether the straight line would be within maxSeatRadius (=rowThickness/2) of the seat.
+If not, take the straight point.
 If so, then put the line on the side of the seat depending on which part it's in,
 and either (1) the point at a maxSeatRadius distance of the seat and on a perpendicular to the straight line passing through the seat,
 or (2) the point at a maxSeatRadius distance of the seat and on the row's base semicircle.
