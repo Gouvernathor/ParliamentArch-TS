@@ -34,24 +34,24 @@ export function getLineCheckPoints(seatCenters: SeatCenters, {
     round = Math.ceil,
     // ratio = .5, // TODO
 }: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
-    const isInRightHalf = getIsInRightHalf(seatCenters, round);
+    const isInRightPart = getIsInRightPart(seatCenters, round);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThicc/2;
 
     return {
         startPoint: [1, .5 - maxSeatRadius],
-        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightHalf),
+        checkpoints: getCheckpoints(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart),
         endPoint: [1, 1],
         rowThickness: rowThicc,
     };
 }
 
-function getIsInRightHalf(seatCenters: SeatCenters, round: Rounder) {
-    const rightHalf = new Set([...seatCenters.keys()]
+function getIsInRightPart(seatCenters: SeatCenters, round: Rounder) {
+    const rightPart = new Set([...seatCenters.keys()]
         .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
         .slice(0, seatCenters.size - round(seatCenters.size / 2)));
-    return rightHalf.has.bind(rightHalf);
+    return rightPart.has.bind(rightPart);
 }
 
 function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[] {
@@ -66,23 +66,23 @@ function getCheckpoints(
     seatsPerRow: readonly (readonly Point[])[],
     rowThicc: number,
     maxSeatRadius: number,
-    isInRightHalf: (p: Point) => boolean,
+    isInRightPart: (p: Point) => boolean,
 ): Point[] {
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
-        const rowSide = getRowSide(row, isInRightHalf);
+        const rowSide = getRowSide(row, isInRightPart);
 
         checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
     }
     return checkpoints;
 }
 
-function getRowSide(row: readonly Point[], isInRightHalf: (p: Point) => boolean): 0|-1|1 {
+function getRowSide(row: readonly Point[], isInRightPart: (p: Point) => boolean): 0|-1|1 {
     if ((row.length%2) === 0) {
         return 0;
     }
-    const nSeatsRightHalfInRow = row.reduce((a, p) => isInRightHalf(p) ? a+1 : a, 0);
-    return sign((row.length/2) - nSeatsRightHalfInRow);
+    const nSeatsRightPartInRow = row.reduce((a, p) => isInRightPart(p) ? a+1 : a, 0);
+    return sign((row.length/2) - nSeatsRightPartInRow);
 }
