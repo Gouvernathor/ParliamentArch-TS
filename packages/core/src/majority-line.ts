@@ -167,6 +167,8 @@ function getCheckpoints(
                 }
             }
         }
+
+        const straightLineWouldCutTheSeat = maxSeatRadius**2 < squareDistanceCartesian(straightLinePoint, seat);
     }
     return checkpoints;
 }
@@ -190,4 +192,8 @@ function getBoundarySeats(
 
 function polarToCartesian(norm: number, angle: number): Point {
     return [1 + norm * Math.cos(angle), norm * Math.sin(angle)];
+}
+
+function squareDistanceCartesian(pointA: Point, pointB: Point) {
+    return (pointB[0]-pointA[0])**2 + (pointB[1]-pointA[1])**2;
 }
