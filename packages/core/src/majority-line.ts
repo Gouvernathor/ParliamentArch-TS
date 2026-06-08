@@ -98,14 +98,14 @@ function getCheckpointsForHalf(
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
-        const rowSide = getRowSide(row, isInRightPart);
+        const rowSide = getRowSideForHalf(row, isInRightPart);
 
         checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
     }
     return checkpoints;
 }
 
-function getRowSide(row: readonly Point[], isInRightPart: (p: Point) => boolean): 0|-1|1 {
+function getRowSideForHalf(row: readonly Point[], isInRightPart: (p: Point) => boolean): 0|-1|1 {
     if ((row.length%2) === 0) {
         return 0;
     }
@@ -144,7 +144,8 @@ function getCheckpoints(
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
 
-        const straightLinePoint = polarToCartesian(getRowArcRadius(rowIdx, rowThicc), ratioAngle);
+        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
+        const straightLinePoint = polarToCartesian(rowArcRadius, ratioAngle);
 
         const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart);
         let seat;
@@ -173,7 +174,12 @@ function getCheckpoints(
             continue;
         }
 
-        // TODO
+        const sidgn = isInRightPart(seat) ? -1 : 1;
+        // (2)
+        const seatAngle = getPolarAngle(seat);
+        const angleIncrement = 2*Math.atan(maxSeatRadius/2 / rowArcRadius);
+        const point = polarToCartesian(rowArcRadius, seatAngle + sidgn*angleIncrement);
+        checkpoints.push(point);
     }
     return checkpoints;
 }
@@ -197,6 +203,10 @@ function getBoundarySeats(
 
 function polarToCartesian(norm: number, angle: number): Point {
     return [1 + norm * Math.cos(angle), norm * Math.sin(angle)];
+}
+/** From the diagram's center. */
+function getPolarAngle([x, y]: Point) {
+    return Math.atan2(y, x-1);
 }
 
 function squareDistanceCartesian(pointA: Point, pointB: Point) {
