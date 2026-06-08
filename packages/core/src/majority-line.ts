@@ -168,7 +168,12 @@ function getCheckpoints(
             }
         }
 
-        const straightLineWouldCutTheSeat = maxSeatRadius**2 < squareDistanceCartesian(straightLinePoint, seat);
+        if (squareDistanceCartesian(straightLinePoint, seat) <= maxSeatRadius**2) {
+            checkpoints.push(straightLinePoint);
+            continue;
+        }
+
+        // TODO
     }
     return checkpoints;
 }
