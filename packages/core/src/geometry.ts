@@ -176,7 +176,7 @@ export function getSeatCenters(
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
 
         if (nSeatsThisRow === 1) {
-            positions.set([1, rowArcRadius], { rowIdx: rowIdx, angle: Math.PI / 2 });
+            positions.set([1, rowArcRadius], { rowIdx, angle: Math.PI / 2 });
         } else {
             // the angle necessary in this row to put the first (and last) seats fully on the canvas
             const angleMargin = Math.asin(rowThicc / rowArcRadius)
@@ -193,7 +193,7 @@ export function getSeatCenters(
             for (let s = 0; s < nSeatsThisRow; s++) {
                 const angle = angleMargin + s * angleStep;
                 // an oriented angle, so it goes trig positive (counterclockwise)
-                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], { rowIdx: rowIdx, angle });
+                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], { rowIdx, angle });
             }
         }
     }
