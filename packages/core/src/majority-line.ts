@@ -6,7 +6,7 @@ type Point = [number, number];
 type SeatCenters = ReadonlyMap<Point, SeatInfo>;
 type Rounder = (n: number) => number;
 
-export interface GetLineCheckPointsOptions {
+export interface GetMajorityLineCheckpointsOptions {
     /**
      * Used to round the sharing of the assembly.
      * Rounding up means more seats to the left.
@@ -28,7 +28,7 @@ export interface GetLineCheckPointsOptions {
  * zigzagging between the seats to represent a majority.
  * The base points are provided, as well as values to help create control points.
  */
-export interface LineCheckPoints {
+export interface MajorityLineCheckpoints {
     /** The starting point, on the inner side of the arch. */
     startPoint: Point;
 
@@ -52,10 +52,10 @@ export interface LineCheckPoints {
     rowThickness: number;
 }
 
-export function getLineCheckPoints(seatCenters: SeatCenters, {
+export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
     round = Math.ceil,
     ratio = .5,
-}: Partial<Readonly<GetLineCheckPointsOptions>> = {}): LineCheckPoints {
+}: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {}): MajorityLineCheckpoints {
     const isInRightPart = getIsInRightPart(seatCenters, round, ratio);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThicc = getRowThickness(seatsPerRow.length);
