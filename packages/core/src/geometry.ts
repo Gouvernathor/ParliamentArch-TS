@@ -17,6 +17,16 @@ export function getRowThickness(nRows: number): number {
 }
 
 /**
+ * @param rowIdx the index of the row, starting from 0 from the inner out,
+ * and counting the rows that may be empty due to the filling strategy
+ * @param rowThickness as returned by getRowThickness
+ * @returns the radius of the circle crossing the center of each seat in the row
+ */
+export function getRowArcRadius(rowIdx: number, rowThickness: number) {
+    return .5 + 2 * rowIdx * rowThickness;
+}
+
+/**
  * This indicates the maximal number of seats for each row for a given number of rows.
  * @param spanAngle if provided, it is the angle in degrees that the hemicycle, as an annulus arc, covers.
  * @returns an array of number of seats per row, from inner to outer.
@@ -26,19 +36,9 @@ export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE):
     const rad = getRowThickness(nRows);
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array.from({ length: nRows }, (_, r) => {
-        const rowArcRadius = .5 + 2 * r * rad;
+        const rowArcRadius = getRowArcRadius(r, rad);
         return Math.floor(radianSpanAngle * rowArcRadius / (2 * rad));
     });
-}
-
-/**
- * @param rowIdx the index of the row, starting from 0 from the inner out,
- * and counting the rows that may be empty due to the filling strategy
- * @param rowThickness as returned by getRowThickness
- * @returns the radius of the circle crossing the center of each seat in the row
- */
-export function getRowArcRadius(rowIdx: number, rowThickness: number) {
-    return .5 + 2 * rowIdx * rowThickness;
 }
 
 /**
