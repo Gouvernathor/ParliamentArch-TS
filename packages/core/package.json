@@ -13,6 +13,12 @@
         "default": "./dist/geometry.js"
       }
     },
+    "./majority-line": {
+      "import": {
+        "types": "./dist/majority-line.d.ts",
+        "default": "./dist/majority-line.js"
+      }
+    },
     "./utils": {
       "import": {
         "types": "./dist/utils.d.ts",
