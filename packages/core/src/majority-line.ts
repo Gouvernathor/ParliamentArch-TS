@@ -19,7 +19,6 @@ export interface GetMajorityLineCheckpointsOptions {
      * A value between 0 and 1
      * representing the share of the seats that will be on the left.
      * Defaults to .5.
-     * Not yet implemented.
      */
     ratio: number;
 }
