@@ -173,6 +173,8 @@ function addMajorityLine(
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
     path.setAttribute("stroke", "black");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-width", `${c.rowThickness/10 *ARCH_RADIUS}`);
 }
 
 type Point = readonly [number, number];
