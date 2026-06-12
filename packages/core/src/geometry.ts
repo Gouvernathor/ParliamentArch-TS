@@ -7,15 +7,20 @@ const DEFAULT_SPAN_ANGLE = 180;
  *
  * If you divide the half-disk of the hemicycle into one half-disk of half the radius and one half-annulus outside of it,
  * the innermost row lies on the border between the two, and the outermost row lies entirely inside the half-annulus.
- * So, looking at the line cutting the circle and the annulus in half (which is the bottom border of the diagram),
- * all rows minus one half of the innermost are on the left, same on the right,
- * and the radius of the void at the center is equal to that value again.
- * So, total = 4 * (nRows-.5) = 4 * nRows - 2.
- *
- * FIXME this actually returns the max seat RADIUS, not diameter, so HALF of the row thickness
+ * So, looking at a vertical line cutting the diagram in half,
+ * that line's length is 1,
+ * the innermost row crosses the line in its middle,
+ * and all the rows minus half of the innermost are higher than this middle point.
+ * So, 1 = (nRows - .5) *2 *rowThickness
+ * 1 = (2*nRows - 1) *rowThickness
+ * rowThickness = 1 / (2*nRows -1)
  */
 export function getRowThickness(nRows: number): number {
-    return 1 / (4 * nRows - 2);
+    return 1 / (2*nRows - 1);
+}
+
+export function getMaxSeatRadius(nRows: number): number {
+    return getRowThickness(nRows) / 2;
 }
 
 /**
@@ -25,7 +30,7 @@ export function getRowThickness(nRows: number): number {
  * @returns the radius of the circle crossing the center of each seat in the row
  */
 export function getRowArcRadius(rowIdx: number, rowThickness: number) {
-    return .5 + 2 * rowIdx * rowThickness;
+    return .5 + rowIdx * rowThickness;
 }
 
 /**
@@ -35,11 +40,11 @@ export function getRowArcRadius(rowIdx: number, rowThickness: number) {
  * The length of the array is nRows.
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
-    const rad = getRowThickness(nRows);
+    const thic = getRowThickness(nRows);
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array.from({ length: nRows }, (_, r) => {
-        const rowArcRadius = getRowArcRadius(r, rad);
-        return Math.floor(radianSpanAngle * rowArcRadius / (2 * rad));
+        const rowArcRadius = getRowArcRadius(r, thic);
+        return Math.floor(radianSpanAngle * rowArcRadius / thic);
     });
 }
 
@@ -109,6 +114,7 @@ export function getSeatCenters(
 ): Map<[number, number], SeatInfo> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
+    const maxSeatRadius = rowThicc/2;
     const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
 
     const maxedRows = getRowsFromNRows(nRows, spanAngle);
@@ -181,7 +187,7 @@ export function getSeatCenters(
             positions.set([1, rowArcRadius], { rowIdx, angle: Math.PI / 2 });
         } else {
             // the angle necessary in this row to put the first (and last) seats fully on the canvas
-            const angleMargin = Math.asin(rowThicc / rowArcRadius)
+            const angleMargin = Math.asin(maxSeatRadius / rowArcRadius)
                 // add the margin to make up the side angle
                 + spanAngleMargin;
             // alternatively, allow the centers of the seats by the side to reach the angle's limits

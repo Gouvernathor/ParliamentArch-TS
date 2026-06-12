@@ -1,4 +1,4 @@
-import { getNRowsFromNSeats, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry.js";
+import { getNRowsFromNSeats, getMaxSeatRadius, getSeatCenters, GetSeatCentersOptions } from "./geometry.js";
 import { getMajorityLineCheckpoints, GetMajorityLineCheckpointsOptions, MajorityLineCheckpoints } from "./majority-line.js";
 
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
@@ -98,7 +98,7 @@ export function precomputeFromAttribution<SeatDisplay>(
 
     const seatCenters = getSeatCenters(nSeats, options);
     const groupedSeatCenters = dispatchSeats(attribution, [...seatCenters.keys()].sort((a, b) => seatCenters.get(b)!.angle - seatCenters.get(a)!.angle));
-    const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats, options.spanAngle));
+    const seatActualRadius = seatRadiusFactor * getMaxSeatRadius(getNRowsFromNSeats(nSeats, options.spanAngle));
     const rv: PrecomputeReturn<SeatDisplay> = {
         groupedSeatCenters,
         seatActualRadius,
