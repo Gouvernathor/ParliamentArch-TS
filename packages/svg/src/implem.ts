@@ -171,6 +171,8 @@ function addMajorityLine(
     const d = getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness*1);
     const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
     path.setAttribute("d", d);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "black");
 }
 
 type Point = readonly [number, number];
