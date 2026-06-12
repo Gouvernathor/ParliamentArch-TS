@@ -1,4 +1,5 @@
 import { getNRowsFromNSeats, getRowThickness, getSeatCenters, GetSeatCentersOptions } from "./geometry.js";
+import { getMajorityLineCheckpoints, GetMajorityLineCheckpointsOptions, MajorityLineCheckpoints } from "./majority-line.js";
 
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
@@ -63,20 +64,25 @@ export function regroupSeatCenters<SeatDisplay, SeatLocation=SeatCenter>(
 
 export interface PrecomputeOptions extends GetSeatCentersOptions {
     seatRadiusFactor: number;
+    majorityLine: GetMajorityLineCheckpointsOptions;
 }
 export interface PrecomputeReturn<SeatDisplay> {
     groupedSeatCenters: Map<SeatDisplay, SeatCenter[]>,
     seatActualRadius: number,
+    majorityLineCheckpoints?: MajorityLineCheckpoints;
 }
 
 /**
  * Pre-computes some values that are useful in the extensions that generate actual diagrams.
  * The SeatDisplay type will depend on the extension.
  * @param options.seatRadiusFactor the ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
+ * @param options.majorityLine if included, the options for the majority line generator.
  * @param options the rest of the options are those passed through to the options parameter of the getSeatCenters function.
- * @returns an object with two properties:
+ * @returns an object with at least two properties:
  * the groupedSeatCenters key, a mapping of SeatDisplay objects to the list of the corresponding seats' coordinates,
- * and the seatActualRadius key, the actual radius of the seats (in the same unit as the coordinates)
+ * and the seatActualRadius key, the actual radius of the seats (in the same unit as the coordinates).
+ * The majorityLineCheckpoints key contains the results of the majority line calculations, if related options were passed,
+ * otherwise the key is not present.
  */
 export function precomputeFromAttribution<SeatDisplay>(
     attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[],
@@ -93,8 +99,14 @@ export function precomputeFromAttribution<SeatDisplay>(
     const seatCenters = getSeatCenters(nSeats, options);
     const groupedSeatCenters = dispatchSeats(attribution, [...seatCenters.keys()].sort((a, b) => seatCenters.get(b)!.angle - seatCenters.get(a)!.angle));
     const seatActualRadius = seatRadiusFactor * getRowThickness(getNRowsFromNSeats(nSeats, options.spanAngle));
-    return {
+    const rv: PrecomputeReturn<SeatDisplay> = {
         groupedSeatCenters,
         seatActualRadius,
     };
+
+    if (options.majorityLine != undefined) {
+        rv.majorityLineCheckpoints = getMajorityLineCheckpoints(seatCenters, options.majorityLine);
+    }
+
+    return rv;
 }
