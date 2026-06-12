@@ -68,10 +68,11 @@ export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
             rowThickness,
         };
     } else {
+        const ratioAngle = ratio * Math.PI/2;
         return {
-            startPoint: [1, .5 - maxSeatRadius], // FIXME incorrect
-            checkpoints: getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratio),
-            endPoint: [1, 1], // FIXME incorrect
+            startPoint: polarToCartesian(.5 - maxSeatRadius, ratioAngle),
+            checkpoints: getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratioAngle),
+            endPoint: polarToCartesian(1, ratioAngle),
             rowThickness,
         };
     }
@@ -140,10 +141,8 @@ function getCheckpoints(
     rowThicc: number,
     maxSeatRadius: number,
     isInRightPart: (value: Point) => boolean,
-    ratio: number,
+    ratioAngle: number,
 ): Point[] {
-    const ratioAngle = ratio * Math.PI/2;
-
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
         const row = seatsPerRow[rowIdx]!;
