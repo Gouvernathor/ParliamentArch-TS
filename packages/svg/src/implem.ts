@@ -1,4 +1,5 @@
 import "./document-loader.js";
+import { MajorityLineCheckpoints } from "@parliamentarch/core/majority-line";
 
 const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
 const convertToArray: <T>(i: Iterable<T>) => readonly T[] = i => isReadonlyArray(i) ?
@@ -47,6 +48,7 @@ export interface GetGroupedSVGOptions {
      * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
+    majorityLineCheckpoints: MajorityLineCheckpoints;
 }
 
 const ARCH_RADIUS = 175;
@@ -56,18 +58,25 @@ export function getGroupedSVG(
     seatActualRadius: number,
     {
         seatNumberFontSizeFactor = 1,
+        majorityLineCheckpoints,
     }: Partial<Readonly<GetGroupedSVGOptions>> = {},
 ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, "svg");
 
     populateHeader(svg);
+
     addGroupedSeats(svg,
         seatCentersByGroup,
         seatActualRadius,
     );
+
+    if (majorityLineCheckpoints) {
+        addMajorityLine(svg, majorityLineCheckpoints);
+    }
+
     if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
-// TODO fix : this must come before the addGroupedSeats call
+            // TODO fix : this must come before the addGroupedSeats call
             (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
         );
@@ -153,4 +162,27 @@ function addGroupG(
     }
 
     return groupG;
+}
+
+function addMajorityLine(
+    svg: SVGSVGElement,
+    c: MajorityLineCheckpoints,
+): void {
+    const d = getD(c.startPoint, c.checkpoints, c.endPoint, c.rowThickness*1);
+    const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
+    path.setAttribute("d", d);
+}
+
+type Point = readonly [number, number];
+
+function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point, yoffset: number): string {
+    // absolute cubic curve
+    /*
+    so, we need to start (M) from the startPoint
+    then do an S, so a sequence of control point then point
+    for each checkpoint, the control point is the same but offset vertically down by a factor times the rowThicc (or maxSeatRadius)
+    then one additional where both the control point and the point are the endPoint
+    */
+
+    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y-yoffset], [x, y]])} ${[endPoint, endPoint]}`;
 }
