@@ -168,12 +168,16 @@ function addMajorityLine(
     svg: SVGSVGElement,
     c: MajorityLineCheckpoints,
 ): void {
-    const d = getD(c.startPoint, c.checkpoints, c.endPoint, c.rowThickness*1);
+    const d = getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness*1);
     const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
     path.setAttribute("d", d);
 }
 
 type Point = readonly [number, number];
+
+function pointScaler([x, y]: Point): Point {
+    return [ARCH_RADIUS*x, ARCH_RADIUS * (1-y)];
+}
 
 function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point, yoffset: number): string {
     // absolute cubic curve
