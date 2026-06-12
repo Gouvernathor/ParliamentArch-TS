@@ -57,18 +57,18 @@ export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
 }: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {}): MajorityLineCheckpoints {
     const isInRightPart = getIsInRightPart(seatCenters, round, ratio);
     const seatsPerRow = getSeatsPerRow(seatCenters);
-    const rowThicc = getRowThickness(seatsPerRow.length);
-    const maxSeatRadius = rowThicc/2;
+    const rowThickness = getRowThickness(seatsPerRow.length);
+    const maxSeatRadius = rowThickness/2;
 
     const checkpoints = (ratio === .5) ?
-        getCheckpointsForHalf(seatsPerRow, rowThicc, maxSeatRadius, isInRightPart) :
-        getCheckpoints(seatCenters, seatsPerRow, rowThicc, maxSeatRadius, isInRightPart, ratio);
+        getCheckpointsForHalf(seatsPerRow, rowThickness, maxSeatRadius, isInRightPart) :
+        getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratio);
 
     return {
         startPoint: [1, .5 - maxSeatRadius],
         checkpoints,
         endPoint: [1, 1],
-        rowThickness: rowThicc,
+        rowThickness,
     };
 }
 
