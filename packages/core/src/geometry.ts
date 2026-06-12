@@ -11,6 +11,8 @@ const DEFAULT_SPAN_ANGLE = 180;
  * all rows minus one half of the innermost are on the left, same on the right,
  * and the radius of the void at the center is equal to that value again.
  * So, total = 4 * (nRows-.5) = 4 * nRows - 2.
+ *
+ * FIXME this actually returns the max seat RADIUS, not diameter, so HALF of the row thickness
  */
 export function getRowThickness(nRows: number): number {
     return 1 / (4 * nRows - 2);
