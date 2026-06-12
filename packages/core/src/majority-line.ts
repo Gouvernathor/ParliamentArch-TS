@@ -1,4 +1,4 @@
-import { getRowArcRadius, getRowThickness, SeatInfo } from "./geometry";
+import { getRowArcRadius, getRowThickness, SeatInfo } from "./geometry.js";
 
 const sign = Math.sign as (n: number) => -1|0|1;
 
