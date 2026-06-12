@@ -67,6 +67,7 @@ export function getGroupedSVG(
     );
     if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
+// TODO fix : this must come before the addGroupedSeats call
             (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
         );
