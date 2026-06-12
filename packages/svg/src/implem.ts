@@ -61,16 +61,16 @@ export function getGroupedSVG(
     const svg = document.createElementNS(SVG_NS, "svg");
 
     populateHeader(svg);
+    addGroupedSeats(svg,
+        seatCentersByGroup,
+        seatActualRadius,
+    );
     if (seatNumberFontSizeFactor > 0) {
         addNumberOfSeats(svg,
             (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
         );
     }
-    addGroupedSeats(svg,
-        seatCentersByGroup,
-        seatActualRadius,
-    );
     return svg;
 }
 
