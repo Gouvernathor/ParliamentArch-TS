@@ -168,7 +168,7 @@ function addMajorityLine(
     svg: SVGSVGElement,
     c: MajorityLineCheckpoints,
 ): void {
-    const d = getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness*1);
+    const d = getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness*ARCH_RADIUS*1);
     const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
@@ -190,5 +190,5 @@ function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point,
     then one additional where both the control point and the point are the endPoint
     */
 
-    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y-yoffset], [x, y]])} ${[endPoint, endPoint]}`;
+    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y+yoffset], [x, y]])} ${[endPoint, endPoint]}`;
 }
