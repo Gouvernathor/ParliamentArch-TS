@@ -100,7 +100,7 @@ function getCheckpointsForHalf(
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
         const rowSide = getRowSideForHalf(row, isInRightPart);
 
-        checkpoints.push([1 + rowSide*maxSeatRadius, 1-rowArcRadius]);
+        checkpoints.push([1 + rowSide*maxSeatRadius, rowArcRadius]);
     }
     return checkpoints;
 }
