@@ -60,16 +60,21 @@ export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
     const rowThickness = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThickness/2;
 
-    const checkpoints = (ratio === .5) ?
-        getCheckpointsForHalf(seatsPerRow, rowThickness, maxSeatRadius, isInRightPart) :
-        getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratio);
-
-    return {
-        startPoint: [1, .5 - maxSeatRadius],
-        checkpoints,
-        endPoint: [1, 1],
-        rowThickness,
-    };
+    if (ratio === .5) {
+        return {
+            startPoint: [1, .5 - maxSeatRadius],
+            checkpoints: getCheckpointsForHalf(seatsPerRow, rowThickness, maxSeatRadius, isInRightPart),
+            endPoint: [1, 1],
+            rowThickness,
+        };
+    } else {
+        return {
+            startPoint: [1, .5 - maxSeatRadius], // FIXME incorrect
+            checkpoints: getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratio),
+            endPoint: [1, 1], // FIXME incorrect
+            rowThickness,
+        };
+    }
 }
 
 function getIsInRightPart(seatCenters: SeatCenters, round: Rounder, ratio: number) {
