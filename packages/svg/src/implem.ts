@@ -181,7 +181,7 @@ function pointScaler([x, y]: Point): Point {
     return [ARCH_RADIUS*x, ARCH_RADIUS * (1-y)];
 }
 
-function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point, yoffset: number): string {
+function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point, cpYOffset: number): string {
     // absolute cubic curve
     /*
     so, we need to start (M) from the startPoint
@@ -190,5 +190,5 @@ function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point,
     then one additional where both the control point and the point are the endPoint
     */
 
-    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y+yoffset], [x, y]])} ${[endPoint, endPoint]}`;
+    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y+cpYOffset], [x, y]])} ${[endPoint, endPoint]}`;
 }
