@@ -192,7 +192,18 @@ function addMajorityLine(
     path.setAttribute("stroke", c.color ?? "black");
     path.setAttribute("stroke-linecap", "round");
     path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
-    // data id class
+
+    if (c.id) {
+        path.setAttribute("id", c.id);
+    }
+    if (c.class) {
+        path.classList = isReadonlyArray(c.class) ?
+            c.class.join(" ") :
+            c.class;
+    }
+    if (c.data) {
+        path.appendChild(document.createElementNS(SVG_NS, "title")).textContent = c.data;
+    }
 }
 
 type Point = readonly [number, number];
