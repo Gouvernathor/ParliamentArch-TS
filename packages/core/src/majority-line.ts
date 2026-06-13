@@ -172,7 +172,7 @@ function getCheckpoints(
             }
         }
 
-        if (squareDistanceCartesian(straightLinePoint, seat) <= maxSeatRadius**2) {
+        if (squareDistanceCartesian(straightLinePoint, seat) >= maxSeatRadius**2) {
             checkpoints.push(straightLinePoint);
             continue;
         }
