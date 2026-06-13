@@ -84,7 +84,16 @@ export interface GetSeatCentersOptions {
     spanAngle: number;
 }
 export interface SeatInfo {
+    /**
+     * The angle in radian, from 0 to 2π,
+     * trigonometrically positive (the rightmost seats have the smallest angle).
+     */
     angle: number;
+
+    /**
+     * This is 0-indexed, starting from the innermost row,
+     * even if that row is completely empty due to the filling strategy or any other option.
+     */
     rowIdx: number;
 }
 
@@ -102,7 +111,9 @@ export interface SeatInfo {
  * through the center, to the side of the leftmost seats.
  * It takes a value in degrees and defaults to 180 to make a true hemicycle.
  * Values above 180 are not supported.
- * @returns a map whose keys are the seat centers as [x, y] coordinates, with the angle of the seat as values.
+ * @returns a map whose keys are the seat centers as [x, y] coordinates.
+ * The values of the map contain pre-computed metadata about the seats, useful to sort or categorize them.
+ * The returned order of the seats is unspecified.
  */
 export function getSeatCenters(
     nSeats: number,
