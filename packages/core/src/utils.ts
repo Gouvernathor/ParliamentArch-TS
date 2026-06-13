@@ -3,6 +3,7 @@ import { getMajorityLineCheckpoints, GetMajorityLineCheckpointsOptions, Majority
 
 type WithNumber<T> = T & { readonly nSeats?: number|undefined };
 
+const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
 const isReadonlyMap: (v: any) => v is ReadonlyMap<any, any> = v => v instanceof Map;
 
 /**
@@ -64,12 +65,12 @@ export function regroupSeatCenters<SeatDisplay, SeatLocation=SeatCenter>(
 
 export interface PrecomputeOptions extends GetSeatCentersOptions {
     seatRadiusFactor: number;
-    majorityLine: GetMajorityLineCheckpointsOptions;
+    majorityLine: GetMajorityLineCheckpointsOptions|readonly GetMajorityLineCheckpointsOptions[];
 }
 export interface PrecomputeReturn<SeatDisplay> {
     groupedSeatCenters: Map<SeatDisplay, SeatCenter[]>,
     seatActualRadius: number,
-    majorityLineCheckpoints?: MajorityLineCheckpoints;
+    majorityLineCheckpoints?: MajorityLineCheckpoints[];
 }
 
 /**
@@ -104,8 +105,12 @@ export function precomputeFromAttribution<SeatDisplay>(
         seatActualRadius,
     };
 
-    if (options.majorityLine != undefined) {
-        rv.majorityLineCheckpoints = getMajorityLineCheckpoints(seatCenters, options.majorityLine);
+    let majorityLine = options.majorityLine;
+    if (majorityLine != undefined) {
+        if (!isReadonlyArray(majorityLine)) {
+            majorityLine = [ majorityLine ];
+        }
+        rv.majorityLineCheckpoints = majorityLine.map(o => getMajorityLineCheckpoints(seatCenters, o));
     }
 
     return rv;

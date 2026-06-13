@@ -48,7 +48,7 @@ export interface GetGroupedSVGOptions {
      * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
-    majorityLineCheckpoints: MajorityLineCheckpoints;
+    majorityLineCheckpoints: readonly MajorityLineCheckpoints[];
 }
 
 const ARCH_RADIUS = 175;
@@ -79,7 +79,9 @@ export function getGroupedSVG(
     );
 
     if (majorityLineCheckpoints) {
-        addMajorityLine(svg, majorityLineCheckpoints);
+        for (const c of majorityLineCheckpoints) {
+            addMajorityLine(svg, c);
+        }
     }
 
     if (numberOfSeats) {
