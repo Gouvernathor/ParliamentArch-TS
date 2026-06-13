@@ -68,7 +68,7 @@ export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
             rowThickness,
         };
     } else {
-        const ratioAngle = ratio * Math.PI/2;
+        const ratioAngle = (1 - ratio) * Math.PI;
         return {
             startPoint: polarToCartesian(.5 - maxSeatRadius, ratioAngle),
             checkpoints: getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratioAngle),
