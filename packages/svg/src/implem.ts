@@ -47,6 +47,7 @@ export interface MajorityLineDisplayData {
     readonly data?: string;
     readonly color?: string;
     readonly width?: number;
+    readonly dasharray?: number[];
 }
 
 export interface MajorityLineData extends MajorityLineDisplayData, MajorityLineCheckpoints {}
@@ -192,6 +193,9 @@ function addMajorityLine(
     path.setAttribute("stroke", c.color ?? "black");
     path.setAttribute("stroke-linecap", "round");
     path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
+    if (c.dasharray) {
+        path.setAttribute("stroke-dasharray", c.dasharray.toString());
+    }
 
     if (c.id) {
         path.setAttribute("id", c.id);
