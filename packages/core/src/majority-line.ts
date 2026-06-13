@@ -193,6 +193,8 @@ function getBoundarySeats(
 ): [Point|null, Point|null] {
     let lastSeatRightSide = null,
         firstSeatLeftSide = null;
+    // relies on getSeatCenters returning them by increasing angle, and getSeatsPerRow being stable
+    // could also just do a sort before the for loop
     for (const seat of row) {
         if (isInRightPart(seat)) {
             lastSeatRightSide = seat;
