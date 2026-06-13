@@ -177,7 +177,7 @@ function getCheckpoints(
             continue;
         }
 
-        const sidgn = isInRightPart(seat) ? -1 : 1;
+        const sidgn = isInRightPart(seat) ? 1 : -1;
         // (2)
         const seatAngle = getPolarAngle(seat);
         const angleIncrement = 2*Math.atan(maxSeatRadius/2 / rowArcRadius);
