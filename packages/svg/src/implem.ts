@@ -194,7 +194,7 @@ function addMajorityLine(
     path.setAttribute("stroke-linecap", "round");
     path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
     if (c.dasharray) {
-        path.setAttribute("stroke-dasharray", c.dasharray.toString());
+        path.setAttribute("stroke-dasharray", c.dasharray.map(v => v/100 *ARCH_RADIUS).toString());
     }
 
     if (c.id) {
