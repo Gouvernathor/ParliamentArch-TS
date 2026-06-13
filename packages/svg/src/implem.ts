@@ -41,6 +41,16 @@ export interface StandaloneSeatData {
 
 export type SeatData = ClassSeatData | StandaloneSeatData;
 
+export interface MajorityLineDisplayData {
+    readonly class?: string|readonly string[];
+    readonly id?: string;
+    readonly data?: string;
+    readonly color?: string;
+    readonly width?: number;
+}
+
+export interface MajorityLineData extends MajorityLineDisplayData, MajorityLineCheckpoints {}
+
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 export interface GetGroupedSVGOptions {
@@ -48,7 +58,7 @@ export interface GetGroupedSVGOptions {
      * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
-    majorityLineCheckpoints: readonly MajorityLineCheckpoints[];
+    majorityLineCheckpoints: readonly MajorityLineData[];
 }
 
 const ARCH_RADIUS = 175;
@@ -172,16 +182,17 @@ function addGroupG(
 
 function addMajorityLine(
     svg: SVGSVGElement,
-    c: MajorityLineCheckpoints,
+    c: MajorityLineData,
 ): void {
     const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
 
     path.setAttribute("d", getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness * ARCH_RADIUS * .5));
 
     path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "black");
+    path.setAttribute("stroke", c.color ?? "black");
     path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-width", `${c.rowThickness/10 *ARCH_RADIUS}`);
+    path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
+    // data id class
 }
 
 type Point = readonly [number, number];
