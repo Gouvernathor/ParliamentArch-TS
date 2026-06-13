@@ -63,6 +63,14 @@ export function getGroupedSVG(
 ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, "svg");
 
+    const numberOfSeats = seatNumberFontSizeFactor > 0 ?
+        getNumberOfSeats(
+            // needs to happen before the call to getGroupedSeats
+            (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
+            seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
+        ) :
+        null;
+
     populateHeader(svg);
 
     addGroupedSeats(svg,
@@ -74,12 +82,8 @@ export function getGroupedSVG(
         addMajorityLine(svg, majorityLineCheckpoints);
     }
 
-    if (seatNumberFontSizeFactor > 0) {
-        addNumberOfSeats(svg,
-            // TODO fix : this must come before the addGroupedSeats call
-            (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
-            seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
-        );
+    if (numberOfSeats) {
+        svg.appendChild(numberOfSeats);
     }
     return svg;
 }
@@ -96,16 +100,16 @@ function populateHeader(
 
 const SEATS_Y = `${170/175 * 100}%`;
 
-function addNumberOfSeats(
-    svg: SVGSVGElement,
+function getNumberOfSeats(
     nSeats: number,
     fontSize: number,
-): void {
-    const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
+): SVGElement {
+    const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("x", "50%");
     text.setAttribute("y", SEATS_Y);
     text.setAttribute("style", `font-size: ${fontSize/16}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
+    return text;
 }
 
 function addGroupedSeats(
