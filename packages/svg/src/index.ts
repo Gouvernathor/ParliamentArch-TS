@@ -1,5 +1,6 @@
+import { GetMajorityLineCheckpointsOptions } from "@parliamentarch/core/majority-line";
 import { precomputeFromAttribution, PrecomputeOptions } from "@parliamentarch/core/utils";
-import { getGroupedSVG, GetGroupedSVGOptions, SeatData } from "./implem.js";
+import { getGroupedSVG, GetGroupedSVGOptions, MajorityLineDisplayData, SeatData } from "./implem.js";
 
 export {
     ClassSeatData,
@@ -10,6 +11,7 @@ export {
 } from "./implem.js";
 
 export interface GetSVGFromAttributionOptions extends PrecomputeOptions, GetGroupedSVGOptions {
+    majorityLine: readonly Partial<Readonly<MajorityLineDisplayData&GetMajorityLineCheckpointsOptions>>[];
 }
 
 export function getSVGFromAttribution(
@@ -18,7 +20,8 @@ export function getSVGFromAttribution(
 ): SVGSVGElement {
     const { groupedSeatCenters, seatActualRadius, majorityLineCheckpoints } = precomputeFromAttribution(attribution, options);
     if (majorityLineCheckpoints) {
-        options = { ...options, majorityLineCheckpoints };
+        const mlOptions = options!.majorityLine!;
+        options = { ...options, majorityLineCheckpoints: majorityLineCheckpoints.map((c, i) => ({ ...mlOptions[i], ...c })) };
     }
     return getGroupedSVG(groupedSeatCenters, seatActualRadius, options);
 }
