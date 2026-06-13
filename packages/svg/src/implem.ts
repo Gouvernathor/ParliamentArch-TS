@@ -188,9 +188,22 @@ function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point,
     /*
     so, we need to start (M) from the startPoint
     then do an S, so a sequence of control point then point
-    for each checkpoint, the control point is the same but offset vertically down by a factor times the rowThicc (or maxSeatRadius)
+    for each checkpoint, the control point is the same but offset by a factor times the rowThicc (or maxSeatRadius)
     then one additional where both the control point and the point are the endPoint
     */
 
-    return `M ${startPoint} S ${checkpoints.map(([x, y]) => [[x, y+cpOffset], [x, y]])} ${[endPoint, endPoint]}`;
+    return `M ${startPoint} S ${checkpoints.map(point => [offsetToCenter(point, cpOffset), point])} ${[endPoint, endPoint]}`;
+}
+
+const CENTER = pointScaler([1, 0]);
+function offsetToCenter(point: Point, distance: number): Point {
+    // base point + normalize(vector from base point to center)*distance
+    const [x, y] = point;
+    const [offsetX, offsetY] = normalize([CENTER[0]-x, CENTER[1]-y], distance);
+    return [x+offsetX, y+offsetY];
+}
+
+function normalize([x, y]: Point, newNorm = 1): Point {
+    const norm = Math.sqrt(x**2 + y**2);
+    return [x/norm * newNorm, y/norm * newNorm];
 }
