@@ -11,7 +11,7 @@ export {
 } from "./implem.js";
 
 export interface GetSVGFromAttributionOptions extends PrecomputeOptions, GetGroupedSVGOptions {
-    majorityLine: readonly Partial<Readonly<MajorityLineDisplayData&GetMajorityLineCheckpointsOptions>>[];
+    majorityLines: readonly Partial<Readonly<MajorityLineDisplayData&GetMajorityLineCheckpointsOptions>>[];
 }
 
 export function getSVGFromAttribution(
@@ -19,8 +19,8 @@ export function getSVGFromAttribution(
     options?: Partial<Readonly<GetSVGFromAttributionOptions>>,
 ): SVGSVGElement {
     const { groupedSeatCenters, seatActualRadius, majorityLineCheckpoints } = precomputeFromAttribution(attribution, options);
-    if (majorityLineCheckpoints) {
-        const mlOptions = options!.majorityLine!;
+    if (majorityLineCheckpoints.length) {
+        const mlOptions = options!.majorityLines!;
         options = { ...options, majorityLineCheckpoints: majorityLineCheckpoints.map((c, i) => ({ ...mlOptions[i], ...c })) };
     }
     return getGroupedSVG(groupedSeatCenters, seatActualRadius, options);
