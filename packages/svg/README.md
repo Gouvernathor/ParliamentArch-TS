@@ -62,6 +62,13 @@ So, the `SeatData` type is an alternative (a union) between these two modes of o
 
 Extends SeatData with an optional `nSeats?: number` property, which defaults to 1, allowing you not to use Map objects.
 
+`MajorityLineDisplayData`
+
+Contains parameters to represent majority lines. It contains the following properties:
+- `class?: string | readonly string[]`, `id?: string`, `data?: string` and `color?: string` are the same as taken by the seats (the color defaults to black).
+- `width?: number`: the width of the line/curve, which will be multiplied by a tenth the row thickness. Defaults to 1.
+- `dasharray?: number[]`: see the [`stroke-dasharray`](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/stroke-dasharray) CSS property. In this context, 1 represents 1% of the height of the diagram.
+
 `getGroupedSVG(seatCentersByGroup, seatActualRadius, options?): SVGSVGElement`
 
 This function creates an SVG element containing the diagram. The parameters are as follows:
@@ -69,6 +76,7 @@ This function creates an SVG element containing the diagram. The parameters are 
 - `seatCentersByGroup: ReadonlyMap<SeatData, readonly (readonly [number, number])[]> | readonly [SeatData, readonly (readonly [number, number])[]]`: A mapping from the SeatData object of a group of seats to a list of the seat center coordinate pairs, but it can also be passed as an iterable of what wuold be its key-value pairs (the value being itself a pair of coordinates). The order of the seat centers is meaningless.
 - `seatActualRadius: number`: The actual radius of the seat circles, in the same unit as the coordinates which is a fraction of `canvasSize` (see below).
 - `options.seatNumberFontSizeFactor: number`: A factor you can tweak to change the font size of the number of seats. The default value is 1. In the resulting diagram, the font size will be expressed in `rem`, meaning that it will scale with user parameters. Setting this to 0 will prevent the number of seats from being included in the SVG.
+- `options.majorityLineCheckpoints`: an array of option objects, one for each majority line, containing the properties of the `core/majority-line/getMajorityLineCheckpoints` return objects as well as (optionally) the `MajorityLineDisplayData` fields.
 
 `getSVGFromAttribution(attribution, options?): SVGSVGElement`
 
@@ -76,6 +84,7 @@ This function creates the diagram as an SVG element directly from an attribution
 
 - `attribution: ReadonlyMap<SeatData, number> | readonly SeatDataWithNumber[]`: a mapping from a SeatData object to a number of seats in the diagram. Alternatively, an array of SeatDataWithNumber objects. Typically, each SeatData or SeatDataWithNumber object represents a group or party. The ordering of the elements matters, and the groups as provided will be drawn from left to right in the diagram.
 - `options.seatRadiusFactor: number`: the optional ratio (between 0 and 1) of the seat radius over the row thickness. Defaults to .8.
+- `options.majorityLines`: an array of option objects for generating majority lines. Each object supports the same values as the related precompute option objects, as well as the `MajorityLineDisplayData` fields.
 - `options`: the rest of the options are those taken by the `precomputeFromAttribution` function from the `core/utils` module, and by the `getGroupedSVG` function.
 
 ## Adding a margin
