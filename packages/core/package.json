@@ -1,6 +1,6 @@
 {
   "name": "@parliamentarch/core",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "Tools to generate arch-styled parliamentary diagrams",
   "type": "module",
 
