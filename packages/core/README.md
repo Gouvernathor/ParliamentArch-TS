@@ -80,7 +80,7 @@ The values are objects (type aliased as `SeatInfo`). They contain:
 - `angle: number`: the angle, in radians, calculated from the right-outermost point of the annulus arc, through the center of the annulus, to the center of the seat
 - `rowIdx: number`: the index of the row, starting from 0 for the innermost row, and counting rows that contain no seats (for instance due to the filling strategy)
 
-Sorting the keys by decreasing angle value returns the seats arranged from left to right. The order of the entries in the Map is meaningless.
+Sorting the keys by decreasing angle value returns the seats arranged from left to right. The order of the entries in the Map is undocumented, however the function may be considered pure in that for a given version of the library, and a given set of parameters, the seats will be returned in the same order.
 
 ## Majority-line module contents
 
