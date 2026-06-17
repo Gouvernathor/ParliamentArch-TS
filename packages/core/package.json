@@ -1,6 +1,6 @@
 {
   "name": "@parliamentarch/core",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "Tools to generate arch-styled parliamentary diagrams",
   "type": "module",
 
@@ -11,6 +11,12 @@
       "import": {
         "types": "./dist/geometry.d.ts",
         "default": "./dist/geometry.js"
+      }
+    },
+    "./majority-line": {
+      "import": {
+        "types": "./dist/majority-line.d.ts",
+        "default": "./dist/majority-line.js"
       }
     },
     "./utils": {

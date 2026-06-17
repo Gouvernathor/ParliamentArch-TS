@@ -1,4 +1,5 @@
 import "./document-loader.js";
+import { MajorityLineCheckpoints } from "@parliamentarch/core/majority-line";
 
 const isReadonlyArray: (arg: any) => arg is readonly any[] = Array.isArray;
 const convertToArray: <T>(i: Iterable<T>) => readonly T[] = i => isReadonlyArray(i) ?
@@ -40,6 +41,17 @@ export interface StandaloneSeatData {
 
 export type SeatData = ClassSeatData | StandaloneSeatData;
 
+export interface MajorityLineDisplayData {
+    readonly class?: string|readonly string[];
+    readonly id?: string;
+    readonly data?: string;
+    readonly color?: string;
+    readonly width?: number;
+    readonly dasharray?: number[];
+}
+
+export interface MajorityLineData extends MajorityLineDisplayData, MajorityLineCheckpoints {}
+
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 export interface GetGroupedSVGOptions {
@@ -47,6 +59,7 @@ export interface GetGroupedSVGOptions {
      * The seat number will only be displayed for values superior to 0.
      */
     seatNumberFontSizeFactor: number;
+    majorityLineCheckpoints: readonly MajorityLineData[];
 }
 
 const ARCH_RADIUS = 175;
@@ -56,21 +69,35 @@ export function getGroupedSVG(
     seatActualRadius: number,
     {
         seatNumberFontSizeFactor = 1,
+        majorityLineCheckpoints,
     }: Partial<Readonly<GetGroupedSVGOptions>> = {},
 ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, "svg");
 
-    populateHeader(svg);
-    if (seatNumberFontSizeFactor > 0) {
-        addNumberOfSeats(svg,
+    const numberOfSeats = seatNumberFontSizeFactor > 0 ?
+        getNumberOfSeats(
+            // needs to happen before the call to getGroupedSeats
             (seatCentersByGroup = convertToArray(seatCentersByGroup)).reduce((a, b) => a + b[1].length, 0),
             seatNumberFontSizeFactor * 36 * ARCH_RADIUS / 175,
-        );
-    }
+        ) :
+        null;
+
+    populateHeader(svg);
+
     addGroupedSeats(svg,
         seatCentersByGroup,
         seatActualRadius,
     );
+
+    if (majorityLineCheckpoints) {
+        for (const c of majorityLineCheckpoints) {
+            addMajorityLine(svg, c);
+        }
+    }
+
+    if (numberOfSeats) {
+        svg.appendChild(numberOfSeats);
+    }
     return svg;
 }
 
@@ -86,16 +113,16 @@ function populateHeader(
 
 const SEATS_Y = `${170/175 * 100}%`;
 
-function addNumberOfSeats(
-    svg: SVGSVGElement,
+function getNumberOfSeats(
     nSeats: number,
     fontSize: number,
-): void {
-    const text = svg.appendChild(document.createElementNS(SVG_NS, "text"));
+): SVGElement {
+    const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("x", "50%");
     text.setAttribute("y", SEATS_Y);
     text.setAttribute("style", `font-size: ${fontSize/16}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
+    return text;
 }
 
 function addGroupedSeats(
@@ -152,4 +179,64 @@ function addGroupG(
     }
 
     return groupG;
+}
+
+function addMajorityLine(
+    svg: SVGSVGElement,
+    c: MajorityLineData,
+): void {
+    const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
+
+    path.setAttribute("d", getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness * ARCH_RADIUS * .5));
+
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", c.color ?? "black");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
+    if (c.dasharray) {
+        path.setAttribute("stroke-dasharray", c.dasharray.map(v => v/100 *ARCH_RADIUS).toString());
+    }
+
+    if (c.id) {
+        path.setAttribute("id", c.id);
+    }
+    if (c.class) {
+        path.classList = isReadonlyArray(c.class) ?
+            c.class.join(" ") :
+            c.class;
+    }
+    if (c.data) {
+        path.appendChild(document.createElementNS(SVG_NS, "title")).textContent = c.data;
+    }
+}
+
+type Point = readonly [number, number];
+
+function pointScaler([x, y]: Point): Point {
+    return [ARCH_RADIUS*x, ARCH_RADIUS * (1-y)];
+}
+
+function getD(startPoint: Point, checkpoints: readonly Point[], endPoint: Point, cpOffset: number): string {
+    // absolute cubic curve
+    /*
+    so, we need to start (M) from the startPoint
+    then do an S, so a sequence of control point then point
+    for each checkpoint, the control point is the same but offset by a factor times the rowThicc (or maxSeatRadius)
+    then one additional where both the control point and the point are the endPoint
+    */
+
+    return `M ${startPoint} S ${checkpoints.map(point => [offsetToCenter(point, cpOffset), point])} ${[endPoint, endPoint]}`;
+}
+
+const CENTER = pointScaler([1, 0]);
+function offsetToCenter(point: Point, distance: number): Point {
+    // base point + normalize(vector from base point to center)*distance
+    const [x, y] = point;
+    const [offsetX, offsetY] = normalize([CENTER[0]-x, CENTER[1]-y], distance);
+    return [x+offsetX, y+offsetY];
+}
+
+function normalize([x, y]: Point, newNorm = 1): Point {
+    const norm = Math.sqrt(x**2 + y**2);
+    return [x/norm * newNorm, y/norm * newNorm];
 }

@@ -7,13 +7,30 @@ const DEFAULT_SPAN_ANGLE = 180;
  *
  * If you divide the half-disk of the hemicycle into one half-disk of half the radius and one half-annulus outside of it,
  * the innermost row lies on the border between the two, and the outermost row lies entirely inside the half-annulus.
- * So, looking at the line cutting the circle and the annulus in half (which is the bottom border of the diagram),
- * all rows minus one half of the innermost are on the left, same on the right,
- * and the radius of the void at the center is equal to that value again.
- * So, total = 4 * (nRows-.5) = 4 * nRows - 2.
+ * So, looking at a vertical line cutting the diagram in half,
+ * that line's length is 1,
+ * the innermost row crosses the line in its middle,
+ * and all the rows minus half of the innermost are higher than this middle point.
+ * So, 1 = (nRows - .5) *2 *rowThickness
+ * 1 = (2*nRows - 1) *rowThickness
+ * rowThickness = 1 / (2*nRows -1)
  */
 export function getRowThickness(nRows: number): number {
-    return 1 / (4 * nRows - 2);
+    return 1 / (2*nRows - 1);
+}
+
+export function getMaxSeatRadius(nRows: number): number {
+    return getRowThickness(nRows) / 2;
+}
+
+/**
+ * @param rowIdx the index of the row, starting from 0 from the inner out,
+ * and counting the rows that may be empty due to the filling strategy
+ * @param rowThickness as returned by getRowThickness
+ * @returns the radius of the circle crossing the center of each seat in the row
+ */
+export function getRowArcRadius(rowIdx: number, rowThickness: number) {
+    return .5 + rowIdx * rowThickness;
 }
 
 /**
@@ -23,11 +40,11 @@ export function getRowThickness(nRows: number): number {
  * The length of the array is nRows.
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
-    const rad = getRowThickness(nRows);
+    const thic = getRowThickness(nRows);
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array.from({ length: nRows }, (_, r) => {
-        const rowArcRadius = .5 + 2 * r * rad;
-        return Math.floor(radianSpanAngle * rowArcRadius / (2 * rad));
+        const rowArcRadius = getRowArcRadius(r, thic);
+        return Math.floor(radianSpanAngle * rowArcRadius / thic);
     });
 }
 
@@ -66,6 +83,19 @@ export interface GetSeatCentersOptions {
     fillingStrategy: FillingStrategy;
     spanAngle: number;
 }
+export interface SeatInfo {
+    /**
+     * The angle in radian, from 0 to 2π,
+     * trigonometrically positive (the rightmost seats have the smallest angle).
+     */
+    angle: number;
+
+    /**
+     * This is 0-indexed, starting from the innermost row,
+     * even if that row is completely empty due to the filling strategy or any other option.
+     */
+    rowIdx: number;
+}
 
 /**
  * Computes the coordinates of the centers of the seats, with (as a bonus) the angle of each seat in the hemicycle.
@@ -81,7 +111,9 @@ export interface GetSeatCentersOptions {
  * through the center, to the side of the leftmost seats.
  * It takes a value in degrees and defaults to 180 to make a true hemicycle.
  * Values above 180 are not supported.
- * @returns a map whose keys are the seat centers as [x, y] coordinates, with the angle of the seat as values.
+ * @returns a map whose keys are the seat centers as [x, y] coordinates.
+ * The values of the map contain pre-computed metadata about the seats, useful to sort or categorize them.
+ * The returned order of the seats is unspecified.
  */
 export function getSeatCenters(
     nSeats: number,
@@ -89,10 +121,11 @@ export function getSeatCenters(
         minNRows = 0,
         fillingStrategy = FillingStrategy.DEFAULT,
         spanAngle = DEFAULT_SPAN_ANGLE,
-    }: Partial<GetSeatCentersOptions> = {},
-): Map<[number, number], number> {
+    }: Partial<Readonly<GetSeatCentersOptions>> = {},
+): Map<[number, number], SeatInfo> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
     const rowThicc = getRowThickness(nRows);
+    const maxSeatRadius = rowThicc/2;
     const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
 
     const maxedRows = getRowsFromNRows(nRows, spanAngle);
@@ -140,33 +173,32 @@ export function getSeatCenters(
             throw new Error(`Invalid filling strategy: ${fillingStrategy}`);
     }
 
-    const positions = new Map<[number, number], number>();
-    for (let r = startingRow; r < nRows; r++) {
+    const positions = new Map<[number, number], SeatInfo>();
+    for (let rowIdx = startingRow; rowIdx < nRows; rowIdx++) {
         let nSeatsThisRow: number;
-        if (r === nRows - 1) { // if it's the last, outermost row
+        if (rowIdx === nRows - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - positions.size;
         } else if (fillingStrategy === FillingStrategy.OUTER_PRIORITY) {
-            if (r === startingRow) {
+            if (rowIdx === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
             } else {
-                nSeatsThisRow = maxedRows[r]!;
+                nSeatsThisRow = maxedRows[rowIdx]!;
             }
         } else {
             // fullness of the diagram times the maximal number of seats in this row
-            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[r]!);
+            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[rowIdx]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
             // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }
 
-        // row radius : the radius of the circle crossing the center of each seat in the row
-        const rowArcRadius = .5 + 2 * r * rowThicc;
+        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
 
         if (nSeatsThisRow === 1) {
-            positions.set([1, rowArcRadius], Math.PI / 2);
+            positions.set([1, rowArcRadius], { rowIdx, angle: Math.PI / 2 });
         } else {
             // the angle necessary in this row to put the first (and last) seats fully on the canvas
-            const angleMargin = Math.asin(rowThicc / rowArcRadius)
+            const angleMargin = Math.asin(maxSeatRadius / rowArcRadius)
                 // add the margin to make up the side angle
                 + spanAngleMargin;
             // alternatively, allow the centers of the seats by the side to reach the angle's limits
@@ -180,7 +212,7 @@ export function getSeatCenters(
             for (let s = 0; s < nSeatsThisRow; s++) {
                 const angle = angleMargin + s * angleStep;
                 // an oriented angle, so it goes trig positive (counterclockwise)
-                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], angle);
+                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], { rowIdx, angle });
             }
         }
     }

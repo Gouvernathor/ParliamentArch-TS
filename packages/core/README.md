@@ -5,7 +5,7 @@ Tools to generate arch-styled parliamentary diagrams.
 ![Example diagram](https://codeberg.org/Gouvernathor/ParliamentArch-TS/raw/sample.svg)
 <!-- absolute link for NPM support -->
 
-This package handles two things: majorly (in the `geometry` submodule), the geometry of how the seats are arranged in space, and as an aside (in the `utils` submodule), some util functions shared by the other modules taking over from there.
+This package handles two things: majorly (in the `geometry` submodule), the geometry of how the seats are arranged in space, some additional functions to generate majority lines serpenting between the seats (in the `majority-line` submodule), and as an aside (in the `utils` submodule), some util functions shared by the other modules taking over from there and regrouping the other submodules.
 
 Those won't be enough to generate SVG files or nodes by themselves. In fact, there is nothing specific to SVG in this package, and a wholly different display system could be used to generate a diagram from what this package provides.
 
@@ -54,6 +54,10 @@ Returns a list of each row's maximum seat capacity, starting from inner to outer
 
 Returns the row thickness, i.e the difference between the radii of two consecutive rows, for a given number of rows.
 
+`getMaxSeatRadius(nRows: number): number`
+
+Returns the maximum radius seats can have before risking to touch their neighbors. Equal to half of the row thickness.
+
 `FillingStrategy`
 
 A string enum of the implemented strategies to fill the seats among the rows:
@@ -62,7 +66,7 @@ A string enum of the implemented strategies to fill the seats among the rows:
 - `EMPTY_INNER`: This selects as few outermost rows as necessary to hold the given seats, then distributes the seats proportionally among them. Depending on the number of seats and rows, this either leaves empty inner rows, or is equivalent to the `DEFAULT` strategy. This is equivalent to the legacy "dense rows" option, in that in non-empty rows, the distance between consecutive seats is the smallest possible, and is close among all rows.
 - `OUTER_PRIORITY`: This fills the rows to their maximal capacity, starting with the outermost rows going in. The result is that given a number of rows, adding one seat makes a change in only one row.
 
-`getSeatCenters(nSeats: number, options?): Map<[number, number], number>`
+`getSeatCenters(nSeats: number, options?): Map<[number, number], SeatInfo>`
 
 This is the main function of the submodule. The options are as follows:
 
@@ -72,7 +76,28 @@ This is the main function of the submodule. The options are as follows:
 
 The function returns a map representing the ensemble of seats. The keys are `[x, y]` pairs, the cartesian coordinates of the center of the seat. The coordinates start from the bottom-left corner of the rectangle, with the x axis pointing to the right and the y axis pointing up. The outer radius of the annulus, equal to the height and to half of the width of the rectangle, is 1, so `x` goes from 0 to 2 and `y` goes from 0 to 1.
 
-The values are the angle, in radians, calculated from the right-outermost point of the annulus arc, through the center of the annulus, to the center of the seat. Sorting the keys by decreasing value returns the seats arranged from left to right. The order of the entries in the Map is meaningless.
+The values are objects (type aliased as `SeatInfo`). They contain:
+- `angle: number`: the angle, in radians, calculated from the right-outermost point of the annulus arc, through the center of the annulus, to the center of the seat
+- `rowIdx: number`: the index of the row, starting from 0 for the innermost row, and counting rows that contain no seats (for instance due to the filling strategy)
+
+Sorting the keys by decreasing angle value returns the seats arranged from left to right. The order of the entries in the Map is undocumented, however the function may be considered pure in that for a given version of the library, and a given set of parameters, the seats will be returned in the same order.
+
+## Majority-line module contents
+
+`getMajorityLineCheckpoints(seatCenters, options): MajorityLineCheckpoints`
+
+The function generates information needed to draw a curve (intended as a cubic bezier curve) zigzagging between the seats to represent a majority. It returns the base points of the bezier curve, as well as some metadata useful to generate the control points. All points are provided as `[x, y]` number coordinates.
+The parameters are as follows:
+
+- `seatCenters: SeatCenters`: the format returned by `geometry.getSeatCenters`.
+- `options.ratio: number`: a value between 0 and 1, representing the share of seats that will be on the left of the majority line. Defaults to 0.5.
+- `options.round: (number) => number`: a function that will round the number of seats on either side of the majority line. Rounding up means more seats to the left of the line. Defaults to Math.ceil, which rounds to the higher closest integer.
+
+The fields of the returned value are as follows:
+- `startPoint: [number, number]`: the starting point of the curve, inside all the rows.
+- `checkpoints: [number, number][]`: the intermediary points of the curve, roughly one per row.
+- `endPoint: [number, number]`: the end point of the curve, outside all the rows.
+- `rowThickness: number`: the row thickness, can be useful to scale the control points relative to the provided points.
 
 ## Utils module contents
 
@@ -93,8 +118,14 @@ This generic function turns one representation of how each seat is displayed, in
 
 `precomputeFromAttribution<SeatDisplay>(attribution, options?): PrecomputeReturn<SeatDisplay>`
 
-This function pre-calculates some information from an attribution of seats, making it almost enough to be displayed. The return value is an object containing grouped seat centers as returned by the previous function, under the key `groupedSeatCenters`, and the radius of the seats in the same unit as the coordinates, under the key `seatActualRadius`.
+This function pre-calculates some information from an attribution of seats, making it almost enough to be displayed.
 
 - `attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[]`
 - `options.seatRadiusFactor`: the factor between 0 and 1 described earlier. At 1, neighboring seats will touch one another.
+- `options.majorityLines`: a list of option objects as taken by `majority-line.getMajorityLineCheckpoints`. Each object, even if empty, will generate a line.
 - `options`: the rest of the options are the same as taken by the `getSeatCenters` function.
+
+The return value is an object containing the following keys:
+- `groupedSeatCenters`: grouped seat centers as returned by the previous function.
+- `seatActualRadius: number`: the radius of the seats in the same unit as the coordinates.
+- `majorityLineCheckpoints`: an array containing as many results of the `getMajorityLineCheckpoints` function (and in the same order) as related options were passed.
