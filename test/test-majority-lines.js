@@ -31,6 +31,7 @@ const attribution = new Map([
 // ]);
 
 fs.writeFileSync("./sample-maj.svg", parliamentarch.getSVGFromAttribution(attribution, {majorityLines: [
+    {nSeats:100, color: "rebeccapurple", dasharray: [1]},
     {},
     {ratio:.6, color: "orange", dasharray: [2], data: "three-fifths"},
     {ratio:2/3, color: "hotpink", dasharray: [2,1], data: "two-thirds"},
