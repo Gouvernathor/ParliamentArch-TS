@@ -8,6 +8,12 @@ type Rounder = (n: number) => number;
 
 export interface GetMajorityLineCheckpointsOptions {
     /**
+     * Forces a number of seats at the left of the majority line.
+     * Overrides the round and ratio parameters.
+     */
+    nSeats: number;
+
+    /**
      * Used to round the sharing of the assembly.
      * Rounding up means more seats to the left.
      * Defaults to Math.ceil,
@@ -51,11 +57,9 @@ export interface MajorityLineCheckpoints {
     rowThickness: number;
 }
 
-export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
-    round = Math.ceil,
-    ratio = .5,
-}: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {}): MajorityLineCheckpoints {
-    const isInRightPart = getIsInRightPart(seatCenters, round, ratio);
+export function getMajorityLineCheckpoints(seatCenters: SeatCenters, options: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {}): MajorityLineCheckpoints {
+    const [ratio, nSeatsInLeftPart] = precomputeOptions(seatCenters.size, options);
+    const isInRightPart = getIsInRightPart(seatCenters, nSeatsInLeftPart);
     const seatsPerRow = getSeatsPerRow(seatCenters);
     const rowThickness = getRowThickness(seatsPerRow.length);
     const maxSeatRadius = rowThickness/2;
@@ -78,10 +82,22 @@ export function getMajorityLineCheckpoints(seatCenters: SeatCenters, {
     }
 }
 
-function getIsInRightPart(seatCenters: SeatCenters, round: Rounder, ratio: number) {
+function precomputeOptions(total: number, {
+    nSeats,
+    round = Math.ceil,
+    ratio = .5,
+}: Partial<Readonly<GetMajorityLineCheckpointsOptions>>): [ratio: number, nSeatsInLeftPart: number] {
+    if (nSeats != undefined) {
+        return [nSeats/total, nSeats];
+    } else {
+        return [ratio, round(total*ratio)];
+    }
+}
+
+function getIsInRightPart(seatCenters: SeatCenters, nSeatsInLeftPart: number) {
     const rightPart = new Set([...seatCenters.keys()]
         .sort((k1, k2) => seatCenters.get(k1)!.angle - seatCenters.get(k2)!.angle)
-        .slice(0, seatCenters.size - round(seatCenters.size * ratio)));
+        .slice(0, seatCenters.size - nSeatsInLeftPart));
     return rightPart.has.bind(rightPart);
 }
 
