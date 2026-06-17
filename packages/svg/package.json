@@ -31,7 +31,7 @@
     "typescript": "^6.0.2"
   },
   "peerDependencies": {
-    "@parliamentarch/core": "5.0.0",
+    "@parliamentarch/core": "^5.0.0",
     "jsdom": "*"
   },
   "peerDependenciesMeta": {
