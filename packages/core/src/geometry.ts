@@ -85,7 +85,7 @@ export interface GetSeatCentersOptions {
 }
 export interface SeatInfo {
     /**
-     * The angle in radian, from 0 to 2π,
+     * The angle in radian, from 0 to π,
      * trigonometrically positive (the rightmost seats have the smallest angle).
      */
     angle: number;
