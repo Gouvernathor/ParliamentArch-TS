@@ -120,7 +120,8 @@ function getNumberOfSeats(
     const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("x", "50%");
     text.setAttribute("y", SEATS_Y);
-    text.setAttribute("style", `font-size: ${fontSize/16}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
+    // specified in both units : see bug T4311191 https://phabricator.wikimedia.org/T431191 – the Commons rasterizer does not recognize rem values
+    text.setAttribute("style", `font-size: ${fontSize}px; font-size: ${fontSize/16}rem; font-weight: bold; text-align: center; text-anchor: middle; font-family: sans-serif;`);
     text.textContent = nSeats.toString();
     return text;
 }
