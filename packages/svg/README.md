@@ -57,6 +57,7 @@ So, the `SeatData` type is an alternative (a union) between these two modes of o
 - `color: string`: The color with which to fill the seat circle, as a CSS color.
 - `borderSize?: number`: The size of the border around the seat circle, defaults to 0.
 - `borderColor?: string`: The color of the border, defaults to black.
+- `borderDasharray?: number[]`: See the `stroke-dasharray` CSS property, as applied to the border. In this context, 1 represents one tenth of the perimeter of a seat.
 
 `SeatDataWithNumber`
 
