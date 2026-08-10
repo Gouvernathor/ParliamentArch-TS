@@ -11,7 +11,7 @@ const attribution = new Map([
     [{color: "#ff8080"}, 66],
     [{color: "#e1a5e1"}, 23],
     [{color: "#ff9900"}, 36],
-    [{color: "#ffeb00"}, 93],
+    [{color: "#ffeb00", borderColor: "red", borderSize: .2, borderDasharray: [1]}, 93],
     [{color: "#0001b8"}, 34],
     [{color: "#0066cc"}, 47],
     [{color: "#162561"}, 16],
