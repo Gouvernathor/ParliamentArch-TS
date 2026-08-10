@@ -37,6 +37,8 @@ export interface StandaloneSeatData {
      * In CSS class mode, you can replace this with the "stroke" property.
      */
     readonly borderColor?: string|undefined;
+
+    readonly borderDasharray?: number[];
 }
 
 export type SeatData = ClassSeatData | StandaloneSeatData;
@@ -139,7 +141,7 @@ function addGroupedSeats(
             0);
 
         const seatsContainer = "color" in group || groupBorderWidth ?
-            addGroupG(svg, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
+            addGroupG(svg, seatActualRadius, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
             svg;
 
         for (const [x, y] of seatCenters) {
@@ -158,11 +160,14 @@ function addGroupedSeats(
 
 function addGroupG(
     svg: SVGSVGElement,
+    seatActualRadius: number,
     group: StandaloneSeatData,
     groupBorderWidth: number,
     groupNumber: number,
 ): SVGGElement {
     const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
+
+    const groupBorderDasharray = group.borderDasharray?.map(da => da * seatActualRadius * ARCH_RADIUS);
 
     const gStyle = [];
     if (group.color) {
@@ -170,6 +175,9 @@ function addGroupG(
     }
     if (groupBorderWidth > 0) {
         gStyle.push(`stroke: ${group.borderColor ?? "black"}; stroke-width: ${groupBorderWidth};`);
+    }
+    if (groupBorderDasharray) {
+        gStyle.push(`stroke-linecap: round; stroke-dasharray: ${groupBorderDasharray};`);
     }
     groupG.setAttribute("style", gStyle.join(" "));
 
