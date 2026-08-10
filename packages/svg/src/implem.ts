@@ -38,6 +38,11 @@ export interface StandaloneSeatData {
      */
     readonly borderColor?: string|undefined;
 
+    /**
+     * Similar to the CSS stroke-dasharray property,
+     * applied to the border of the seats in this group.
+     * The unit is a tenth of the perimeter of the circle.
+     */
     readonly borderDasharray?: number[];
 }
 
@@ -140,8 +145,10 @@ function addGroupedSeats(
             group.borderSize * seatActualRadius * ARCH_RADIUS :
             0);
 
+        const seatR = seatActualRadius * ARCH_RADIUS - groupBorderWidth / 2;
+
         const seatsContainer = "color" in group || groupBorderWidth ?
-            addGroupG(svg, seatActualRadius, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
+            addGroupG(svg, seatR, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
             svg;
 
         for (const [x, y] of seatCenters) {
@@ -153,21 +160,21 @@ function addGroupedSeats(
             }
             circle.setAttribute("cx", (ARCH_RADIUS * x).toString());
             circle.setAttribute("cy", (ARCH_RADIUS * (1 - y)).toString());
-            circle.setAttribute("r", (seatActualRadius * ARCH_RADIUS - groupBorderWidth / 2).toString());
+            circle.setAttribute("r", seatR.toString());
         }
     }
 }
 
 function addGroupG(
     svg: SVGSVGElement,
-    seatActualRadius: number,
+    seatR: number,
     group: StandaloneSeatData,
     groupBorderWidth: number,
     groupNumber: number,
 ): SVGGElement {
     const groupG = svg.appendChild(document.createElementNS(SVG_NS, "g"));
 
-    const groupBorderDasharray = group.borderDasharray?.map(da => da * seatActualRadius * ARCH_RADIUS);
+    const groupBorderDasharray = group.borderDasharray?.map(da => da * seatR * 2 * Math.PI /10);
 
     const gStyle = [];
     if (group.color) {
