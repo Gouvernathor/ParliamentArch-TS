@@ -138,7 +138,7 @@ function addGroupedSeats(
             group.borderSize * seatActualRadius * ARCH_RADIUS :
             0);
 
-        const seatsContainer = "color" in group || "borderSize" in group || "borderColor" in group ?
+        const seatsContainer = "color" in group || groupBorderWidth ?
             addGroupG(svg, group as StandaloneSeatData, groupBorderWidth, groupNumberFallback++) :
             svg;
 
