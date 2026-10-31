@@ -60,10 +60,11 @@ export function getRowArcRadius(rowIdx: number, rowThickness: number) {
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
     const thic = getRowThickness(nRows);
+    const maxSeatRadius = thic / 2;
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array.from({ length: nRows }, (_, r) => {
         const rowArcRadius = getRowArcRadius(r, thic);
-        return Math.floor(radianSpanAngle * rowArcRadius / thic);
+        return getNSeats(rowArcRadius, maxSeatRadius, radianSpanAngle);
     });
 }
 
