@@ -2,11 +2,21 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## (geometry) Unreleased major
+
+### Removed
+
+- The FillingStrategy runtime object, relegated to a type only
+
 ## (geometry) Unreleased minor
 
 ### Changed
 
 - Improved the formula for the number of seats fitting in a row, which is slightly fewer than the previous formula provided.
+
+### Deprecated
+
+- The FillingStrategy runtime object and enum
 
 ## (svg) 5.2.0 - 2026-08-10
 

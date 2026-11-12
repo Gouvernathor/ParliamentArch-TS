@@ -79,24 +79,32 @@ export function getNRowsFromNSeats(nSeats: number, spanAngle = DEFAULT_SPAN_ANGL
     return nRows;
 }
 
-export enum FillingStrategy {
+/**
+ * @deprecated formerly an enum, prefer using the strings directly
+ */
+export const FillingStrategy = {
+    DEFAULT: "default" as const,
+    EMPTY_INNER: "empty_inner" as const,
+    OUTER_PRIORITY: "outer_priority" as const,
+};
+export type FillingStrategy =
     /**
      * The seats are distributed among all the rows,
      * proportionally to the maximal number of seats each row can contain.
      */
-    DEFAULT = "default",
+    | "default"
 
     /**
      * Selects as few outermost rows as necessary, then distributes the seats among them,
      * proportionally to the maximal number of seats each row can contain.
      */
-    EMPTY_INNER = "empty_inner",
+    | "empty_inner"
 
     /**
      * Fills up the rows as much as possible, starting from the outermost ones.
      */
-    OUTER_PRIORITY = "outer_priority",
-}
+    | "outer_priority"
+;
 
 export interface GetSeatCentersOptions {
     minNRows: number;
@@ -139,7 +147,7 @@ export function getSeatCenters(
     nSeats: number,
     {
         minNRows = 0,
-        fillingStrategy = FillingStrategy.DEFAULT,
+        fillingStrategy = "default",
         spanAngle = DEFAULT_SPAN_ANGLE,
     }: Partial<Readonly<GetSeatCentersOptions>> = {},
 ): Map<[number, number], SeatInfo> {
@@ -164,12 +172,12 @@ function getActualRows(
 ): readonly [ maxSeatRadius: number, readonly Row[] ] {
     let startingRow, fillingRatio, seatsOnStartingRow;
     switch (fillingStrategy) {
-        case FillingStrategy.DEFAULT:
+        case "default":
             startingRow = 0;
             fillingRatio = nSeats / maxedRows.reduce((a, b) => a + b, 0);
             break;
 
-        case FillingStrategy.EMPTY_INNER:
+        case "empty_inner":
             {
                 const rows = maxedRows.slice();
                 while (rows.slice(1).reduce((a, b) => a + b, 0) >= nSeats) {
@@ -185,7 +193,7 @@ function getActualRows(
             }
             break;
 
-        case FillingStrategy.OUTER_PRIORITY:
+        case "outer_priority":
             {
                 const rows = maxedRows.slice();
                 while (rows.reduce((a, b) => a + b, 0) > nSeats) {
@@ -214,7 +222,7 @@ function getActualRows(
         if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - attributedSeats;
-        } else if (fillingStrategy === FillingStrategy.OUTER_PRIORITY) {
+        } else if (fillingStrategy === "outer_priority") {
             if (rowIdx === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
             } else {

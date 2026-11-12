@@ -60,18 +60,18 @@ Returns the maximum radius seats can have before risking to touch their neighbor
 
 `FillingStrategy`
 
-A string enum of the implemented strategies to fill the seats among the rows:
+Strings for the implemented strategies to fill the seats among the rows:
 
-- `DEFAULT`: The seats are distributed proportionally to the maximal number of seats each row can hold. The result is that the lateral distance between the seats is close among all rows.
-- `EMPTY_INNER`: This selects as few outermost rows as necessary to hold the given seats, then distributes the seats proportionally among them. Depending on the number of seats and rows, this either leaves empty inner rows, or is equivalent to the `DEFAULT` strategy. This is equivalent to the legacy "dense rows" option, in that in non-empty rows, the distance between consecutive seats is the smallest possible, and is close among all rows.
-- `OUTER_PRIORITY`: This fills the rows to their maximal capacity, starting with the outermost rows going in. The result is that given a number of rows, adding one seat makes a change in only one row.
+- `"default"`: The seats are distributed proportionally to the maximal number of seats each row can hold. The result is that the lateral distance between the seats is close among all rows.
+- `"empty_inner"`: This selects as few outermost rows as necessary to hold the given seats, then distributes the seats proportionally among them. Depending on the number of seats and rows, this either leaves empty inner rows, or is equivalent to the `"default"` strategy. This is equivalent to the legacy "dense rows" option, in that in non-empty rows, the distance between consecutive seats is the smallest possible, and is close among all rows.
+- `"outer_priority"`: This fills the rows to their maximal capacity, starting with the outermost rows going in. The result is that given a number of rows, adding one seat makes a change in only one row.
 
 `getSeatCenters(nSeats: number, options?): Map<[number, number], SeatInfo>`
 
 This is the main function of the submodule. The options are as follows:
 
 - `minNRows?: number`: Sets a minimum number of rows.
-- `fillingStrategy?: FillingStrategy`: The strategy to use, defaults to `DEFAULT`.
+- `fillingStrategy?: FillingStrategy`: The strategy to use, defaults to `"default"`.
 - `spanAngle?: number`: The span angle of the diagram in degrees, defaults to 180.
 
 The function returns a map representing the ensemble of seats. The keys are `[x, y]` pairs, the cartesian coordinates of the center of the seat. The coordinates start from the bottom-left corner of the rectangle, with the x axis pointing to the right and the y axis pointing up. The outer radius of the annulus, equal to the height and to half of the width of the rectangle, is 1, so `x` goes from 0 to 2 and `y` goes from 0 to 1.
