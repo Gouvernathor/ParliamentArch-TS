@@ -144,12 +144,24 @@ export function getSeatCenters(
     }: Partial<Readonly<GetSeatCentersOptions>> = {},
 ): Map<[number, number], SeatInfo> {
     const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
-    const rowThicc = getRowThickness(nRows);
-    const maxSeatRadius = rowThicc/2;
-    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
-
     const maxedRows = getRowsFromNRows(nRows, spanAngle);
+    const [ maxSeatRadius, actualRows ] = getActualRows(nSeats, maxedRows, fillingStrategy);
 
+    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
+    return new Map(actualRows.flatMap(r => rowToSeats(r, maxSeatRadius, spanAngleMargin)));
+}
+
+interface Row {
+    readonly idx: number;
+    readonly radius: number;
+    readonly nSeats: number;
+}
+
+function getActualRows(
+    nSeats: number,
+    maxedRows: readonly number[],
+    fillingStrategy: FillingStrategy,
+): readonly [ maxSeatRadius: number, readonly Row[] ] {
     let startingRow, fillingRatio, seatsOnStartingRow;
     switch (fillingStrategy) {
         case FillingStrategy.DEFAULT:
@@ -168,7 +180,7 @@ export function getSeatCenters(
 
                 // this row will be the first one to contain seats
                 // the innermost ones are empty
-                startingRow = nRows - rows.length;
+                startingRow = maxedRows.length - rows.length;
                 fillingRatio = nSeats / rows.reduce((a, b) => a + b, 0);
             }
             break;
@@ -184,7 +196,7 @@ export function getSeatCenters(
 
                 // this row will be only one to be partially filled
                 // the innermore ones are empty, the outermost ones are fully filled
-                startingRow = nRows - rows.length - 1;
+                startingRow = maxedRows.length - rows.length - 1;
                 seatsOnStartingRow = nSeats - rows.reduce((a, b) => a + b, 0);
             }
             break;
@@ -193,12 +205,15 @@ export function getSeatCenters(
             throw new Error(`Invalid filling strategy: ${fillingStrategy}`);
     }
 
-    const positions = new Map<[number, number], SeatInfo>();
-    for (let rowIdx = startingRow; rowIdx < nRows; rowIdx++) {
+    const rowThicc = getRowThickness(maxedRows.length);
+
+    let attributedSeats = 0;
+    const rows: Row[] = [];
+    for (let rowIdx = startingRow; rowIdx < maxedRows.length; rowIdx++) {
         let nSeatsThisRow: number;
-        if (rowIdx === nRows - 1) { // if it's the last, outermost row
+        if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
             // fit all the remaining seats
-            nSeatsThisRow = nSeats - positions.size;
+            nSeatsThisRow = nSeats - attributedSeats;
         } else if (fillingStrategy === FillingStrategy.OUTER_PRIORITY) {
             if (rowIdx === startingRow) {
                 nSeatsThisRow = seatsOnStartingRow!;
@@ -209,32 +224,53 @@ export function getSeatCenters(
             // fullness of the diagram times the maximal number of seats in this row
             nSeatsThisRow = Math.round(fillingRatio! * maxedRows[rowIdx]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
-            // nSeatsThisRow = Math.round((nSeats-positions.size) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
+            // nSeatsThisRow = Math.round((nSeats-attributedSeats) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
         }
 
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
 
-        if (nSeatsThisRow === 1) {
-            positions.set([1, rowArcRadius], { rowIdx, angle: Math.PI / 2 });
-        } else {
-            // the angle necessary in this row to put the first (and last) seats fully on the canvas
-            const angleMargin = Math.asin(maxSeatRadius / rowArcRadius)
-                // add the margin to make up the side angle
-                + spanAngleMargin;
-            // alternatively, allow the centers of the seats by the side to reach the angle's limits
-            // const angleMargin = Math.max(angleMargin, spanAngleMargin);
-
-            // the angle separating two seats on that row
-            const angleStep = (Math.PI - 2 * angleMargin) / (nSeatsThisRow - 1);
-            // a fraction of the remaining space, keeping in mind that the same elevation
-            // on start and end limits that remaining space to less than 2PI
-
-            for (let s = 0; s < nSeatsThisRow; s++) {
-                const angle = angleMargin + s * angleStep;
-                // an oriented angle, so it goes trig positive (counterclockwise)
-                positions.set([1 + rowArcRadius * Math.cos(angle), rowArcRadius * Math.sin(angle)], { rowIdx, angle });
-            }
-        }
+        rows.push({ idx: rowIdx, radius: rowArcRadius, nSeats: nSeatsThisRow });
+        attributedSeats += nSeatsThisRow;
     }
-    return positions;
+    return [ rowThicc/2, rows ];
+}
+
+function rowToSeats({
+    idx: rowIdx,
+    radius: rowArcRadius,
+    nSeats: nSeatsThisRow,
+}: Row,
+    maxSeatRadius: number,
+    spanAngleMargin: number,
+): readonly (readonly [[number, number], SeatInfo])[] {
+    if (nSeatsThisRow === 0) {
+        return [];
+    }
+
+    if (nSeatsThisRow === 1) {
+        return [
+            [ [1, rowArcRadius], { rowIdx, angle: Math.PI / 2 } ],
+        ];
+    }
+
+    // the angle necessary in this row to put the first (and last) seats fully on the canvas
+    const angleMargin = Math.asin(maxSeatRadius / rowArcRadius)
+        // add the margin to make up the side angle
+        + spanAngleMargin;
+    // alternatively, allow the centers of the seats by the side to reach the angle's limits
+    // const angleMargin = Math.max(angleMargin, spanAngleMargin);
+
+    // the angle separating two seats on that row
+    const angleStep = (Math.PI - 2 * angleMargin) / (nSeatsThisRow - 1);
+    // a fraction of the remaining space, keeping in mind that the same elevation
+    // on start and end limits that remaining space to less than 2PI
+
+    return Array.from({ length: nSeatsThisRow }, (_, s) => {
+        const angle = angleMargin + s * angleStep;
+        // an oriented angle, so it goes trig positive (counterclockwise)
+        return [
+            [ 1 + rowArcRadius*Math.cos(angle), rowArcRadius*Math.sin(angle) ],
+            { rowIdx, angle },
+        ];
+    });
 }
