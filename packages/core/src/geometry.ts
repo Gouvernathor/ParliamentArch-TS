@@ -232,7 +232,7 @@ function getActualRows(
             // fullness of the diagram times the maximal number of seats in this row
             nSeatsThisRow = Math.round(fillingRatio! * maxedRows[rowIdx]!);
             // actually more precise rounding : avoid rounding errors to accumulate too much
-            // nSeatsThisRow = Math.round((nSeats-attributedSeats) * maxedRows[r] / maxedRows.reduce((a, b) => a + b, 0));
+            nSeatsThisRow = Math.round((nSeats-attributedSeats) * maxedRows[rowIdx]! / maxedRows.slice(rowIdx).reduce((a, b) => a + b, 0));
         }
 
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
