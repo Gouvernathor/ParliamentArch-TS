@@ -2,7 +2,11 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## (geometry) Unreleased minor
+
+### Changed
+
+- Improved the formula for the number of seats fitting in a row, which is slightly fewer than the previous formula provided.
 
 ## (svg) 5.2.0 - 2026-08-10
 

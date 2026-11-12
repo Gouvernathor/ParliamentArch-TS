@@ -24,6 +24,25 @@ export function getMaxSeatRadius(nRows: number): number {
 }
 
 /**
+ * This returns the maximal number of seats for a given row of the provided radius and thickness.
+ *
+ * Supposing the row is filled 100% and neighboring seats touch one another.
+ * Take the segment from the center of the diagram to the contact point between two seats,
+ * the segment from the center of the diagram to the center of one of the seats,
+ * and the radius segment of the seat from its center to the contact point,
+ * they make a right triangle whose right angle is the contact point.
+ * The seat's radius is a known value,
+ * and the segment to the center of the seat is the row arc radius.
+ * The arcsine of their ratio is half of the angle the seat takes, as seen from the center.
+ * The span angle divided by that angle, and rounded down to the closest integer,
+ * is the number of seats fitting in the row.
+ */
+function getNSeats(rowArcRadius: number, maxSeatRadius: number, radianSpanAngle: number): number {
+    const radianSeatAngle = 2 * Math.asin(maxSeatRadius / rowArcRadius);
+    return Math.floor(radianSpanAngle / radianSeatAngle);
+}
+
+/**
  * @param rowIdx the index of the row, starting from 0 from the inner out,
  * and counting the rows that may be empty due to the filling strategy
  * @param rowThickness as returned by getRowThickness
@@ -41,10 +60,11 @@ export function getRowArcRadius(rowIdx: number, rowThickness: number) {
  */
 export function getRowsFromNRows(nRows: number, spanAngle = DEFAULT_SPAN_ANGLE): number[] {
     const thic = getRowThickness(nRows);
+    const maxSeatRadius = thic / 2;
     const radianSpanAngle = Math.PI * spanAngle / 180;
     return Array.from({ length: nRows }, (_, r) => {
         const rowArcRadius = getRowArcRadius(r, thic);
-        return Math.floor(radianSpanAngle * rowArcRadius / thic);
+        return getNSeats(rowArcRadius, maxSeatRadius, radianSpanAngle);
     });
 }
 
