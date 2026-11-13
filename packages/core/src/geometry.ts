@@ -170,11 +170,10 @@ function getActualRows(
     maxedRows: readonly number[],
     fillingStrategy: FillingStrategy,
 ): readonly [ maxSeatRadius: number, readonly Row[] ] {
-    let startingRow, fillingRatio, seatsOnStartingRow;
+    let startingRow, seatsOnStartingRow;
     switch (fillingStrategy) {
         case "default":
             startingRow = 0;
-            fillingRatio = nSeats / maxedRows.reduce((a, b) => a + b, 0);
             break;
 
         case "empty_inner":
@@ -189,7 +188,6 @@ function getActualRows(
                 // this row will be the first one to contain seats
                 // the innermost ones are empty
                 startingRow = maxedRows.length - rows.length;
-                fillingRatio = nSeats / rows.reduce((a, b) => a + b, 0);
             }
             break;
 
@@ -229,9 +227,7 @@ function getActualRows(
                 nSeatsThisRow = maxedRows[rowIdx]!;
             }
         } else {
-            // fullness of the diagram times the maximal number of seats in this row
-            nSeatsThisRow = Math.round(fillingRatio! * maxedRows[rowIdx]!);
-            // actually more precise rounding : avoid rounding errors to accumulate too much
+            // avoid rounding errors to accumulate too much
             nSeatsThisRow = Math.round((nSeats-attributedSeats) * maxedRows[rowIdx]! / maxedRows.slice(rowIdx).reduce((a, b) => a + b, 0));
         }
 
