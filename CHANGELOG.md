@@ -10,6 +10,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## (geometry) Unreleased minor
 
+### Fixed
+
+- In some situations the attribution of seats across rows was wrong, and the number of seats on the last row overflowed the row's capacity. This fix goes along with the slight change in the formula for the number of seats per row.
+
 ### Changed
 
 - Improved the formula for the number of seats fitting in a row, which is slightly fewer than the previous formula provided.
