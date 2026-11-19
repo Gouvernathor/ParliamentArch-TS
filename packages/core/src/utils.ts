@@ -97,7 +97,7 @@ export function precomputeFromAttribution<SeatDisplay>(
 
     const seatCenters = getSeatCenters(nSeats, options);
     const groupedSeatCenters = dispatchSeats(attribution, [...seatCenters.keys()].sort((a, b) => seatCenters.get(b)!.angle - seatCenters.get(a)!.angle));
-    const seatActualRadius = seatRadiusFactor * getMaxSeatRadius(getNRowsFromNSeats(nSeats, options.spanAngle));
+    const seatActualRadius = seatRadiusFactor * getMaxSeatRadius(Math.max(options.minNRows ?? 0, getNRowsFromNSeats(nSeats, options.spanAngle)));
     const majorityLineCheckpoints = options.majorityLines?.map(o => getMajorityLineCheckpoints(seatCenters, o)) ?? [];
     return {
         groupedSeatCenters,

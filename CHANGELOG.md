@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 - In some situations the attribution of seats across rows was wrong, and the number of seats on the last row overflowed the row's capacity. This fix goes along with the slight change in the formula for the number of seats per row.
 - `getMajorityLineCheckpoints` threw a TypeError when any row had no seats, as happens with the `"empty_inner"` and `"outer_priority"` strategies.
+- `precomputeFromAttribution` ignored `minNRows` when computing `seatActualRadius`, so with more rows than necessary the seats were drawn too large and overlapped.
 
 ### Changed
 
