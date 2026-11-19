@@ -117,7 +117,7 @@ function getCheckpointsForHalf(
 ): Point[] {
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
-        const row = seatsPerRow[rowIdx]!;
+        const row = seatsPerRow[rowIdx] ?? [];
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
         const rowSide = getRowSideForHalf(row, isInRightPart);
 
@@ -161,7 +161,7 @@ function getCheckpoints(
 ): Point[] {
     const checkpoints: Point[] = [];
     for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
-        const row = seatsPerRow[rowIdx]!;
+        const row = seatsPerRow[rowIdx] ?? [];
 
         const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
         const straightLinePoint = polarToCartesian(rowArcRadius, ratioAngle);
