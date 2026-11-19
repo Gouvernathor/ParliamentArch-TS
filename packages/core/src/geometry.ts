@@ -215,9 +215,11 @@ function getActualRows(
 
     let attributedSeats = 0;
     const rows: Row[] = [];
-    for (let rowIdx = startingRow; rowIdx < maxedRows.length; rowIdx++) {
+    for (let rowIdx = 0; rowIdx < maxedRows.length; rowIdx++) {
         let nSeatsThisRow: number;
-        if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
+        if (rowIdx < startingRow) { // the innermost rows left empty by the strategy
+            nSeatsThisRow = 0;
+        } else if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - attributedSeats;
         } else if (fillingStrategy === "outer_priority") {
