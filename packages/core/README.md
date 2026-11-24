@@ -92,12 +92,13 @@ Sorting the keys by decreasing angle value returns the seats arranged from left 
 
 ## Majority-line module contents
 
-`getMajorityLineCheckpoints(seatCenters, options): MajorityLineCheckpoints`
+`getMajorityLineCheckpoints(layout, seatCenters, options): MajorityLineCheckpoints`
 
 The function generates information needed to draw a curve (intended as a cubic bezier curve) zigzagging between the seats to represent a majority. It returns the base points of the bezier curve, as well as some metadata useful to generate the control points. All points are provided as `[x, y]` number coordinates.
 The parameters are as follows:
 
-- `seatCenters: SeatCenters`: as returned by `geometry.getSeatCenters`.
+- `layout: SeatLayout`: as returned by `geometry.getSeatLayout`.
+- `seatCenters: SeatCenters`: as returned by `geometry.getSeatCenters` or `geometry.getSeatCentersFromLayout`.
 - `options.ratio: number`: a value between 0 and 1, representing the share of seats that will be on the left of the majority line. Defaults to 0.5.
 - `options.round: (number) => number`: a function that will round the number of seats on either side of the majority line. Rounding up means more seats to the left of the line. Defaults to Math.ceil, which rounds to the higher closest integer.
 

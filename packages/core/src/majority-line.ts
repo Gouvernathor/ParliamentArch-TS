@@ -1,4 +1,4 @@
-import { getRowArcRadius, getRowThickness, SeatInfo } from "./geometry.js";
+import { getRowArcRadius, getRowThickness, type getSeatLayout, type SeatInfo } from "./geometry.js";
 
 const sign = Math.sign as (n: number) => -1|0|1;
 
@@ -57,25 +57,76 @@ export interface MajorityLineCheckpoints {
     rowThickness: number;
 }
 
-export function getMajorityLineCheckpoints(seatCenters: SeatCenters, options: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {}): MajorityLineCheckpoints {
+// TODO kick this proxy out and promote the Internal function
+/**
+ * @param layout the layout the seats were placed from, as returned by {@link getSeatLayout}.
+ */
+export function getMajorityLineCheckpoints(
+    layout: SeatLayoutSubset,
+    seatCenters: SeatCenters,
+    options?: Partial<Readonly<GetMajorityLineCheckpointsOptions>>,
+): MajorityLineCheckpoints;
+/**
+ * @deprecated Pass the layout as the first parameter.
+ */
+export function getMajorityLineCheckpoints(
+    seatCenters: SeatCenters,
+    options?: Partial<Readonly<GetMajorityLineCheckpointsOptions>>,
+): MajorityLineCheckpoints;
+export function getMajorityLineCheckpoints(
+    a: SeatLayoutSubset|SeatCenters,
+    b: SeatCenters|Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {},
+    c: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {},
+): MajorityLineCheckpoints {
+    if ("rows" in a) {
+        return getMajorityLineCheckpointsInternal(a, b as SeatCenters, c);
+    } else {
+        const layout = getStandardLayout(a);
+        return getMajorityLineCheckpointsInternal(layout, a, b as Partial<Readonly<GetMajorityLineCheckpointsOptions>>);
+    }
+}
+
+interface SeatLayoutSubset {
+    readonly rows: readonly {
+        readonly radius: number,
+    }[];
+    readonly maxSeatRadius: number;
+}
+function getStandardLayout(seatCenters: SeatCenters): SeatLayoutSubset {
+    const nRows = 1 + Math.max(...Array.from(seatCenters.values(), ({ rowIdx }) => rowIdx));
+    const rowThicc = getRowThickness(nRows);
+    return {
+        rows: Array.from({ length: nRows }, (_, idx) => ({ radius: getRowArcRadius(idx, rowThicc) })),
+        // FIXME: same as below
+        maxSeatRadius: rowThicc/2,
+    };
+}
+
+function getMajorityLineCheckpointsInternal(
+    layout: SeatLayoutSubset,
+    seatCenters: SeatCenters,
+    options: Partial<Readonly<GetMajorityLineCheckpointsOptions>> = {},
+): MajorityLineCheckpoints {
     const [ratio, nSeatsInLeftPart] = precomputeOptions(seatCenters.size, options);
     const isInRightPart = getIsInRightPart(seatCenters, nSeatsInLeftPart);
-    const seatsPerRow = getSeatsPerRow(seatCenters);
-    const rowThickness = getRowThickness(seatsPerRow.length);
-    const maxSeatRadius = rowThickness/2;
+    const rows = getRowsWithSeats(seatCenters, layout.rows);
+    const maxSeatRadius = layout.maxSeatRadius;
+    // FIXME: the relationship between rowThickness and maxSeatRadius will not hold for future strategies
+    const rowThickness = 2*maxSeatRadius;
+    const innerRowArcRadius = rows[0]!.rowArcRadius;
 
     if (ratio === .5) {
         return {
-            startPoint: [1, .5 - maxSeatRadius],
-            checkpoints: getCheckpointsForHalf(seatsPerRow, rowThickness, maxSeatRadius, isInRightPart),
+            startPoint: [1, innerRowArcRadius - maxSeatRadius],
+            checkpoints: getCheckpointsForHalf(rows, maxSeatRadius, isInRightPart),
             endPoint: [1, 1],
             rowThickness,
         };
     } else {
         const ratioAngle = (1 - ratio) * Math.PI;
         return {
-            startPoint: polarToCartesian(.5 - maxSeatRadius, ratioAngle),
-            checkpoints: getCheckpoints(seatCenters, seatsPerRow, rowThickness, maxSeatRadius, isInRightPart, ratioAngle),
+            startPoint: polarToCartesian(innerRowArcRadius - maxSeatRadius, ratioAngle),
+            checkpoints: getCheckpoints(seatCenters, rows, maxSeatRadius, isInRightPart, ratioAngle),
             endPoint: polarToCartesian(1, ratioAngle),
             rowThickness,
         };
@@ -101,25 +152,33 @@ function getIsInRightPart(seatCenters: SeatCenters, nSeatsInLeftPart: number) {
     return rightPart.has.bind(rightPart);
 }
 
-function getSeatsPerRow(seatCenters: SeatCenters): readonly (readonly Point[])[] {
-    const rv: Point[][] = [];
-    for (const [seatCenter, seatInfo] of seatCenters) {
-        (rv[seatInfo.rowIdx] ??= []).push(seatCenter);
+interface RowWithSeats {
+    readonly rowArcRadius: number;
+    readonly seats: readonly Point[];
+}
+/**
+ * @returns every row (including ones with no seats) from inner to outer,
+ * each with its seats ordered by seatCenters.
+ */
+function getRowsWithSeats(
+    seatCenters: SeatCenters,
+    layoutRows: SeatLayoutSubset["rows"],
+): RowWithSeats[] {
+    const rowsWithSeats = layoutRows.map(({ radius }) => ({ rowArcRadius: radius, seats: [] as Point[] }));
+    for (const [seatCenter, { rowIdx }] of seatCenters) {
+        rowsWithSeats[rowIdx]!.seats.push(seatCenter);
     }
-    return rv;
+    return rowsWithSeats;
 }
 
 function getCheckpointsForHalf(
-    seatsPerRow: readonly (readonly Point[])[],
-    rowThicc: number,
+    rows: readonly RowWithSeats[],
     maxSeatRadius: number,
     isInRightPart: (p: Point) => boolean,
 ): Point[] {
     const checkpoints: Point[] = [];
-    for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
-        const row = seatsPerRow[rowIdx] ?? [];
-        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
-        const rowSide = getRowSideForHalf(row, isInRightPart);
+    for (const { rowArcRadius, seats } of rows) {
+        const rowSide = getRowSideForHalf(seats, isInRightPart);
 
         checkpoints.push([1 + rowSide*maxSeatRadius, rowArcRadius]);
     }
@@ -153,20 +212,16 @@ whose angle is the same as the point and whose distance is the point's minus (or
 */
 function getCheckpoints(
     seatCenters: SeatCenters,
-    seatsPerRow: readonly (readonly Point[])[],
-    rowThicc: number,
+    rows: readonly RowWithSeats[],
     maxSeatRadius: number,
     isInRightPart: (value: Point) => boolean,
     ratioAngle: number,
 ): Point[] {
     const checkpoints: Point[] = [];
-    for (let rowIdx = 0; rowIdx < seatsPerRow.length; rowIdx++) {
-        const row = seatsPerRow[rowIdx] ?? [];
-
-        const rowArcRadius = getRowArcRadius(rowIdx, rowThicc);
+    for (const { rowArcRadius, seats } of rows) {
         const straightLinePoint = polarToCartesian(rowArcRadius, ratioAngle);
 
-        const [leftSeat, rightSeat] = getBoundarySeats(row, isInRightPart);
+        const [leftSeat, rightSeat] = getBoundarySeats(seats, isInRightPart);
         let seat;
         if (leftSeat === null) {
             if (rightSeat === null) {
@@ -209,7 +264,7 @@ function getBoundarySeats(
 ): [Point|null, Point|null] {
     let lastSeatRightSide = null,
         firstSeatLeftSide = null;
-    // relies on getSeatCenters returning them by increasing angle, and getSeatsPerRow being stable
+    // relies on getSeatCenters returning them by increasing angle, and getRowsWithSeats keeping their order
     // could also just do a sort before the for loop
     for (const seat of row) {
         if (isInRightPart(seat)) {

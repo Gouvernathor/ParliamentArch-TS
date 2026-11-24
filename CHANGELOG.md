@@ -2,13 +2,14 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## (geometry) Unreleased major
+## (core) Unreleased major
 
 ### Removed
 
 - The FillingStrategy runtime object, relegated to a type only
+- The overload of `getMajorityLineCheckpoints` without a `SeatLayout` parameter
 
-## (geometry) Unreleased minor
+## (core) Unreleased minor
 
 ### Added
 
@@ -25,10 +26,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Improved the formula for the number of seats fitting in a row, which is slightly fewer than the previous formula provided.
+- `getMajorityLineCheckpoints` takes a `SeatLayout` as parameter instead of recomputing some values from the number of rows.
 
 ### Deprecated
 
 - The FillingStrategy runtime object and enum
+- Calling `getMajorityLineCheckpoints` without a `SeatLayout` parameter
 
 ## (svg) 5.2.0 - 2026-08-10
 
