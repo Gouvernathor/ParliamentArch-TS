@@ -48,11 +48,17 @@ export interface MajorityLineCheckpoints {
     endPoint: Point;
 
     /**
-     * The row thickness.
+     * The maximum radius at which seats may be drawn.
      * Can help place the control points from each base point,
      * offset by some factor times that value,
      * for instance towards the center of the diagram,
      * or parallel to the direction set by the ratio.
+     */
+    maxSeatRadius: number;
+
+    /**
+     * The row thickness, actually twice the max seat radius.
+     * @deprecated use {@link maxSeatRadius}
      */
     rowThickness: number;
 }
@@ -97,7 +103,8 @@ function getStandardLayout(seatCenters: SeatCenters): SeatLayoutSubset {
     const rowThicc = getRowThickness(nRows);
     return {
         rows: Array.from({ length: nRows }, (_, idx) => ({ radius: getRowArcRadius(idx, rowThicc) })),
-        // FIXME: same as below
+        // FIXME: that relationship is incompatible with future strategies
+        // to be discarded when removing the deprecated proxy
         maxSeatRadius: rowThicc/2,
     };
 }
@@ -111,8 +118,6 @@ function getMajorityLineCheckpointsInternal(
     const isInRightPart = getIsInRightPart(seatCenters, nSeatsInLeftPart);
     const rows = getRowsWithSeats(seatCenters, layout.rows);
     const maxSeatRadius = layout.maxSeatRadius;
-    // FIXME: the relationship between rowThickness and maxSeatRadius will not hold for future strategies
-    const rowThickness = 2*maxSeatRadius;
     const innerRowArcRadius = rows[0]!.rowArcRadius;
 
     if (ratio === .5) {
@@ -120,7 +125,8 @@ function getMajorityLineCheckpointsInternal(
             startPoint: [1, innerRowArcRadius - maxSeatRadius],
             checkpoints: getCheckpointsForHalf(rows, maxSeatRadius, isInRightPart),
             endPoint: [1, 1],
-            rowThickness,
+            maxSeatRadius,
+            rowThickness: 2 * maxSeatRadius, // compat patch
         };
     } else {
         const ratioAngle = (1 - ratio) * Math.PI;
@@ -128,7 +134,8 @@ function getMajorityLineCheckpointsInternal(
             startPoint: polarToCartesian(innerRowArcRadius - maxSeatRadius, ratioAngle),
             checkpoints: getCheckpoints(seatCenters, rows, maxSeatRadius, isInRightPart, ratioAngle),
             endPoint: polarToCartesian(1, ratioAngle),
-            rowThickness,
+            maxSeatRadius,
+            rowThickness: 2 * maxSeatRadius, // compat patch
         };
     }
 }

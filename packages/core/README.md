@@ -106,7 +106,7 @@ The fields of the returned value are as follows:
 - `startPoint: [number, number]`: the starting point of the curve, inside all the rows.
 - `checkpoints: [number, number][]`: the intermediary points of the curve, roughly one per row.
 - `endPoint: [number, number]`: the end point of the curve, outside all the rows.
-- `rowThickness: number`: the row thickness, can be useful to scale the control points relative to the provided points.
+- `maxSeatRadius: number`: can be useful to scale the control points relative to the provided points.
 
 ## Utils module contents
 
