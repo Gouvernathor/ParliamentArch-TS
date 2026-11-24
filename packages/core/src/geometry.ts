@@ -130,6 +130,10 @@ export interface SeatInfo {
  * The canvas is assumed to be 2 in width and 1 in height, with the x axis pointing right and the y axis pointing up.
  * The angle is calculated from the [1, 0] center of the hemicycle, in radians and in trigonometric positive direction,
  * tending to 0 for the rightmost seats, 90° or PI/2 for the center, and 180° or PI for the leftmost seats.
+ *
+ * Same as `getSeatCentersFromLayout(getSeatLayout(nSeats, options))`,
+ * see {@link getSeatLayout} and {@link getSeatCentersFromLayout}.
+ *
  * @param minNRows The minimal number of rows required to contain `nSeats` seats will be computed automatically.
  * If `minNRows` is greater, then that will be the number of rows, otherwise the parameter is ignored.
  * Passing a higher number of rows will make the diagram sparser,
@@ -139,30 +143,72 @@ export interface SeatInfo {
  * through the center, to the side of the leftmost seats.
  * It takes a value in degrees and defaults to 180 to make a true hemicycle.
  * Values above 180 are not supported.
+ *
  * @returns a map whose keys are the seat centers as [x, y] coordinates.
  * The values of the map contain pre-computed metadata about the seats, useful to sort or categorize them.
  * The returned order of the seats is unspecified.
  */
 export function getSeatCenters(
     nSeats: number,
-    {
-        minNRows = 0,
-        fillingStrategy = "default",
-        spanAngle = DEFAULT_SPAN_ANGLE,
-    }: Partial<Readonly<GetSeatCentersOptions>> = {},
+    options: Partial<Readonly<GetSeatCentersOptions>> = {},
 ): Map<[number, number], SeatInfo> {
-    const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
-    const maxedRows = getRowsFromNRows(nRows, spanAngle);
-    const [ maxSeatRadius, actualRows ] = getActualRows(nSeats, maxedRows, fillingStrategy);
-
-    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
-    return new Map(actualRows.flatMap(r => rowToSeats(r, maxSeatRadius, spanAngleMargin)));
+    return getSeatCentersFromLayout(getSeatLayout(nSeats, options));
 }
 
 interface Row {
     readonly idx: number;
     readonly radius: number;
     readonly nSeats: number;
+}
+interface SeatLayout {
+    /**
+     * All the rows from inner to outer, including those left empty.
+     */
+    readonly rows: readonly Row[];
+
+    /**
+     * The maximal radius of the seats,
+     * at which neighboring seats of the same row, or seats of adjacent rows, may touch.
+     */
+    readonly maxSeatRadius: number;
+
+    /**
+     * In degrees, as passed or defaulted.
+     */
+    readonly spanAngle: number;
+}
+
+/**
+ * Computes the rows the seats will be placed on.
+ * See {@link getSeatCenters} for the parameters.
+ * @returns the rows with their radius and number of seats, and the maximal seat radius,
+ * to be passed to {@link getSeatCentersFromLayout}.
+ */
+export function getSeatLayout(
+    nSeats: number,
+    {
+        minNRows = 0,
+        fillingStrategy = "default",
+        spanAngle = DEFAULT_SPAN_ANGLE,
+    }: Partial<Readonly<GetSeatCentersOptions>> = {},
+): SeatLayout {
+    const nRows = Math.max(minNRows, getNRowsFromNSeats(nSeats, spanAngle));
+    const maxedRows = getRowsFromNRows(nRows, spanAngle);
+    const [ maxSeatRadius, rows ] = getActualRows(nSeats, maxedRows, fillingStrategy);
+    return { rows, maxSeatRadius, spanAngle };
+}
+
+/**
+ * @param layout as returned by {@link getSeatLayout}
+ * @returns see {@link getSeatCenters}'s return value.
+ */
+export function getSeatCentersFromLayout({
+    rows: actualRows,
+    maxSeatRadius,
+    spanAngle,
+}: SeatLayout): Map<[number, number], SeatInfo> {
+    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
+    return new Map(actualRows.flatMap(r => rowToSeats(r, maxSeatRadius, spanAngleMargin)));
 }
 
 function getActualRows(
@@ -241,11 +287,12 @@ function getActualRows(
     return [ rowThicc/2, rows ];
 }
 
-function rowToSeats({
-    idx: rowIdx,
-    radius: rowArcRadius,
-    nSeats: nSeatsThisRow,
-}: Row,
+function rowToSeats(
+    {
+        idx: rowIdx,
+        radius: rowArcRadius,
+        nSeats: nSeatsThisRow,
+    }: Row,
     maxSeatRadius: number,
     spanAngleMargin: number,
 ): readonly (readonly [[number, number], SeatInfo])[] {

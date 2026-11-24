@@ -68,13 +68,21 @@ Strings for the implemented strategies to fill the seats among the rows:
 
 `getSeatCenters(nSeats: number, options?): Map<[number, number], SeatInfo>`
 
-This is the main function of the submodule. The options are as follows:
+This is the main function of the submodule, a shortcut for `getSeatCentersFromLayout(getSeatLayout(nSeats, options))`, see below.
+
+`getSeatLayout(nSeats: number, options?): SeatLayout`
+
+This computes the rows the seats will be placed on, without placing them. The options are as follows:
 
 - `minNRows?: number`: Sets a minimum number of rows.
 - `fillingStrategy?: FillingStrategy`: The strategy to use, defaults to `"default"`.
 - `spanAngle?: number`: The span angle of the diagram in degrees, defaults to 180.
 
-The function returns a map representing the ensemble of seats. The keys are `[x, y]` pairs, the cartesian coordinates of the center of the seat. The coordinates start from the bottom-left corner of the rectangle, with the x axis pointing to the right and the y axis pointing up. The outer radius of the annulus, equal to the height and to half of the width of the rectangle, is 1, so `x` goes from 0 to 2 and `y` goes from 0 to 1.
+The `SeatLayout` object it returns is an opaque object mainly representing the rows, their radii and their number of seats.
+
+`getSeatCentersFromLayout(layout: SeatLayout): Map<[number, number], SeatInfo>`
+
+This places the seats of a layout returned by `getSeatLayout`. The function returns a map representing the ensemble of seats. The keys are `[x, y]` pairs, the cartesian coordinates of the center of the seat. The coordinates start from the bottom-left corner of the rectangle, with the x axis pointing to the right and the y axis pointing up. The outer radius of the annulus, equal to the height and to half of the width of the rectangle, is 1, so `x` goes from 0 to 2 and `y` goes from 0 to 1.
 
 The values are objects (type aliased as `SeatInfo`). They contain:
 - `angle: number`: the angle, in radians, calculated from the right-outermost point of the annulus arc, through the center of the annulus, to the center of the seat
@@ -89,7 +97,7 @@ Sorting the keys by decreasing angle value returns the seats arranged from left 
 The function generates information needed to draw a curve (intended as a cubic bezier curve) zigzagging between the seats to represent a majority. It returns the base points of the bezier curve, as well as some metadata useful to generate the control points. All points are provided as `[x, y]` number coordinates.
 The parameters are as follows:
 
-- `seatCenters: SeatCenters`: the format returned by `geometry.getSeatCenters`.
+- `seatCenters: SeatCenters`: as returned by `geometry.getSeatCenters`.
 - `options.ratio: number`: a value between 0 and 1, representing the share of seats that will be on the left of the majority line. Defaults to 0.5.
 - `options.round: (number) => number`: a function that will round the number of seats on either side of the majority line. Rounding up means more seats to the left of the line. Defaults to Math.ceil, which rounds to the higher closest integer.
 
@@ -123,7 +131,7 @@ This function pre-calculates some information from an attribution of seats, maki
 - `attribution: ReadonlyMap<SeatDisplay, number> | readonly WithNumber<SeatDisplay>[]`
 - `options.seatRadiusFactor`: the factor between 0 and 1 described earlier. At 1, neighboring seats will touch one another.
 - `options.majorityLines`: a list of option objects as taken by `majority-line.getMajorityLineCheckpoints`. Each object, even if empty, will generate a line.
-- `options`: the rest of the options are the same as taken by the `getSeatCenters` function.
+- `options`: the rest of the options are the same as taken by the `getSeatCenters`/`getSeatLayout` functions.
 
 The return value is an object containing the following keys:
 - `groupedSeatCenters`: grouped seat centers as returned by the previous function.

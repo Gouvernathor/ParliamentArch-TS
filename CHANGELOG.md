@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## (geometry) Unreleased minor
 
+### Added
+
+- `getSeatLayout` and `getSeatCentersFromLayout`, which break up `getSeatCenters` into two functions:
+  - `getSeatLayout` computes an opaque `SeatLayout` from the number of seats and the same options as `getSeatCenters`.
+  - `getSeatCentersFromLayout` computes the seat center coordinates from a `SeatLayout`.
+
 ### Fixed
 
 - In some situations the attribution of seats across rows was wrong, and the number of seats on the last row overflowed the row's capacity. This fix goes along with the slight change in the formula for the number of seats per row.
