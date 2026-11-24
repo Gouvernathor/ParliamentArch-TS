@@ -203,12 +203,12 @@ function addMajorityLine(
 ): void {
     const path = svg.appendChild(document.createElementNS(SVG_NS, "path"));
 
-    path.setAttribute("d", getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.rowThickness * ARCH_RADIUS * .5));
+    path.setAttribute("d", getD(pointScaler(c.startPoint), c.checkpoints.map(pointScaler), pointScaler(c.endPoint), c.maxSeatRadius * ARCH_RADIUS));
 
     path.setAttribute("fill", "none");
     path.setAttribute("stroke", c.color ?? "black");
     path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-width", `${c.rowThickness/10 *(c.width ?? 1) *ARCH_RADIUS}`);
+    path.setAttribute("stroke-width", `${c.maxSeatRadius/5 *(c.width ?? 1) *ARCH_RADIUS}`);
     if (c.dasharray) {
         path.setAttribute("stroke-dasharray", c.dasharray.map(v => v/100 *ARCH_RADIUS).toString());
     }
