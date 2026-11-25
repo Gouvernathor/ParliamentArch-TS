@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - The overload of `getMajorityLineCheckpoints` without a `SeatLayout` parameter
 - The `rowThickness` field of the `MajorityLineCheckpoints` object
 
+## (svg) 5.2.1 - Unreleased
+
+### Technical
+
+- Use the matching version of the core package and new calculations for the majority line (with the same results).
+
 ## (core) 5.2.1 - Unreleased
 
 ### Added
@@ -36,12 +42,6 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - The FillingStrategy runtime object and enum
 - Calling `getMajorityLineCheckpoints` without a `SeatLayout` parameter, which also draws the line differently when there are empty rows
 - The `rowThickness` field of the `MajorityLineCheckpoints` object
-
-## (svg) 5.2.1 - Unreleased
-
-### Technical
-
-- Use the matching version of the core package and new calculations for the majority line (with the same results).
 
 ## (svg) 5.2.0 - 2026-08-10
 
