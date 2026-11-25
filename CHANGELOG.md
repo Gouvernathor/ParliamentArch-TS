@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - `getSeatLayout` and `getSeatCentersFromLayout`, which break up `getSeatCenters` into two functions:
   - `getSeatLayout` computes an opaque `SeatLayout` from the number of seats and the same options as `getSeatCenters`.
   - `getSeatCentersFromLayout` computes the seat center coordinates from a `SeatLayout`.
+- `getMajorityLineCheckpoints` now supports strategies with empty rows, and skips them when building the checkpoints.
 - The new `maxSeatRadius` field on the `MajorityLineCheckpoints` objects, which should be used instead of the deprecated `rowThickness` field.
 
 ### Fixed
@@ -33,7 +34,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ### Deprecated
 
 - The FillingStrategy runtime object and enum
-- Calling `getMajorityLineCheckpoints` without a `SeatLayout` parameter
+- Calling `getMajorityLineCheckpoints` without a `SeatLayout` parameter, which also draws the line differently when there are empty rows
 - The `rowThickness` field of the `MajorityLineCheckpoints` object
 
 ## (svg) 5.2.1 - Unreleased

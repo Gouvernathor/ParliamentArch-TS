@@ -162,7 +162,8 @@ interface Row {
 }
 interface SeatLayout {
     /**
-     * All the rows from inner to outer, including those left empty.
+     * The rows from inner to outer.
+     * Their `idx` field takes into account the empty rows, but the array itself does not.
      */
     readonly rows: readonly Row[];
 
@@ -248,11 +249,9 @@ function getActualRows(
 
     let attributedSeats = 0;
     const rows: Row[] = [];
-    for (let rowIdx = 0; rowIdx < maxedRows.length; rowIdx++) {
+    for (let rowIdx = startingRow; rowIdx < maxedRows.length; rowIdx++) {
         let nSeatsThisRow: number;
-        if (rowIdx < startingRow) { // the innermost rows left empty by the strategy
-            nSeatsThisRow = 0;
-        } else if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
+        if (rowIdx === maxedRows.length - 1) { // if it's the last, outermost row
             // fit all the remaining seats
             nSeatsThisRow = nSeats - attributedSeats;
         } else if (fillingStrategy === "outer_priority") {

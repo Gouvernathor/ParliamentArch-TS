@@ -94,6 +94,7 @@ export function getMajorityLineCheckpoints(
 
 interface SeatLayoutSubset {
     readonly rows: readonly {
+        readonly idx: number,
         readonly radius: number,
     }[];
     readonly maxSeatRadius: number;
@@ -102,7 +103,9 @@ function getStandardLayout(seatCenters: SeatCenters): SeatLayoutSubset {
     const nRows = 1 + Math.max(...Array.from(seatCenters.values(), ({ rowIdx }) => rowIdx));
     const rowThicc = getRowThickness(nRows);
     return {
-        rows: Array.from({ length: nRows }, (_, idx) => ({ radius: getRowArcRadius(idx, rowThicc) })),
+        // FIXME: includes empty rows, too bad
+        // to be discarded when removing the deprecated proxy
+        rows: Array.from({ length: nRows }, (_, idx) => ({ idx, radius: getRowArcRadius(idx, rowThicc) })),
         // FIXME: that relationship is incompatible with future strategies
         // to be discarded when removing the deprecated proxy
         maxSeatRadius: rowThicc/2,
@@ -171,9 +174,9 @@ function getRowsWithSeats(
     seatCenters: SeatCenters,
     layoutRows: SeatLayoutSubset["rows"],
 ): RowWithSeats[] {
-    const rowsWithSeats = layoutRows.map(({ radius }) => ({ rowArcRadius: radius, seats: [] as Point[] }));
+    const rowsWithSeats = layoutRows.map(({ idx, radius }) => ({ idx, rowArcRadius: radius, seats: [] as Point[] }));
     for (const [seatCenter, { rowIdx }] of seatCenters) {
-        rowsWithSeats[rowIdx]!.seats.push(seatCenter);
+        rowsWithSeats.find(row => row.idx === rowIdx)!.seats.push(seatCenter);
     }
     return rowsWithSeats;
 }
