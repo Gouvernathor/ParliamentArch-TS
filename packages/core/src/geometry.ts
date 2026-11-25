@@ -198,19 +198,6 @@ export function getSeatLayout(
     return { rows, maxSeatRadius, spanAngle };
 }
 
-/**
- * @param layout as returned by {@link getSeatLayout}
- * @returns see {@link getSeatCenters}'s return value.
- */
-export function getSeatCentersFromLayout({
-    rows: actualRows,
-    maxSeatRadius,
-    spanAngle,
-}: SeatLayout): Map<[number, number], SeatInfo> {
-    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
-    return new Map(actualRows.flatMap(r => rowToSeats(r, maxSeatRadius, spanAngleMargin)));
-}
-
 function getActualRows(
     nSeats: number,
     maxedRows: readonly number[],
@@ -285,6 +272,19 @@ function getActualRows(
         attributedSeats += nSeatsThisRow;
     }
     return [ rowThicc/2, rows ];
+}
+
+/**
+ * @param layout as returned by {@link getSeatLayout}
+ * @returns see {@link getSeatCenters}'s return value.
+ */
+export function getSeatCentersFromLayout({
+    rows,
+    maxSeatRadius,
+    spanAngle,
+}: SeatLayout): Map<[number, number], SeatInfo> {
+    const spanAngleMargin = (1 - spanAngle / 180) * Math.PI / 2;
+    return new Map(rows.flatMap(r => rowToSeats(r, maxSeatRadius, spanAngleMargin)));
 }
 
 function rowToSeats(
