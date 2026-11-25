@@ -174,11 +174,11 @@ function getRowsWithSeats(
     seatCenters: SeatCenters,
     layoutRows: SeatLayoutSubset["rows"],
 ): RowWithSeats[] {
-    const rowsWithSeats = layoutRows.map(({ idx, radius }) => ({ idx, rowArcRadius: radius, seats: [] as Point[] }));
+    const sparse: Point[][] = [];
     for (const [seatCenter, { rowIdx }] of seatCenters) {
-        rowsWithSeats.find(row => row.idx === rowIdx)!.seats.push(seatCenter);
+        (sparse[rowIdx] ??= []).push(seatCenter);
     }
-    return rowsWithSeats;
+    return layoutRows.map(({ idx, radius }) => ({ rowArcRadius: radius, seats: sparse[idx] ?? [] }));
 }
 
 function getCheckpointsForHalf(
