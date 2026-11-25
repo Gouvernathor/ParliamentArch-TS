@@ -30,10 +30,13 @@ const attribution = new Map([
 //     [{ color: "blue" }, 94],
 // ]);
 
-fs.writeFileSync("./sample-maj.svg", parliamentarch.getSVGFromAttribution(attribution, {majorityLines: [
-    {nSeats:100, color: "rebeccapurple", dasharray: [1]},
-    {round: Math.trunc, color: "grey"},
-    {},
-    {ratio:.6, color: "orange", dasharray: [2], data: "three-fifths"},
-    {ratio:2/3, color: "hotpink", dasharray: [2,1], data: "two-thirds"},
-]}).outerHTML);
+fs.writeFileSync("./sample-maj.svg", parliamentarch.getSVGFromAttribution(attribution, {
+    majorityLines: [
+        {nSeats:100, color: "rebeccapurple", dasharray: [1]},
+        {round: Math.trunc, color: "grey"},
+        {},
+        {ratio:.6, color: "orange", dasharray: [2], data: "three-fifths"},
+        {ratio:2/3, color: "hotpink", dasharray: [2,1], data: "two-thirds"},
+    ],
+    // fillingStrategy: "empty_inner",
+}).outerHTML);
