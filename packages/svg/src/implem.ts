@@ -253,6 +253,6 @@ function offsetToCenter(point: Point, distance: number): Point {
 }
 
 function normalize([x, y]: Point, newNorm = 1): Point {
-    const norm = Math.sqrt(x**2 + y**2);
+    const norm = Math.hypot(x, y);
     return [x/norm * newNorm, y/norm * newNorm];
 }
